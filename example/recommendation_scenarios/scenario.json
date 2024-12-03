@@ -1,0 +1,9 @@
+{
+    "type": "recommendation",
+    "time": "2023-12-01",
+    "context": {"example_key": "example_value"},
+    "candidate_poi": [
+        {"business_id": "1", "stars": 4.0},
+        {"business_id": "2", "stars": 4.5}
+    ]
+}
