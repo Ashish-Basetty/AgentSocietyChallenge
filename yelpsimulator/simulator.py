@@ -1,11 +1,13 @@
 import os
 import json
-from typing import List, Type, Dict, Any
-from tools.interaction_tool import InteractionTool
-from agents.simulation_agent import SimulationAgent
-from agents.recommendation_agent import RecommendationAgent
-from scenarios.simulation_scenario import SimulationScenario
-from scenarios.recommendation_scenario import RecommendationScenario
+from typing import List, Type, Dict, Any, Optional
+from .tools.interaction_tool import InteractionTool
+from .tools.evaluation_tool import RecommendationEvaluator, SimulationEvaluator
+from .agents.simulation_agent import SimulationAgent
+from .agents.recommendation_agent import RecommendationAgent
+from .scenarios.simulation_scenario import SimulationScenario
+from .scenarios.recommendation_scenario import RecommendationScenario
+import numpy as np
 
 
 class Simulator:
@@ -19,6 +21,12 @@ class Simulator:
         self.interaction_tool = InteractionTool(data_dir)
         self.scenarios = []  # List to store scenarios
         self.agent_class = None  # The agent class used for simulation
+        
+        # 添加评估器
+        self.recommendation_evaluator = RecommendationEvaluator()
+        self.simulation_evaluator = SimulationEvaluator()
+        self.simulation_outputs = []  # 存储模拟输出
+        self.evaluation_results = []  # 存储评估结果
 
     def set_scenario(self, scenario_dir: str):
         """
@@ -72,7 +80,7 @@ class Simulator:
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
-        outputs = []
+        self.simulation_outputs = []
         for scenario in self.scenarios:
             # Initialize the agent
             agent = self.agent_class(self.data_dir)
@@ -83,14 +91,111 @@ class Simulator:
             # Invoke the forward method and collect output
             try:
                 output = agent.forward()
-                outputs.append({
+                result = {
                     "scenario": scenario.to_dict(),
                     "output": output
-                })
+                }
+                self.simulation_outputs.append(result)
             except NotImplementedError:
-                outputs.append({
+                result = {
                     "scenario": scenario.to_dict(),
                     "error": "Forward method not implemented by participant."
-                })
+                }
+                self.simulation_outputs.append(result)
         
-        return outputs
+        return self.simulation_outputs
+
+    def evaluate(self, ground_truth: Optional[List[Dict]] = None) -> Dict[str, Any]:
+        """
+        Evaluate the simulation results.
+        Args:
+            ground_truth: Optional ground truth data for evaluation
+        Returns:
+            Dictionary containing evaluation metrics
+        """
+        if not self.simulation_outputs:
+            raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
+
+        evaluation_results = {}
+        
+        # 根据agent类型选择评估方法
+        if issubclass(self.agent_class, RecommendationAgent):
+            evaluation_results = self._evaluate_recommendation(ground_truth)
+        elif issubclass(self.agent_class, SimulationAgent):
+            evaluation_results = self._evaluate_simulation(ground_truth)
+        
+        self.evaluation_results.append(evaluation_results)
+        return evaluation_results
+
+    def _evaluate_recommendation(self, ground_truth: List[Dict]) -> Dict[str, Any]:
+        """
+        Evaluate recommendation results
+        """
+        if not ground_truth:
+            raise ValueError("Ground truth data is required for recommendation evaluation")
+
+        # 准备评估数据
+        gt_pois = [item['poi_id'] for item in ground_truth]
+        pred_pois = [
+            output['output']['recommended_pois'] 
+            for output in self.simulation_outputs
+            if 'output' in output and 'recommended_pois' in output['output']
+        ]
+
+        # 计算评估指标
+        metrics = self.recommendation_evaluator.calculate_hr_at_n(
+            ground_truth=gt_pois,
+            predictions=pred_pois,
+            n=10  # 可以通过参数配置
+        )
+
+        return {
+            'type': 'recommendation',
+            'metrics': metrics.__dict__,
+            'timestamp': self.scenarios[0].time if self.scenarios else None
+        }
+
+    def _evaluate_simulation(self, ground_truth: List[Dict]) -> Dict[str, Any]:
+        """
+        Evaluate simulation results
+        """
+        if not ground_truth:
+            raise ValueError("Ground truth data is required for simulation evaluation")
+
+        all_metrics = []
+        for sim_output, gt_data in zip(self.simulation_outputs, ground_truth):
+            if 'error' in sim_output:
+                continue
+
+            # 准备评估数据
+            simulated_data = sim_output['output']
+            metrics = self.simulation_evaluator.calculate_metrics(
+                simulated_data=simulated_data,
+                real_data=gt_data
+            )
+            all_metrics.append(metrics)
+
+        # 计算平均指标
+        avg_metrics = {
+            'star_rmse': np.mean([m.star_rmse for m in all_metrics]),
+            'sentiment_rmse': np.mean([m.sentiment_rmse for m in all_metrics]),
+            'useful_rmse': np.mean([m.useful_rmse for m in all_metrics]),
+            'cool_rmse': np.mean([m.cool_rmse for m in all_metrics]),
+            'funny_rmse': np.mean([m.funny_rmse for m in all_metrics]),
+            'overall_rmse': np.mean([m.overall_rmse for m in all_metrics])
+        }
+
+        return {
+            'type': 'simulation',
+            'metrics': avg_metrics,
+            'detailed_metrics': [m.__dict__ for m in all_metrics],
+            'timestamp': self.scenarios[0].time if self.scenarios else None
+        }
+
+    def get_evaluation_history(self) -> List[Dict[str, Any]]:
+        """
+        Get the history of evaluation results
+        Returns:
+            List of evaluation results
+        """
+        return self.evaluation_results

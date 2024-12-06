@@ -37,10 +37,11 @@ if __name__ == "__main__":
     simulator.set_agent(MySimulationAgent)
 
     # Run the simulation
-    results = simulator.run_simulation()
+    outputs = simulator.run_simulation()
 
-    # Print results
-    for result in results:
-        scenario_info = result.get("scenario")
-        output = result.get("output", result.get("error"))
-        print(f"Scenario: {scenario_info}, Output: {output}")
+    # 评估结果
+    ground_truth = []  # 准备真实数据   
+    evaluation_results = simulator.evaluate(ground_truth)
+
+    # 获取评估历史
+    evaluation_history = simulator.get_evaluation_history()

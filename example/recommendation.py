@@ -35,12 +35,12 @@ if __name__ == "__main__":
     # Use the custom agent for recommendation
     simulator.set_agent(CustomRecommendationAgent)
 
-    # Run the simulation and collect results
-    results = simulator.run_simulation()
+    # 运行模拟
+    outputs = simulator.run_simulation()
 
-    # Output the results
-    for result in results:
-        scenario = result['scenario']
-        output = result.get('output', result.get('error'))
-        print(f"Scenario: {scenario}")
-        print(f"Recommendation Output: {output}")
+    # 评估结果
+    ground_truth = []  # 准备真实数据   
+    evaluation_results = simulator.evaluate(ground_truth)
+
+    # 获取评估历史
+    evaluation_history = simulator.get_evaluation_history()
