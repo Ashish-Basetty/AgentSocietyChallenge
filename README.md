@@ -28,7 +28,9 @@ This is the core library containing all source code required for the competition
 
 - **`agents/`**: Contains base agent classes (`SimulationAgent`, `RecommendationAgent`) and their abstractions. Participants must extend these classes for their implementations.
 - **`scenarios/`**: Defines scenario structures for each track (`SimulationScenario`, `RecommendationScenario`).
-- **`tools/`**: Includes `InteractionTool`, a utility for interacting with the Yelp dataset during simulations.
+- **`tools/`**: Includes utility tools:
+  - `InteractionTool`: A utility for interacting with the Yelp dataset during simulations.
+  - `EvaluationTool`: Provides comprehensive metrics for both recommendation (HR@1/3/5) and simulation tasks (RMSE, sentiment analysis).
 - **`simulator.py`**: The main simulation framework, which handles scenario evaluation and agent execution.
 
 ### 2. **`data_images/`**  
