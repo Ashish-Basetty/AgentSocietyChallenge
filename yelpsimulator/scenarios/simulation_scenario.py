@@ -1,4 +1,4 @@
-from scenarios.scenario import Scenario
+from .scenario import Scenario
 from typing import Dict
 
 class SimulationScenario(Scenario):

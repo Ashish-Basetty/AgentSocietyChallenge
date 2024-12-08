@@ -105,37 +105,57 @@ class Simulator:
         
         return self.simulation_outputs
 
-    def evaluate(self, ground_truth: Optional[List[Dict]] = None) -> Dict[str, Any]:
+    def evaluate(self, ground_truth_file: str) -> Dict[str, Any]:
         """
         Evaluate the simulation results.
         Args:
-            ground_truth: Optional ground truth data for evaluation
+            ground_truth_file: Path to the JSON file containing ground truth data
         Returns:
             Dictionary containing evaluation metrics
         """
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
-
+        
+        # 读取ground truth文件
+        with open(ground_truth_file, 'r') as f:
+            ground_truth_data = json.load(f)
+        
+        # 检查数据条目数量
+        sim_count = len(self.simulation_outputs)
+        gt_count = len(ground_truth_data)
+        
+        if sim_count != gt_count:
+            print(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
+            # 使用较小的数量
+            eval_count = min(sim_count, gt_count)
+            ground_truth_data = ground_truth_data[:eval_count]
+            self.simulation_outputs = self.simulation_outputs[:eval_count]
+        
         evaluation_results = {}
         
         # 根据agent类型选择评估方法
         if issubclass(self.agent_class, RecommendationAgent):
-            evaluation_results = self._evaluate_recommendation(ground_truth)
+            evaluation_results = self._evaluate_recommendation(ground_truth_data)
         elif issubclass(self.agent_class, SimulationAgent):
-            evaluation_results = self._evaluate_simulation(ground_truth)
+            evaluation_results = self._evaluate_simulation(ground_truth_data)
+        
+        # 添加数据条目信息到评估结果中
+        evaluation_results['data_info'] = {
+            'evaluated_count': eval_count if sim_count != gt_count else sim_count,
+            'original_simulation_count': sim_count,
+            'original_ground_truth_count': gt_count
+        }
         
         self.evaluation_results.append(evaluation_results)
         return evaluation_results
 
-    def _evaluate_recommendation(self, ground_truth: List[Dict]) -> Dict[str, Any]:
+    def _evaluate_recommendation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
         """
         Evaluate recommendation results
         """
-        if not ground_truth:
-            raise ValueError("Ground truth data is required for recommendation evaluation")
-
-        # 准备评估数据
-        gt_pois = [item['poi_id'] for item in ground_truth]
+        # 从ground truth数据中提取候选POI列表
+        gt_pois = [item['candidate_id_list'] for item in ground_truth_data]
+        
         pred_pois = [
             output['output']['recommended_pois'] 
             for output in self.simulation_outputs
@@ -155,26 +175,30 @@ class Simulator:
             'timestamp': self.scenarios[0].time if self.scenarios else None
         }
 
-    def _evaluate_simulation(self, ground_truth: List[Dict]) -> Dict[str, Any]:
+    def _evaluate_simulation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
         """
         Evaluate simulation results
         """
-        if not ground_truth:
-            raise ValueError("Ground truth data is required for simulation evaluation")
-
         all_metrics = []
-        for sim_output, gt_data in zip(self.simulation_outputs, ground_truth):
+        for sim_output, gt_data in zip(self.simulation_outputs, ground_truth_data):
             if 'error' in sim_output:
                 continue
-
-            # 准备评估数据
+            
+            # 准备评估数据：从ground truth中提取所需字段
+            gt_info = {
+                'user_id': gt_data['user_id'],
+                'business_id': gt_data['business_id'],
+                'date': gt_data['date'],
+                'review_id': gt_data['review_id']
+            }
+            
             simulated_data = sim_output['output']
             metrics = self.simulation_evaluator.calculate_metrics(
                 simulated_data=simulated_data,
-                real_data=gt_data
+                real_data=gt_info
             )
             all_metrics.append(metrics)
-
+        
         # 计算平均指标
         avg_metrics = {
             'star_rmse': np.mean([m.star_rmse for m in all_metrics]),
