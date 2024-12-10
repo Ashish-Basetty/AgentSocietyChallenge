@@ -27,7 +27,7 @@ class CustomRecommendationAgent(RecommendationAgent):
 
 if __name__ == "__main__":
     # Initialize the simulator with the dataset directory
-    simulator = Simulator(data_dir="path/to/dataset")
+    simulator = Simulator(data_dir="path/to/dataset", groundtruth_file="path/to/groundtruth")
 
     # Set scenarios (e.g., load predefined recommendation scenarios)
     simulator.set_scenario(scenario_dir="./recommendation_scenarios")
@@ -39,8 +39,7 @@ if __name__ == "__main__":
     outputs = simulator.run_simulation()
 
     # 评估结果
-    ground_truth = []  # 准备真实数据   
-    evaluation_results = simulator.evaluate(ground_truth)
+    evaluation_results = simulator.evaluate()
 
     # 获取评估历史
     evaluation_history = simulator.get_evaluation_history()

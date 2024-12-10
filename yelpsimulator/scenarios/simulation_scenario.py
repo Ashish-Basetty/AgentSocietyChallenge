@@ -1,8 +1,7 @@
-from .scenario import Scenario
 from typing import Dict
 
-class SimulationScenario(Scenario):
-    def __init__(self, time: str, user: str, business: str):
+class SimulationScenario():
+    def __init__(self, date: str, user_id: str, business_id: str):
         """
         Simulation Scenario for the SimulationAgent.
         Args:
@@ -10,9 +9,9 @@ class SimulationScenario(Scenario):
             user: The user being simulated.
             business: The business receiving the simulated review.
         """
-        super().__init__(time)
-        self.user = user
-        self.business = business
+        self.date = date
+        self.user_id = user_id
+        self.business_id = business_id
 
     def to_dict(self) -> Dict[str, str]:
         """
@@ -21,7 +20,7 @@ class SimulationScenario(Scenario):
             dict: The scenario in dictionary format.
         """
         return {
-            "time": self.time,
-            "user": self.user,
-            "business": self.business
+            "date": self.date,
+            "user_id": self.user_id,
+            "business_id": self.business_id
         }

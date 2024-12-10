@@ -11,22 +11,34 @@ import numpy as np
 
 
 class Simulator:
-    def __init__(self, data_dir: str):
+    def __init__(self, data_dir: str, groundtruth_file: Optional[str] = None):
         """
         Initialize the Simulator.
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
+            groundtruth_file: Path to the groundtruth file for Track2 evaluation.
         """
         self.data_dir = data_dir
-        self.interaction_tool = InteractionTool(data_dir)
-        self.scenarios = []  # List to store scenarios
-        self.agent_class = None  # The agent class used for simulation
+        self.groundtruth_file = groundtruth_file
+        self.groundtruth_data = None
         
-        # 添加评估器
+        # 如果提供了groundtruth文件，加载数据
+        if groundtruth_file:
+            with open(groundtruth_file, 'r') as f:
+                self.groundtruth_data = json.load(f)
+        
+        # 初始化interaction tool时传入groundtruth数据
+        self.interaction_tool = InteractionTool(
+            data_dir, 
+            groundtruth_data=self.groundtruth_data if self.groundtruth_data else None
+        )
+        
+        self.scenarios = []  # List to store scenarios
+        self.agent_class = None
         self.recommendation_evaluator = RecommendationEvaluator()
         self.simulation_evaluator = SimulationEvaluator()
-        self.simulation_outputs = []  # 存储模拟输出
-        self.evaluation_results = []  # 存储评估结果
+        self.simulation_outputs = []
+        self.evaluation_results = []
 
     def set_scenario(self, scenario_dir: str):
         """
@@ -45,15 +57,16 @@ class Simulator:
                 # Determine scenario type and create corresponding object
                 if scenario_type == 'user_behavior_simulation':
                     scenario = SimulationScenario(
-                        time=scenario_data['time'],
-                        user=scenario_data['user'],
-                        business=scenario_data['business']
+                        date=scenario_data['date'],
+                        user_id=scenario_data['user_id'],
+                        business_id=scenario_data['business_id']
                     )
                 elif scenario_type == 'recommendation':
                     scenario = RecommendationScenario(
-                        time=scenario_data['time'],
-                        context=scenario_data['context'],
-                        candidate_poi=scenario_data['candidate_poi']
+                        date=scenario_data['date'],
+                        candidate_category=scenario_data['candidate_category'],
+                        candidate_list=scenario_data['candidate_list'],
+                        loc=scenario_data['loc']
                     )
                 else:
                     raise ValueError(f"Unsupported scenario type: {scenario_type}")
@@ -83,7 +96,8 @@ class Simulator:
         self.simulation_outputs = []
         for scenario in self.scenarios:
             # Initialize the agent
-            agent = self.agent_class(self.data_dir)
+            agent = self.agent_class()
+            agent.set_interaction_tool(self.interaction_tool)
             
             # Set the scenario in the agent
             agent.insert_scenario(scenario)
@@ -105,39 +119,38 @@ class Simulator:
         
         return self.simulation_outputs
 
-    def evaluate(self, ground_truth_file: str) -> Dict[str, Any]:
+    def evaluate(self) -> Dict[str, Any]:
         """
-        Evaluate the simulation results.
-        Args:
-            ground_truth_file: Path to the JSON file containing ground truth data
+        Evaluate the simulation results using the loaded groundtruth data.
         Returns:
             Dictionary containing evaluation metrics
         """
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
         
-        # 读取ground truth文件
-        with open(ground_truth_file, 'r') as f:
-            ground_truth_data = json.load(f)
+        if not self.groundtruth_data:
+            raise RuntimeError("No groundtruth data available. Initialize simulator with groundtruth_file.")
         
         # 检查数据条目数量
         sim_count = len(self.simulation_outputs)
-        gt_count = len(ground_truth_data)
+        gt_count = len(self.groundtruth_data)
         
         if sim_count != gt_count:
             print(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
             # 使用较小的数量
             eval_count = min(sim_count, gt_count)
-            ground_truth_data = ground_truth_data[:eval_count]
+            groundtruth_data = self.groundtruth_data[:eval_count]
             self.simulation_outputs = self.simulation_outputs[:eval_count]
+        else:
+            groundtruth_data = self.groundtruth_data
         
         evaluation_results = {}
         
         # 根据agent类型选择评估方法
         if issubclass(self.agent_class, RecommendationAgent):
-            evaluation_results = self._evaluate_recommendation(ground_truth_data)
+            evaluation_results = self._evaluate_recommendation(groundtruth_data)
         elif issubclass(self.agent_class, SimulationAgent):
-            evaluation_results = self._evaluate_simulation(ground_truth_data)
+            evaluation_results = self._evaluate_simulation(groundtruth_data)
         
         # 添加数据条目信息到评估结果中
         evaluation_results['data_info'] = {
@@ -151,22 +164,21 @@ class Simulator:
 
     def _evaluate_recommendation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
         """
-        Evaluate recommendation results
+        Evaluate recommendation results using groundtruth
         """
-        # 从ground truth数据中提取候选POI列表
-        gt_pois = [item['candidate_id_list'] for item in ground_truth_data]
+        # 从ground truth数据中提取真实POI
+        gt_pois = [item['groundtruth'] for item in ground_truth_data]
         
         pred_pois = [
-            output['output']['recommended_pois'] 
+            output['output']
             for output in self.simulation_outputs
-            if 'output' in output and 'recommended_pois' in output['output']
+            if 'output' in output
         ]
 
         # 计算评估指标
         metrics = self.recommendation_evaluator.calculate_hr_at_n(
             ground_truth=gt_pois,
             predictions=pred_pois,
-            n=10  # 可以通过参数配置
         )
 
         return {

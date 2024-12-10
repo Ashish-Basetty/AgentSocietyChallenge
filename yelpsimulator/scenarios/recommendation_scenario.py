@@ -1,18 +1,20 @@
-from scenarios.scenario import Scenario
 from typing import Any, Dict, List
 
-class RecommendationScenario(Scenario):
-    def __init__(self, time: str, context: Any, candidate_poi: List[Dict[str, Any]]):
+class RecommendationScenario:
+    def __init__(self, user_id: str, candidate_category: str, 
+                 candidate_list: List[str], loc: List[float]):
         """
         Recommendation Scenario for the RecommendationAgent.
         Args:
-            time: The time parameter to limit InteractionTool behavior.
-            context: Contextual information for recommendations.
-            candidate_poi: List of candidate points of interest (businesses).
+            user_id: The ID of the user requesting recommendations.
+            candidate_category: The category of businesses to recommend.
+            candidate_list: List of candidate business IDs.
+            loc: User's location as [latitude, longitude].
         """
-        super().__init__(time)
-        self.context = context
-        self.candidate_poi = candidate_poi
+        self.user_id = user_id
+        self.candidate_category = candidate_category
+        self.candidate_list = candidate_list
+        self.loc = loc
 
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -21,7 +23,8 @@ class RecommendationScenario(Scenario):
             dict: The scenario in dictionary format.
         """
         return {
-            "time": self.time,
-            "context": self.context,
-            "candidate_poi": self.candidate_poi
+            "user_id": self.user_id,
+            "candidate_category": self.candidate_category,
+            "candidate_list": self.candidate_list,
+            "loc": self.loc
         }

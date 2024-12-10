@@ -1,15 +1,21 @@
 from abc import ABC, abstractmethod
 from typing import Any
-from tools.interaction_tool import InteractionTool
+from ..tools.interaction_tool import InteractionTool
 
 class Agent(ABC):
-    def __init__(self, data_dir: str):
+    def __init__(self):
         """
         Abstract base class for agents.
-        Args:
-            data_dir: Directory containing Yelp dataset files.
         """
-        self.interaction_tool = InteractionTool(data_dir)
+        self.interaction_tool = None
+
+    def set_interaction_tool(self, interaction_tool: InteractionTool):
+        """
+        Set the interaction tool for the agent.
+        Args:
+            interaction_tool: An instance of InteractionTool.
+        """
+        self.interaction_tool = interaction_tool
 
     @abstractmethod
     def insert_scenario(self, scenario):

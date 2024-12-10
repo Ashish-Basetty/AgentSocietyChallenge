@@ -1,14 +1,12 @@
-from typing import Tuple
-from agents.agent import Agent
+from typing import Dict, Any
+from .agent import Agent
 
 class SimulationAgent(Agent):
-    def __init__(self, data_dir: str):
+    def __init__(self):
         """
         SimulationAgent initialization.
-        Args:
-            data_dir: Directory containing Yelp dataset files.
         """
-        super().__init__(data_dir)
+        super().__init__()
         self.scenario = None
 
     def insert_scenario(self, scenario):
@@ -22,12 +20,21 @@ class SimulationAgent(Agent):
         self.scenario = scenario.to_dict()
         self.interaction_tool.set_scenario(self.scenario)
 
-    def forward(self) -> Tuple[float, str, Tuple[int, int, int]]:
+    def forward(self) -> Dict[str, Any]:
         """
         Abstract forward method for SimulationAgent.
         Participants must override this method to provide:
             - star (float): Simulated rating
-            - review_text (str): Simulated review text
-            - behavior_metrics (tuple): Simulated behavior metrics (int, int, int)
+            - review (str): Simulated review text
+            - useful (int): Simulated useful count
+            - cool (int): Simulated cool count
+            - funny (int): Simulated funny count
         """
-        raise NotImplementedError("Forward method must be implemented by the participant.")
+        result = {
+            'star': 0,
+            'review': '',
+            'useful': 0,
+            'cool': 0,
+            'funny': 0
+        }
+        return result
