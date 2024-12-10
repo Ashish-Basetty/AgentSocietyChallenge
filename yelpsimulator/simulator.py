@@ -184,7 +184,6 @@ class Simulator:
         return {
             'type': 'recommendation',
             'metrics': metrics.__dict__,
-            'timestamp': self.scenarios[0].time if self.scenarios else None
         }
 
     def _evaluate_simulation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
@@ -225,7 +224,6 @@ class Simulator:
             'type': 'simulation',
             'metrics': avg_metrics,
             'detailed_metrics': [m.__dict__ for m in all_metrics],
-            'timestamp': self.scenarios[0].time if self.scenarios else None
         }
 
     def get_evaluation_history(self) -> List[Dict[str, Any]]:
