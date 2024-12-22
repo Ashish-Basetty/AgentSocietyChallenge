@@ -1,7 +1,0 @@
-{
-    "type": "recommendation",
-    "user_id": "user_id_example",
-    "business_id": "business_id_example",
-    "candidate_category": "category_example",
-    "candidate_list": ["candidate_id_1", "candidate_id_2"]
-}

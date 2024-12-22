@@ -5,17 +5,16 @@
 
 # 🚀 AgentSociety Challenge
 ![License](https://img.shields.io/badge/license-MIT-green) &ensp;
-[![Online Documentation](https://img.shields.io/badge/docs-online-blue)]() &ensp;
 [![Competition Link](https://img.shields.io/badge/competition-link-orange)](https://www.codabench.org/competitions/4574/)
 
-Welcome to the **WWW'25 AgentSociety Challenge**! This repository provides the tools and framework needed to participate in a competition that focuses on building **LLM Agents** for **user behavior simulation** and **recommendation systems** based on the Yelp dataset.
+Welcome to the **WWW'25 AgentSociety Challenge**! This repository provides the tools and framework needed to participate in a competition that focuses on building **LLM Agents** for **user behavior simulation** and **recommendation systems** based on open source datasets.
 
 Participants are tasked with developing intelligent agents that interact with a simulated environment and perform specific tasks in two competition tracks:
 1. **User Behavior Simulation Track**: Agents simulate user behavior, including generating reviews and ratings.
 2. **Recommendation Track**: Agents generate recommendations based on provided contextual data.
 
 This repository includes:
-- The core library `yelpsimulator` for environment simulation.
+- The core library `websocietysimulator` for environment simulation.
 - Scripts for dataset processing and analysis.
 - Example usage for creating and evaluating agents.
 
@@ -23,24 +22,22 @@ This repository includes:
 
 ## Directory Structure
 
-### 1. **`yelpsimulator/`**  
+### 1. **`websocietysimulator/`**  
 This is the core library containing all source code required for the competition.
 
 - **`agents/`**: Contains base agent classes (`SimulationAgent`, `RecommendationAgent`) and their abstractions. Participants must extend these classes for their implementations.
-- **`scenarios/`**: Defines scenario structures for each track (`SimulationScenario`, `RecommendationScenario`).
+- **`task/`**: Defines task structures for each track (`SimulationTask`, `RecommendationTask`).
+- **`llm/`**: Contains base LLM client classes (`DeepseekLLM`, `OpenAILLM`).
 - **`tools/`**: Includes utility tools:
   - `InteractionTool`: A utility for interacting with the Yelp dataset during simulations.
   - `EvaluationTool`: Provides comprehensive metrics for both recommendation (HR@1/3/5) and simulation tasks (RMSE, sentiment analysis).
-- **`simulator.py`**: The main simulation framework, which handles scenario evaluation and agent execution.
+- **`simulator.py`**: The main simulation framework, which handles task and groundtruth setting, evaluation and agent execution.
 
-### 2. **`data_images/`**  
-Contains analysis images and graphs for the raw Yelp dataset. These visualizations provide insights into the dataset structure and characteristics.
+### 2. **`example/`**  
+Contains usage examples of the `websocietysimulator` library. Includes sample agents and scripts to demonstrate how to load scenarios, set agents, and evaluate them.
 
-### 3. **`example/`**  
-Contains usage examples of the `yelpsimulator` library. Includes sample agents and scripts to demonstrate how to load scenarios, set agents, and evaluate them.
-
-### 4. **`yelp_data_process.py`**  
-A script to process the raw Yelp dataset into the required format for use with the `yelpsimulator` library. This script ensures the dataset is cleaned and structured correctly for simulations.
+### 3. **`data_process.py`**  
+A script to process the raw Yelp dataset into the required format for use with the `websocietysimulator` library. This script ensures the dataset is cleaned and structured correctly for simulations.
 
 ---
 
@@ -52,8 +49,8 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/yelpsimulator.git
-   cd yelpsimulator
+   git clone <this_repo>
+   cd websocietysimulator
    ```
 
 2. Install dependencies using Poetry:
@@ -72,9 +69,9 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
 
 #### Option One: Process the Raw Yelp Dataset
 1. Download the raw Yelp dataset from the [Yelp Dataset Challenge page](https://www.yelp.com/dataset).
-2. Run the `yelp_data_process.py` script to process the dataset:
+2. Run the `data_process.py` script to process the dataset:
    ```bash
-   python yelp_data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
+   python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
    ```
 
 #### Option Two: Use a Preprocessed Dataset
@@ -118,40 +115,35 @@ class MySimulationAgent(SimulationAgent):
 
 ---
 
-### 5. Run the Evaluation Script
+### 5. Evaluation your agent with training data
 
 Run the simulation using the provided `Simulator` class:
 
 ```python
-from yelpsimulator import Simulator
+from websocietysimulator import Simulator
 from my_agent import MySimulationAgent
 
 # Initialize Simulator
 simulator = Simulator(data_dir="path/to/your/dataset")
 
 # Load scenarios
-simulator.set_scenario(scenario_dir="path/to/scenario_directory")
+simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtruth_dir="path/to/groundtruth_directory")
 
 # Set your custom agent
 simulator.set_agent(MySimulationAgent)
 
 # Run evaluation
-results = simulator.run_simulation()
+agent_outputs = simulator.run_simulation()
 
-# Print results
-for result in results:
-    print(result)
+# Evaluate the agent
+evaluation_results = simulator.evaluate()
 ```
 
 ---
 
 ## Introduction to the `InteractionTool`
 
-The `InteractionTool` is the core utility for interacting with the Yelp dataset. It provides an interface for querying user, business, review, tip, and check-in data within the context of a scenario.
-
-### Idea
-
-The `InteractionTool` acts as a middleware between the agent and the environment. It ensures agents only access the data relevant to the current scenario and within the specified constraints (e.g., time limits).
+The `InteractionTool` is the core utility for interacting with the raw dataset. It provides an interface for querying user, business, review, tip, and check-in data within the context of a task.
 
 ### Functions
 

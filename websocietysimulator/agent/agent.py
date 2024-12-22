@@ -18,8 +18,8 @@ class Agent(ABC):
         self.interaction_tool = interaction_tool
 
     @abstractmethod
-    def insert_scenario(self, scenario):
-        """Insert a scenario for the agent."""
+    def insert_task(self, task):
+        """Insert a task for the agent."""
         pass
 
     @abstractmethod

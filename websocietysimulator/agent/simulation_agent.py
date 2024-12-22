@@ -7,18 +7,18 @@ class SimulationAgent(Agent):
         SimulationAgent initialization.
         """
         super().__init__()
-        self.scenario = None
+        self.task = None
 
-    def insert_scenario(self, scenario):
+    def insert_task(self, task):
         """
-        Insert a simulation scenario.
+        Insert a simulation task.
         Args:
-            scenario: An instance of SimulationScenario.
+            task: An instance of SimulationTask.
         """
-        if not scenario:
-            raise ValueError("The scenario cannot be None.")
-        self.scenario = scenario.to_dict()
-        self.interaction_tool.set_scenario(self.scenario)
+        if not task:
+            raise ValueError("The task cannot be None.")
+        self.task = task.to_dict()
+        self.interaction_tool.set_task(self.task)
 
     def forward(self) -> Dict[str, Any]:
         """

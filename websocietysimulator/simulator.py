@@ -3,75 +3,70 @@ import json
 from typing import List, Type, Dict, Any, Optional
 from .tools.interaction_tool import InteractionTool
 from .tools.evaluation_tool import RecommendationEvaluator, SimulationEvaluator
-from .agents.simulation_agent import SimulationAgent
-from .agents.recommendation_agent import RecommendationAgent
-from .scenarios.simulation_scenario import SimulationScenario
-from .scenarios.recommendation_scenario import RecommendationScenario
+from .agent.simulation_agent import SimulationAgent
+from .agent.recommendation_agent import RecommendationAgent
+from .tasks.simulation_task import SimulationTask
+from .tasks.recommendation_task import RecommendationTask
 import numpy as np
 
 
 class Simulator:
-    def __init__(self, data_dir: str, groundtruth_file: Optional[str] = None):
+    def __init__(self, data_dir: str):
         """
         Initialize the Simulator.
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
-            groundtruth_file: Path to the groundtruth file for Track2 evaluation.
         """
         self.data_dir = data_dir
-        self.groundtruth_file = groundtruth_file
-        self.groundtruth_data = None
         
-        # 如果提供了groundtruth文件，加载数据
-        if groundtruth_file:
-            with open(groundtruth_file, 'r') as f:
-                self.groundtruth_data = json.load(f)
+        self.interaction_tool = InteractionTool(data_dir)
         
-        # 初始化interaction tool时传入groundtruth数据
-        self.interaction_tool = InteractionTool(
-            data_dir, 
-            groundtruth_data=self.groundtruth_data if self.groundtruth_data else None
-        )
-        
-        self.scenarios = []  # List to store scenarios
+        self.tasks = []  # List to store tasks
+        self.groundtruth_data = []  # List to store groundtruth data
         self.agent_class = None
         self.recommendation_evaluator = RecommendationEvaluator()
         self.simulation_evaluator = SimulationEvaluator()
         self.simulation_outputs = []
         self.evaluation_results = []
 
-    def set_scenario(self, scenario_dir: str):
+    def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
         """
-        Load scenarios from a directory.
+        Load tasks from a directory.
         Args:
-            scenario_dir: Directory containing scenario files.
+            task_dir: Directory containing task files.
+            groundtruth_dir: Directory containing groundtruth files.
         """
-        self.scenarios = []  # Clear previous scenarios
+        self.tasks = []  # Clear previous tasks
 
-        for file_name in os.listdir(scenario_dir):
-            file_path = os.path.join(scenario_dir, file_name)
+        for file_name in os.listdir(task_dir):
+            file_path = os.path.join(task_dir, file_name)
             with open(file_path, 'r') as f:
-                scenario_data = json.load(f)
-                scenario_type = scenario_data.get('type')
+                task_data = json.load(f)
+                task_type = task_data.get('type')
 
                 # Determine scenario type and create corresponding object
-                if scenario_type == 'user_behavior_simulation':
-                    scenario = SimulationScenario(
-                        date=scenario_data['date'],
-                        user_id=scenario_data['user_id'],
-                        business_id=scenario_data['business_id']
+                if task_type == 'user_behavior_simulation':
+                    task = SimulationTask(
+                        date=task_data['date'],
+                        user_id=task_data['user_id'],
+                        business_id=task_data['business_id']
                     )
-                elif scenario_type == 'recommendation':
-                    scenario = RecommendationScenario(
-                        date=scenario_data['date'],
-                        candidate_category=scenario_data['candidate_category'],
-                        candidate_list=scenario_data['candidate_list'],
-                        loc=scenario_data['loc']
+                elif task_type == 'recommendation':
+                    task = RecommendationTask(
+                        user_id=task_data['user_id'],
+                        candidate_list=task_data['candidate_list']
                     )
                 else:
-                    raise ValueError(f"Unsupported scenario type: {scenario_type}")
+                    raise ValueError(f"Unsupported task type: {task_type}")
                 
-                self.scenarios.append(scenario)
+                self.tasks.append(task)
+
+        self.groundtruth_data = []
+        for file_name in os.listdir(groundtruth_dir):
+            file_path = os.path.join(groundtruth_dir, file_name)
+            with open(file_path, 'r') as f:
+                groundtruth_data = json.load(f)
+                self.groundtruth_data.append(groundtruth_data)
 
     def set_agent(self, agent_class: Type):
         """
@@ -94,25 +89,25 @@ class Simulator:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
         self.simulation_outputs = []
-        for scenario in self.scenarios:
+        for task in self.tasks:
             # Initialize the agent
             agent = self.agent_class()
             agent.set_interaction_tool(self.interaction_tool)
             
             # Set the scenario in the agent
-            agent.insert_scenario(scenario)
+            agent.insert_task(task)
             
             # Invoke the forward method and collect output
             try:
                 output = agent.forward()
                 result = {
-                    "scenario": scenario.to_dict(),
+                    "task": task.to_dict(),
                     "output": output
                 }
                 self.simulation_outputs.append(result)
             except NotImplementedError:
                 result = {
-                    "scenario": scenario.to_dict(),
+                    "task": task.to_dict(),
                     "error": "Forward method not implemented by participant."
                 }
                 self.simulation_outputs.append(result)
@@ -127,9 +122,6 @@ class Simulator:
         """
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
-        
-        if not self.groundtruth_data:
-            raise RuntimeError("No groundtruth data available. Initialize simulator with groundtruth_file.")
         
         # 检查数据条目数量
         sim_count = len(self.simulation_outputs)

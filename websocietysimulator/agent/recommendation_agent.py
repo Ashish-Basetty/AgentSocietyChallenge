@@ -9,18 +9,18 @@ class RecommendationAgent(Agent):
             data_dir: Directory containing Yelp dataset files.
         """
         super().__init__()
-        self.scenario = None
+        self.task = None
 
-    def insert_scenario(self, scenario):
+    def insert_task(self, task):
         """
-        Insert a recommendation scenario.
+        Insert a recommendation task.
         Args:
-            scenario: An instance of RecommendationScenario.
+            task: An instance of RecommendationTask.
         """
-        if not scenario:
-            raise ValueError("The scenario cannot be None.")
-        self.scenario = scenario.to_dict()
-        self.interaction_tool.set_scenario(self.scenario)
+        if not task:
+            raise ValueError("The task cannot be None.")
+        self.task = task.to_dict()
+        self.interaction_tool.set_task(self.task)
 
     def forward(self) -> List[str]:
         """

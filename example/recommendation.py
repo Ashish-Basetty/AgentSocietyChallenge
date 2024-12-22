@@ -1,5 +1,5 @@
-from yelpsimulator import Simulator
-from yelpsimulator.agents.recommendation_agent import RecommendationAgent
+from websocietysimulator import Simulator
+from websocietysimulator.agents.recommendation_agent import RecommendationAgent
 from typing import List, Dict, Any
 
 
