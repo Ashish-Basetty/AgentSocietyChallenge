@@ -113,6 +113,9 @@ class MySimulationAgent(SimulationAgent):
         return star, review_text, behavior_metrics
 ```
 
+- Check out the [Tutorial](./tutorials/agent_development.md) for Agent Development.
+- Check out the [Baseline User Behavior Simulation Agent](./example/userBehaviorSimulation.py) for the baseline implementation (Track 1).
+- Check out the [Baseline Recommendation Agent](./example/recommendation.py) for the baseline implementation (Track 2).
 ---
 
 ### 5. Evaluation your agent with training data
