@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import Any
 from ..tools.interaction_tool import InteractionTool
+from ..llm import BaseLLM
 
 class Agent(ABC):
-    def __init__(self):
+    def __init__(self, llm: BaseLLM):
         """
         Abstract base class for agents.
         """
         self.interaction_tool = None
+        self.llm = llm
 
     def set_interaction_tool(self, interaction_tool: InteractionTool):
         """

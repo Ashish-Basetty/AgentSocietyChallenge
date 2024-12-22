@@ -1,21 +1,21 @@
 from websocietysimulator import Simulator
 from websocietysimulator.agent import SimulationAgent
 import json 
-from websocietysimulator.llm import DeepseekLLM
+from websocietysimulator.llm import BaseLLM, DeepseekLLM
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
 import os
 
 api_key = os.getenv('DEEPSEEK_API_KEY')
 class PlanningBaseline(PlanningBase):
-    """继承自 PlanningBase 的规划模块"""
+    """Inherit from PlanningBase"""
     
     def __init__(self, llm):
-        """初始化规划模块"""
+        """Initialize the planning module"""
         super().__init__(llm=llm)
     
     def __call__(self, task_description):
-        """重写父类的 __call__ 方法"""
+        """Override the parent class's __call__ method"""
         self.plan = [
             {
                 'description': 'First I need to find user information',
@@ -32,14 +32,14 @@ class PlanningBaseline(PlanningBase):
 
 
 class ReasoningBaseline(ReasoningBase):
-    """继承自 ReasoningBase 的推理模块"""
+    """Inherit from ReasoningBase"""
     
     def __init__(self, profile_type_prompt, llm):
-        """初始化推理模块"""
+        """Initialize the reasoning module"""
         super().__init__(profile_type_prompt=profile_type_prompt, memory=None, llm=llm)
         
     def __call__(self, task_description: str):
-        """重写父类的 __call__ 方法"""
+        """Override the parent class's __call__ method"""
         prompt = '''
 {task_description}'''
         prompt = prompt.format(task_description=task_description)
@@ -57,16 +57,15 @@ class ReasoningBaseline(ReasoningBase):
 class MySimulationAgent(SimulationAgent):
     """Participant's implementation of SimulationAgent."""
     
-    def __init__(self):
-        """初始化 MySimulationAgent"""
-        super().__init__()
-        self.llm = DeepseekLLM(api_key=api_key)
+    def __init__(self, llm: BaseLLM):
+        """Initialize MySimulationAgent"""
+        super().__init__(llm=llm)
         self.planning = PlanningBaseline(llm=self.llm)
         self.reasoning = ReasoningBaseline(profile_type_prompt='', llm=self.llm)
 
     def forward(self):
         """
-        模拟用户行为
+        Simulate user behavior
         Returns:
             tuple: (star (float), useful (float), funny (float), cool (float), review_text (str))
         """
@@ -133,11 +132,18 @@ class MySimulationAgent(SimulationAgent):
 
 
 if __name__ == "__main__":
+    # Set the data
     simulator = Simulator(data_dir="xxx")
     simulator.set_task_and_groundtruth(task_dir="xxx", groundtruth_dir="xxx")
+
+    # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
+    simulator.set_llm(DeepseekLLM(api_key=api_key))
+
+    # Run the simulation
     outputs = simulator.run_simulation()
 
+    # Evaluate the agent
     evaluation_results = simulator.evaluate()       
     with open('./evaluation_results.json', 'w') as f:
         json.dump(evaluation_results, f, indent=4)

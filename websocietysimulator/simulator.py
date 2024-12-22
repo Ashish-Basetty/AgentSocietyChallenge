@@ -4,6 +4,7 @@ from typing import List, Type, Dict, Any, Optional
 from .tools.interaction_tool import InteractionTool
 from .tools.evaluation_tool import RecommendationEvaluator, SimulationEvaluator
 from .agent.simulation_agent import SimulationAgent
+from .llm import BaseLLM
 from .agent.recommendation_agent import RecommendationAgent
 from .tasks.simulation_task import SimulationTask
 from .tasks.recommendation_task import RecommendationTask
@@ -24,6 +25,7 @@ class Simulator:
         self.tasks = []  # List to store tasks
         self.groundtruth_data = []  # List to store groundtruth data
         self.agent_class = None
+        self.llm = None
         self.recommendation_evaluator = RecommendationEvaluator()
         self.simulation_evaluator = SimulationEvaluator()
         self.simulation_outputs = []
@@ -78,6 +80,14 @@ class Simulator:
             raise ValueError("Agent class must inherit from SimulationAgent or RecommendationAgent.")
         self.agent_class = agent_class
 
+    def set_llm(self, llm: BaseLLM):
+        """
+        Set the LLM to be used for the simulation.
+        Args:
+            llm: A class inheriting from the abstract LLM class.
+        """
+        self.llm = llm
+
     def run_simulation(self) -> List[Any]:
         """
         Run the simulation.
@@ -91,7 +101,7 @@ class Simulator:
         self.simulation_outputs = []
         for task in self.tasks:
             # Initialize the agent
-            agent = self.agent_class()
+            agent = self.agent_class(llm=self.llm)
             agent.set_interaction_tool(self.interaction_tool)
             
             # Set the scenario in the agent

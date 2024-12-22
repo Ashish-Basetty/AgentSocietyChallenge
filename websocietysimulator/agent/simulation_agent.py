@@ -1,12 +1,12 @@
 from typing import Dict, Any
 from .agent import Agent
-
+from ..llm import BaseLLM
 class SimulationAgent(Agent):
-    def __init__(self):
+    def __init__(self, llm: BaseLLM):
         """
         SimulationAgent initialization.
         """
-        super().__init__()
+        super().__init__(llm=llm)
         self.task = None
 
     def insert_task(self, task):
