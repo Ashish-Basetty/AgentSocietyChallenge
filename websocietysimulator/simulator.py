@@ -1,15 +1,15 @@
+import logging
 import os
 import json
 from typing import List, Type, Dict, Any, Optional
 from .tools.interaction_tool import InteractionTool
 from .tools.evaluation_tool import RecommendationEvaluator, SimulationEvaluator
 from .agent.simulation_agent import SimulationAgent
-from .llm import BaseLLM
+from .llm import LLMBase
 from .agent.recommendation_agent import RecommendationAgent
 from .tasks.simulation_task import SimulationTask
 from .tasks.recommendation_task import RecommendationTask
 import numpy as np
-
 
 class Simulator:
     def __init__(self, data_dir: str):
@@ -18,6 +18,7 @@ class Simulator:
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
         """
+        logging.info("Start initializing Simulator")
         self.data_dir = data_dir
         
         self.interaction_tool = InteractionTool(data_dir)
@@ -30,6 +31,7 @@ class Simulator:
         self.simulation_evaluator = SimulationEvaluator()
         self.simulation_outputs = []
         self.evaluation_results = []
+        logging.info("Simulator initialized")
 
     def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
         """
@@ -49,19 +51,21 @@ class Simulator:
                 # Determine scenario type and create corresponding object
                 if task_type == 'user_behavior_simulation':
                     task = SimulationTask(
-                        date=task_data['date'],
                         user_id=task_data['user_id'],
                         business_id=task_data['business_id']
                     )
                 elif task_type == 'recommendation':
                     task = RecommendationTask(
                         user_id=task_data['user_id'],
-                        candidate_list=task_data['candidate_list']
+                        candidate_category=task_data['candidate_category'],
+                        candidate_list=task_data['candidate_id_list'],
+                        loc=task_data['loc']
                     )
                 else:
                     raise ValueError(f"Unsupported task type: {task_type}")
                 
                 self.tasks.append(task)
+        logging.info("Tasks loaded")
 
         self.groundtruth_data = []
         for file_name in os.listdir(groundtruth_dir):
@@ -69,6 +73,7 @@ class Simulator:
             with open(file_path, 'r') as f:
                 groundtruth_data = json.load(f)
                 self.groundtruth_data.append(groundtruth_data)
+        logging.info("Groundtruth data loaded")
 
     def set_agent(self, agent_class: Type):
         """
@@ -79,15 +84,15 @@ class Simulator:
         if not issubclass(agent_class, (SimulationAgent, RecommendationAgent)):
             raise ValueError("Agent class must inherit from SimulationAgent or RecommendationAgent.")
         self.agent_class = agent_class
-
-    def set_llm(self, llm: BaseLLM):
+        logging.info("Agent class set")
+    def set_llm(self, llm: LLMBase):
         """
         Set the LLM to be used for the simulation.
         Args:
             llm: A class inheriting from the abstract LLM class.
         """
         self.llm = llm
-
+        logging.info("LLM set")
     def run_simulation(self) -> List[Any]:
         """
         Run the simulation.
@@ -95,6 +100,7 @@ class Simulator:
         Returns:
             List of outputs from agents for each scenario.
         """
+        logging.info("Running simulation")
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
@@ -121,7 +127,7 @@ class Simulator:
                     "error": "Forward method not implemented by participant."
                 }
                 self.simulation_outputs.append(result)
-        
+        logging.info("Simulation finished")
         return self.simulation_outputs
 
     def evaluate(self) -> Dict[str, Any]:
@@ -130,6 +136,7 @@ class Simulator:
         Returns:
             Dictionary containing evaluation metrics
         """
+        logging.info("Evaluating simulation results")
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
         
@@ -138,7 +145,7 @@ class Simulator:
         gt_count = len(self.groundtruth_data)
         
         if sim_count != gt_count:
-            print(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
+            logging.warning(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
             # 使用较小的数量
             eval_count = min(sim_count, gt_count)
             groundtruth_data = self.groundtruth_data[:eval_count]
@@ -162,6 +169,7 @@ class Simulator:
         }
         
         self.evaluation_results.append(evaluation_results)
+        logging.info("Evaluation finished")
         return evaluation_results
 
     def _evaluate_recommendation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
@@ -169,7 +177,7 @@ class Simulator:
         Evaluate recommendation results using groundtruth
         """
         # 从ground truth数据中提取真实POI
-        gt_pois = [item['groundtruth'] for item in ground_truth_data]
+        gt_pois = [item['ground truth'] for item in ground_truth_data]
         
         pred_pois = [
             output['output']
@@ -199,10 +207,11 @@ class Simulator:
             
             # 准备评估数据：从ground truth中提取所需字段
             gt_info = {
-                'user_id': gt_data['user_id'],
-                'business_id': gt_data['business_id'],
-                'date': gt_data['date'],
-                'review_id': gt_data['review_id']
+                'stars': gt_data['stars'],
+                'useful': gt_data['useful'],
+                'funny': gt_data['funny'],
+                'cool': gt_data['cool'],
+                'review': gt_data['review']
             }
             
             simulated_data = sim_output['output']

@@ -1,8 +1,9 @@
 from typing import List, Dict, Any
 from .agent import Agent
-from ..llm import BaseLLM
+from ..llm import LLMBase
+
 class RecommendationAgent(Agent):
-    def __init__(self, llm: BaseLLM):
+    def __init__(self, llm: LLMBase):
         """
         RecommendationAgent initialization.
         Args:

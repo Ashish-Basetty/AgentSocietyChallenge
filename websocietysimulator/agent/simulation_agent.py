@@ -1,8 +1,8 @@
 from typing import Dict, Any
 from .agent import Agent
-from ..llm import BaseLLM
+from ..llm import LLMBase
 class SimulationAgent(Agent):
-    def __init__(self, llm: BaseLLM):
+    def __init__(self, llm: LLMBase):
         """
         SimulationAgent initialization.
         """
@@ -24,17 +24,17 @@ class SimulationAgent(Agent):
         """
         Abstract forward method for SimulationAgent.
         Participants must override this method to provide:
-            - star (float): Simulated rating
+            - stars (float): Simulated rating
             - review (str): Simulated review text
             - useful (int): Simulated useful count
             - cool (int): Simulated cool count
             - funny (int): Simulated funny count
         """
         result = {
-            'star': 0,
+            'stars': 0,
             'review': '',
             'useful': 0,
-            'cool': 0,
-            'funny': 0
+            'funny': 0,
+            'cool': 0
         }
         return result

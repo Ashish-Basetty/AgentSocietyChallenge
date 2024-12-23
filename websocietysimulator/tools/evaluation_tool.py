@@ -6,6 +6,9 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
 
+import nltk
+nltk.download('vader_lexicon')
+
 @dataclass
 class RecommendationMetrics:
     hr_at_1: float
@@ -88,18 +91,12 @@ class SimulationEvaluator(BaseEvaluator):
 
     def calculate_metrics(
         self,
-        simulated_data: Union[str, Dict],
-        real_data: Union[str, Dict]
+        simulated_data: Dict,
+        real_data: Dict
     ) -> SimulationMetrics:
         """Calculate all simulation metrics"""
-        # Convert string to dict if necessary
-        if isinstance(simulated_data, str):
-            simulated_data = json.loads(simulated_data)
-        if isinstance(real_data, str):
-            real_data = json.loads(real_data)
-
         # Calculate basic metrics
-        star_rmse = np.sqrt(np.mean((simulated_data['star'] - real_data['star']) ** 2))
+        star_rmse = np.sqrt(np.mean((simulated_data['stars'] - real_data['stars']) ** 2))
         useful_rmse = np.sqrt(np.mean((simulated_data['useful'] - real_data['useful']) ** 2))
         cool_rmse = np.sqrt(np.mean((simulated_data['cool'] - real_data['cool']) ** 2))
         funny_rmse = np.sqrt(np.mean((simulated_data['funny'] - real_data['funny']) ** 2))
