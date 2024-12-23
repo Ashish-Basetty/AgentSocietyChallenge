@@ -1,6 +1,6 @@
 <div style="text-align: center; display: flex; align-items: center; justify-content: center; background-color: white; padding: 20px; border-radius: 30px;">
   <img src="./static/ASC.jpg" alt="AgentSociety Challenge Logo" width="100" style="margin-right: 20px; border-radius: 10%;">
-  <h1 style="color: black; margin: 0; font-size: 2em;">WWW'25 AgentSociety Challenge: YelpSimulator</h1>
+  <h1 style="color: black; margin: 0; font-size: 2em;">WWW'25 AgentSociety Challenge: WebSocietySimulator</h1>
 </div>
 
 # 🚀 AgentSociety Challenge
