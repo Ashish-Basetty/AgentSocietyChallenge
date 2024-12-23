@@ -1,12 +1,10 @@
 from websocietysimulator import Simulator
 from websocietysimulator.agent import SimulationAgent
 import json 
-from websocietysimulator.llm import BaseLLM, DeepseekLLM
+from websocietysimulator.llm import LLMBase, DeepseekLLM
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
-import os
-
-api_key = os.getenv('DEEPSEEK_API_KEY')
+    
 class PlanningBaseline(PlanningBase):
     """Inherit from PlanningBase"""
     
@@ -57,7 +55,7 @@ class ReasoningBaseline(ReasoningBase):
 class MySimulationAgent(SimulationAgent):
     """Participant's implementation of SimulationAgent."""
     
-    def __init__(self, llm: BaseLLM):
+    def __init__(self, llm: LLMBase):
         """Initialize MySimulationAgent"""
         super().__init__(llm=llm)
         self.planning = PlanningBaseline(llm=self.llm)
@@ -102,24 +100,24 @@ class MySimulationAgent(SimulationAgent):
         - Be critical when businesses fail to meet basic standards
 
         Format your response exactly as follows:
-        star: [your rating]
+        stars: [your rating]
         useful: [count]
         funny: [count] 
         cool: [count]
-        review_text: [your review]
+        review: [your review]
         '''
         result = self.reasoning(task_description)
         
         try:
-            star_line = [line for line in result.split('\n') if 'star:' in line][0]
-            review_line = [line for line in result.split('\n') if 'review_text:' in line][0]
+            stars_line = [line for line in result.split('\n') if 'stars:' in line][0]
+            review_line = [line for line in result.split('\n') if 'review:' in line][0]
             useful_line = [line for line in result.split('\n') if 'useful:' in line][0]
             funny_line = [line for line in result.split('\n') if 'funny:' in line][0]
             cool_line = [line for line in result.split('\n') if 'cool:' in line][0]
         except:
             print('Error:', result)
 
-        star = float(star_line.split(':')[1].strip())
+        stars = float(stars_line.split(':')[1].strip())
         useful = float(useful_line.split(':')[1].strip())
         funny = float(funny_line.split(':')[1].strip())
         cool = float(cool_line.split(':')[1].strip())
@@ -128,22 +126,31 @@ class MySimulationAgent(SimulationAgent):
         if len(review_text) > 512:
             review_text = review_text[:512]
             
-        return star, useful, funny, cool, review_text
+        return {
+            "stars": stars,
+            "useful": useful,
+            "funny": funny,
+            "cool": cool,
+            "review": review_text
+        }
 
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="xxx")
-    simulator.set_task_and_groundtruth(task_dir="xxx", groundtruth_dir="xxx")
+    simulator = Simulator(data_dir="path-to-data")
+    simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(DeepseekLLM(api_key=api_key))
+    simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
 
     # Run the simulation
     outputs = simulator.run_simulation()
-
+    
     # Evaluate the agent
     evaluation_results = simulator.evaluate()       
-    with open('./evaluation_results.json', 'w') as f:
+    with open('./evaluation_results_track1.json', 'w') as f:
         json.dump(evaluation_results, f, indent=4)
+
+    # 获取评估历史
+    evaluation_history = simulator.get_evaluation_history()

@@ -1,6 +1,9 @@
+import json
 from websocietysimulator import Simulator
 from websocietysimulator.agent.recommendation_agent import RecommendationAgent
 from typing import List, Dict, Any
+
+from websocietysimulator.llm import DeepseekLLM
 
 
 class CustomRecommendationAgent(RecommendationAgent):
@@ -26,20 +29,21 @@ class CustomRecommendationAgent(RecommendationAgent):
 
 
 if __name__ == "__main__":
-    # Initialize the simulator with the dataset directory
-    simulator = Simulator(data_dir="path/to/dataset", groundtruth_file="path/to/groundtruth")
+    # Set the data
+    simulator = Simulator(data_dir="path-to-data")
+    simulator.set_task_and_groundtruth(task_dir="./track2/tasks", groundtruth_dir="./track2/groundtruth")
 
-    # Set scenarios (e.g., load predefined recommendation scenarios)
-    simulator.set_scenario(scenario_dir="./recommendation_scenarios")
-
-    # Use the custom agent for recommendation
+    # Set the agent and LLM
     simulator.set_agent(CustomRecommendationAgent)
+    simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
 
-    # 运行模拟
+    # Run the simulation
     outputs = simulator.run_simulation()
 
-    # 评估结果
-    evaluation_results = simulator.evaluate()
+    # Evaluate the agent
+    evaluation_results = simulator.evaluate()       
+    with open('./evaluation_results_track2.json', 'w') as f:
+        json.dump(evaluation_results, f, indent=4)
 
     # 获取评估历史
     evaluation_history = simulator.get_evaluation_history()
