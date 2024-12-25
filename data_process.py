@@ -1,8 +1,12 @@
 import json
+import logging
+import uuid
 import pandas as pd
 from tqdm import tqdm
 import os
 import argparse
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 REQUIRED_FILES_YELP = [
     'yelp_academic_dataset_business.json', 
@@ -36,53 +40,22 @@ def load_data(file_path):
             data.append(json.loads(line))
     return pd.DataFrame(data)
 
-def clean_business_data(df):
-    """Clean business data by removing invalid entries and splitting categories."""
-    tqdm.pandas(desc="Cleaning Business Data")
-    df = df.dropna(subset=['business_id', 'categories']).copy()
-    df.loc[:, 'categories'] = df['categories'].progress_apply(lambda x: x.split(', ') if isinstance(x, str) else [])
-    return df
-
-def clean_checkin_data(df):
-    """Clean check-in data by parsing dates."""
-    tqdm.pandas(desc="Cleaning Check-in Data")
-    df = df.dropna(subset=['business_id', 'date']).copy()
-    return df
-
-def clean_user_data(df):
-    """Clean user data by removing invalid entries."""
-    tqdm.pandas(desc="Cleaning User Data")
-    df = df.dropna(subset=['user_id', 'review_count', 'yelping_since']).copy()
-    return df
-
-def clean_tip_data(df):
-    """Clean tip data by removing invalid entries."""
-    tqdm.pandas(desc="Cleaning Tip Data")
-    df = df.dropna(subset=['user_id', 'business_id', 'text', 'date']).copy()
-    return df
-
-def clean_review_data(df):
-    """Clean review data by removing invalid entries."""
-    tqdm.pandas(desc="Cleaning Review Data")
-    df = df.dropna(subset=['review_id', 'user_id', 'business_id', 'stars', 'text', 'date']).copy()
-    return df
-
 def get_top_cities_by_reviews(business_df):
     """Find the top three cities with the most total review counts."""
-    tqdm.pandas(desc="Calculating Top Cities")
+    logging.info("Calculating top cities...")
     city_review_counts = business_df.groupby('city')['review_count'].sum().sort_values(ascending=False)
     top_cities = city_review_counts.head(3).index.tolist()
     return top_cities
 
 def save_json(dataframe, output_file):
     """Save a Pandas DataFrame to a JSON file."""
-    tqdm.write(f"Saving {output_file}...")
+    logging.info(f"Saving {output_file}...")
     dataframe.to_json(output_file, orient='records', lines=True)
-    tqdm.write(f"{output_file} saved.")
+    logging.info(f"{output_file} saved.")
 
 def filter_data(top_cities, business_df, user_df, review_df):
     """Filter and save data within the top three cities with progress bars."""
-    tqdm.pandas(desc="Filtering Data for Top Cities")
+    logging.info("Filtering data for top cities...")
     
     filtered_businesses = business_df[business_df['city'].isin(top_cities)]
     filtered_reviews = review_df[review_df['business_id'].isin(filtered_businesses['business_id'])]
@@ -108,6 +81,7 @@ def check_required_files(input_dir):
     return True
 
 def load_and_process_yelp_data(input_dir):
+    logging.info("Loading and processing Yelp data...")
     # File paths
     business_file = os.path.join(input_dir, 'yelp_academic_dataset_business.json')
     user_file = os.path.join(input_dir, 'yelp_academic_dataset_user.json')
@@ -118,19 +92,17 @@ def load_and_process_yelp_data(input_dir):
     user_df = load_data(user_file)
     review_df = load_data(review_file)
 
-    # Clean the datasets
-    business_df = clean_business_data(business_df)
-    user_df = clean_user_data(user_df)
-    review_df = clean_review_data(review_df)
-
     # Find top cities and related data
+    logging.info("Finding top cities by reviews for Yelp...")
     top_cities = get_top_cities_by_reviews(business_df)
 
+    logging.info("Filtering data for top cities for Yelp...")
     filtered_businesses, filtered_reviews, filtered_users = filter_data(top_cities, business_df, user_df, review_df)
     return filtered_businesses, filtered_reviews, filtered_users
 
 def load_and_process_amazon_data(input_dir):
     """Load and process Amazon dataset."""
+    logging.info("Loading and processing Amazon data...")
     product_files = ['All_Beauty.jsonl', 'Handmade_Products.jsonl', 'Health_and_Personal_Care.jsonl']
     meta_files = ['meta_ALL_Beauty.jsonl', 'meta_Handmade_Products.jsonl', 'meta_Health_and_Personal_Care.jsonl']
     
@@ -141,6 +113,7 @@ def load_and_process_amazon_data(input_dir):
 
 def load_and_process_goodreads_data(input_dir):
     """Load and process Goodreads dataset."""
+    logging.info("Loading and processing Goodreads data...")
     book_files = ['goodreads_books_children.json', 'goodreads_books_comics_graphic.json', 'goodreads_books_poetry.json']
     review_files = ['goodreads_reviews_children.json', 'goodreads_reviews_comics_graphic.json', 'goodreads_reviews_poetry.json']
     
@@ -149,72 +122,109 @@ def load_and_process_goodreads_data(input_dir):
     
     return all_books, all_reviews
 
-def merge_business_data(yelp_business, amazon_meta, goodreads_books):
-    """Merge business data from all sources."""
-    # Transform Amazon meta data to business format
-    amazon_business = amazon_meta.rename(columns={
-        'asin': 'business_id',
-        'title': 'name',
-        'description': 'attributes',
-        'category': 'categories'
-    })
+def merge_business_data(yelp_business, amazon_meta, goodreads_books, output_file=None):
+    """Merge business data from all sources while preserving source-specific columns."""
+    logging.info("Merging business data for business...")
     
-    # Transform Goodreads books to business format
+    # 将Yelp数据转换为json格式
+    yelp_business['source'] = 'yelp'
+    yelp_business['type'] = 'location'
+    yelp_json = json.loads(yelp_business.to_json(orient='records'))
+    
+    # 将Amazon数据转换为json格式
+    amazon_business = amazon_meta.rename(columns={
+        'parent_asin': 'business_id',
+    })
+    amazon_business['source'] = 'amazon'
+    amazon_business['type'] = 'product'
+    amazon_json = json.loads(amazon_business.to_json(orient='records'))
+    
+    # 将Goodreads数据转换为json格式
     goodreads_business = goodreads_books.rename(columns={
         'book_id': 'business_id',
-        'title': 'name',
-        'description': 'attributes',
-        'genres': 'categories'
     })
-    
-    # Add type column
-    yelp_business['type'] = 'location'
-    amazon_business['type'] = 'product'
+    goodreads_business['source'] = 'goodreads'
     goodreads_business['type'] = 'book'
+    goodreads_json = json.loads(goodreads_business.to_json(orient='records'))
     
-    return pd.concat([yelp_business, amazon_business, goodreads_business])
+    # 合并所有json数据
+    merged_json = yelp_json + amazon_json + goodreads_json
+    
+    # 如果指定了输出文件，则保存
+    if output_file:
+        logging.info(f"Saving merged business data to {output_file}...")
+        with open(output_file, 'w') as f:
+            for item in merged_json:
+                f.write(json.dumps(item) + '\n')
 
-def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews):
-    """Merge review data from all sources."""
-    # Standardize column names
+def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_file=None):
+    """Merge review data from all sources while preserving source-specific columns."""
+    logging.info("Merging review data for reviews...")
+    
+    # 将Yelp评论转换为json格式
+    yelp_reviews['source'] = 'yelp'
+    yelp_reviews['type'] = 'location'
+    yelp_json = json.loads(yelp_reviews.to_json(orient='records'))
+    
+    # 将Amazon评论转换为json格式
     amazon_reviews = amazon_reviews.rename(columns={
         'asin': 'business_id',
-        'overall': 'stars',
-        'reviewText': 'text',
-        'reviewTime': 'date'
+        'parent_asin': 'parent_business_id',
     })
+    amazon_reviews['review_id'] = [str(uuid.uuid4()) for _ in range(len(amazon_reviews))]
+    amazon_reviews['source'] = 'amazon'
+    amazon_reviews['type'] = 'product'
+    amazon_json = json.loads(amazon_reviews.to_json(orient='records'))
     
+    # 将Goodreads评论转换为json格式
     goodreads_reviews = goodreads_reviews.rename(columns={
         'book_id': 'business_id',
-        'rating': 'stars',
-        'review_text': 'text'
     })
-    
-    # Add source column
-    yelp_reviews['source'] = 'yelp'
-    amazon_reviews['source'] = 'amazon'
     goodreads_reviews['source'] = 'goodreads'
+    goodreads_reviews['type'] = 'book'
+    goodreads_json = json.loads(goodreads_reviews.to_json(orient='records'))
     
-    return pd.concat([yelp_reviews, amazon_reviews, goodreads_reviews])
+    # 合并所有json数据
+    merged_json = yelp_json + amazon_json + goodreads_json
+    
+    # 如果指定了输出文件，则保存
+    if output_file:
+        logging.info(f"Saving merged review data to {output_file}...")
+        with open(output_file, 'w') as f:
+            for item in merged_json:
+                f.write(json.dumps(item) + '\n')
 
-def create_unified_users(yelp_users, amazon_reviews, goodreads_reviews):
-    """Create unified user data including empty users for Amazon and Goodreads."""
-    # Create empty users for Amazon
+def create_unified_users(yelp_users, amazon_reviews, goodreads_reviews, output_file=None):
+    """Create unified user data while preserving Yelp-specific user information."""
+    logging.info("Merging users...")
+    
+    # 将Yelp用户数据转换为json格式
+    yelp_users['source'] = 'yelp'
+    yelp_json = json.loads(yelp_users.to_json(orient='records'))
+    
+    # 创建Amazon用户数据并转换为json格式
     amazon_users = pd.DataFrame({
-        'user_id': amazon_reviews['reviewerID'].unique(),
+        'user_id': amazon_reviews['user_id'].unique(),
         'source': 'amazon'
     })
+    amazon_json = json.loads(amazon_users.to_json(orient='records'))
     
-    # Create empty users for Goodreads
+    # 创建Goodreads用户数据并转换为json格式
     goodreads_users = pd.DataFrame({
         'user_id': goodreads_reviews['user_id'].unique(),
         'source': 'goodreads'
     })
+    goodreads_json = json.loads(goodreads_users.to_json(orient='records'))
     
-    # Add source to Yelp users
-    yelp_users['source'] = 'yelp'
+    # 合并所有json数据
+    merged_json = yelp_json + amazon_json + goodreads_json
     
-    return pd.concat([yelp_users, amazon_users, goodreads_users])
+    # 如果指定了输出文件，则保存
+    if output_file:
+        logging.info(f"Saving merged user data to {output_file}...")
+        with open(output_file, 'w') as f:
+            for item in merged_json:
+                f.write(json.dumps(item) + '\n')
 
 def main():
     """Main function with updated processing logic."""
@@ -237,15 +247,12 @@ def main():
     goodreads_books, goodreads_reviews = load_and_process_goodreads_data(args.input_dir)
     
     # Merge all data
-    merged_business = merge_business_data(filtered_businesses, amazon_meta, goodreads_books)
-    merged_reviews = merge_review_data(filtered_reviews, amazon_reviews, goodreads_reviews)
-    merged_users = create_unified_users(filtered_users, amazon_reviews, goodreads_reviews)
-    
-    # Save merged data
     os.makedirs(args.output_dir, exist_ok=True)
-    save_json(merged_business, os.path.join(args.output_dir, 'business.json'))
-    save_json(merged_reviews, os.path.join(args.output_dir, 'review.json'))
-    save_json(merged_users, os.path.join(args.output_dir, 'user.json'))
+    merge_business_data(filtered_businesses, amazon_meta, goodreads_books, os.path.join(args.output_dir, 'business.json'))
+    merge_review_data(filtered_reviews, amazon_reviews, goodreads_reviews, os.path.join(args.output_dir, 'review.json'))
+    create_unified_users(filtered_users, amazon_reviews, goodreads_reviews, os.path.join(args.output_dir, 'user.json'))
+
+    logging.info("Data processing completed successfully.")
 
 if __name__ == '__main__':
     main()
