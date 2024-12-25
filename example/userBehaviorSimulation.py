@@ -4,7 +4,7 @@ import json
 from websocietysimulator.llm import LLMBase, DeepseekLLM
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
-    
+
 class PlanningBaseline(PlanningBase):
     """Inherit from PlanningBase"""
     
@@ -67,13 +67,13 @@ class MySimulationAgent(SimulationAgent):
         Returns:
             tuple: (star (float), useful (float), funny (float), cool (float), review_text (str))
         """
-        plan = self.planning(task_description=self.scenario)
+        plan = self.planning(task_description=self.task)
 
         for sub_task in plan:
             if 'user' in sub_task['description']:
-                user = str(self.interaction_tool.get_user(user_id=self.scenario['user_id']))
+                user = str(self.interaction_tool.get_user(user_id=self.task['user_id']))
             elif 'business' in sub_task['description']:
-                business = str(self.interaction_tool.get_business(business_id=self.scenario['business_id']))
+                business = str(self.interaction_tool.get_business(business_id=self.task['business_id']))
 
         task_description = f'''
         You are a real human user on Yelp, a platform for crowd-sourced business reviews. Here is your Yelp profile and review history: {user}
@@ -137,12 +137,12 @@ class MySimulationAgent(SimulationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="path-to-data")
+    simulator = Simulator(data_dir="../__local")
     simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
+    simulator.set_llm(DeepseekLLM(api_key="sk-4b9640af765c49678c9ab2560032ff60"))
 
     # Run the simulation
     outputs = simulator.run_simulation()
