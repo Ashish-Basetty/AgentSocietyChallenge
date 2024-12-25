@@ -1619,7 +1619,10 @@ aiohttp = ">=3.8.3,<4.0.0"
 langchain-core = ">=0.3.26,<0.4.0"
 langchain-text-splitters = ">=0.3.3,<0.4.0"
 langsmith = ">=0.1.17,<0.3"
-numpy = {version = ">=1.26.2,<3", markers = "python_version >= \"3.12\""}
+numpy = [
+    {version = ">=1.22.4,<2", markers = "python_version < \"3.12\""},
+    {version = ">=1.26.2,<3", markers = "python_version >= \"3.12\""},
+]
 pydantic = ">=2.7.4,<3.0.0"
 PyYAML = ">=5.3"
 requests = ">=2,<3"
@@ -1641,7 +1644,10 @@ files = [
 chromadb = ">=0.4.0,<0.5.4 || >0.5.4,<0.5.5 || >0.5.5,<0.6.0"
 fastapi = ">=0.95.2,<1"
 langchain-core = {version = ">=0.1.40,<0.4", markers = "python_version >= \"3.9\""}
-numpy = {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""}
+numpy = [
+    {version = ">=1,<2", markers = "python_version < \"3.12\""},
+    {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""},
+]
 
 [[package]]
 name = "langchain-core"
@@ -2771,7 +2777,10 @@ files = [
 ]
 
 [package.dependencies]
-numpy = {version = ">=1.26.0", markers = "python_version >= \"3.12\""}
+numpy = [
+    {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
+]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
 tzdata = ">=2022.7"
@@ -4767,5 +4776,5 @@ type = ["pytest-mypy"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.12"
-content-hash = "276bb970277495038f36312f2bebaa61f385fd4783b9f7d8bca298ba00012dfc"
+python-versions = ">=3.11,<4.0"
+content-hash = "0a3b7e6071028fbcdcbcb05c61c733af226e10c5e27ebf48fb60eccb95a20c57"
