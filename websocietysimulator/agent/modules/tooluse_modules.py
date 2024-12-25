@@ -4,7 +4,7 @@ import ast
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain.docstore.document import Document
-from tooluse_pool import tooluse_pool
+from .tooluse_pool import tooluse_pool
 
 class ToolUseBase():
     def __init__(self, llm):

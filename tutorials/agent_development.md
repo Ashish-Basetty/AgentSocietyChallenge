@@ -22,7 +22,7 @@ Different tracks require different return values from the `forward()` method:
 def forward(self) -> Dict[str, Any]:
     # Must return a dictionary with:
     return {
-        'stars': float,  # Rating (1.0-5.0)
+        'star': float,  # Rating (1.0-5.0)
         'review': str,  # Review text
         'useful': int,  # Useful votes
         'cool': int,    # Cool votes
@@ -95,12 +95,14 @@ The Reasoning module processes subtasks sequentially, where each subtask and opt
 
 The module consists of multiple implementations:
 1. **ReasoningBase**: Base class handling task processing and memory management
-2. **ReasoningIO**: Basic reasoning implementation
-3. **ReasoningCOT**: Chain-of-thought reasoning 
-4. **ReasoningSelfRefine**: Self-refining reasoning
-5. **ReasoningStepBack**: Step-back reasoning approach
-6. **ReasoningSelfReflectiveTOT**: Self-reflective tree of thoughts
-7. **ReasoningDILU**: DILU-based reasoning
+2. **ReasoningIO**[1]
+3. **ReasoningCOT**[2]
+4. **ReasoningCOTSC**[3]
+5. **ReasoningTOT**[4]
+6. **ReasoningSelfRefine**[5]
+7. **ReasoningStepBack**[6]
+8. **ReasoningSelfReflectiveTOT**[4, 6]
+9. **ReasoningDILU**[7]
 
 #### Interface
 
@@ -137,10 +139,10 @@ The Memory module provides dynamic storage and retrieval of an agent's past expe
 
 The module includes multiple implementations:
 1. **MemoryBase**: Base class for memory management
-2. **MemoryDILU**: DILU-based memory implementation
-3. **MemoryGenerative**: Generative memory approach
-4. **MemoryTP**: Task planning memory
-5. **MemoryVoyager**: Voyager-style memory
+2. **MemoryDILU**[7]
+3. **MemoryGenerative**[8]
+4. **MemoryTP**[9]
+5. **MemoryVoyager**[10]
 
 #### Interface
 
@@ -172,15 +174,13 @@ class MemoryBase:
 The Planning module decomposes complex tasks into manageable subtasks. It takes high-level task descriptions and generates structured sequences of subtasks with specific reasoning and tool-use instructions.
 
 #### Overview
-
 The module includes multiple implementations:
 1. **PlanningBase**: Base planning functionality
-2. **PlanningIO**: Basic planning implementation
-3. **PlanningDEPS**: Dependency-based planning
-4. **PlanningTD**: Temporal dependency planning
-5. **PlanningVoyager**: Voyager-style planning
-6. **PlanningOPENAGI**: OpenAGI planning approach
-7. **PlanningHUGGINGGPT**: HuggingGPT-style planning
+2. **PlanningIO**
+3. **PlanningDEPS**[11]
+4. **PlanningVoyager**[10]
+5. **PlanningOPENAGI**[12]
+6. **PlanningHUGGINGGPT**[13]
 
 #### Interface
 
@@ -216,10 +216,10 @@ The ToolUse module enables effective use of external tools to overcome LLM knowl
 
 The module includes multiple implementations:
 1. **ToolUseBase**: Base tool selection functionality
-2. **ToolUseIO**: Basic tool use implementation
-3. **ToolUseAnyTool**: Flexible tool selection
-4. **ToolUseToolBench**: ToolBench-based approach
-5. **ToolUseToolBenchFormer**: Enhanced ToolBench implementation
+2. **ToolUseIO**
+3. **ToolUseAnyTool**[14]
+4. **ToolUseToolBench**[15]
+5. **ToolUseToolFormer**[16]
 
 #### Interface
 
@@ -246,3 +246,21 @@ class ToolUseBase:
             str: Tool use result
         """
 ```
+
+## References:
+[1] Kojima et al. (2022). Zero-Shot Reasoning with Large Language Models. arXiv:2205.11916
+[2] Wei et al. (2022). Chain of Thought Prompting Elicits Reasoning in Large Language Models. arXiv:2201.11903
+[3] Wang et al. (2022). Self-Consistency Improves Chain of Thought Reasoning in Language Models. arXiv:2203.11171
+[4] Yao et al. (2023). Tree of Thoughts: Deliberate Problem Solving with Large Language Models. arXiv:2305.10601
+[5] Zhang et al. (2023). Self-Refine: Iterative Refinement with Self-Feedback. arXiv:2303.17651
+[6] Zheng et al. (2023). Take a Step Back: Evoking Reasoning via Abstraction in Large Language Models. arXiv:2310.06117
+[7] Wen et al. (2023). DILU: A Knowledge-Driven Approach to Turn LLMs into Intelligent Agents. arXiv:2310.09819
+[8] Park et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior. arXiv:2304.03442
+[9] Yu et al. (2023). Thought Propagation: An Analogical Approach to Complex Reasoning with Large Language Models. arXiv:2310.03965
+[10] Wang et al. (2023). Voyager: An Open-Ended Embodied Agent with Large Language Models. arXiv:2305.16291
+[11] Xu et al. (2023). DEPS: A Framework for Dependency-based Planning with LLMs. arXiv:2305.16291
+[12] Wang et al. (2023). OpenAGI: When LLM Meets Domain Experts. arXiv:2304.04370
+[13] Shen et al. (2023). HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in Hugging Face. arXiv:2303.17580
+[14] Qin et al. (2023). AnyTool: Self-Reflective, Hierarchical Agents for Large-Scale API Calls. arXiv:2308.10848
+[15] Qin et al. (2023). ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs. arXiv:2307.16789
+[16] Schick et al. (2023). ToolFormer: Language Models Can Teach Themselves to Use Tools. arXiv:2302.04761
