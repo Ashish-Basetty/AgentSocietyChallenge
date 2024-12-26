@@ -21,6 +21,8 @@
         - `goodreads_books_comics_graphic.json`
         - `goodreads_reviews_poetry.json`
         - `goodreads_books_poetry.json`
+        - `goodreads_reviews_children.json`
+        - `goodreads_books_children.json`
 3. Run the `data_preparation.py` script to prepare the data for the simulation and recommendation tasks.
 ```bash
 python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
