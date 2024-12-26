@@ -127,13 +127,16 @@ def merge_business_data(yelp_business, amazon_meta, goodreads_books, output_file
     logging.info("Merging business data for business...")
     
     # 将Yelp数据转换为json格式
+    yelp_business = yelp_business.rename(columns={
+        'business_id': 'item_id',
+    })
     yelp_business['source'] = 'yelp'
-    yelp_business['type'] = 'location'
+    yelp_business['type'] = 'business'
     yelp_json = json.loads(yelp_business.to_json(orient='records'))
     
     # 将Amazon数据转换为json格式
     amazon_business = amazon_meta.rename(columns={
-        'parent_asin': 'business_id',
+        'parent_asin': 'item_id',
     })
     amazon_business['source'] = 'amazon'
     amazon_business['type'] = 'product'
@@ -141,7 +144,7 @@ def merge_business_data(yelp_business, amazon_meta, goodreads_books, output_file
     
     # 将Goodreads数据转换为json格式
     goodreads_business = goodreads_books.rename(columns={
-        'book_id': 'business_id',
+        'book_id': 'item_id',
     })
     goodreads_business['source'] = 'goodreads'
     goodreads_business['type'] = 'book'
@@ -162,14 +165,17 @@ def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_fi
     logging.info("Merging review data for reviews...")
     
     # 将Yelp评论转换为json格式
+    yelp_reviews = yelp_reviews.rename(columns={
+        'business_id': 'item_id',
+    })
     yelp_reviews['source'] = 'yelp'
-    yelp_reviews['type'] = 'location'
+    yelp_reviews['type'] = 'business'
     yelp_json = json.loads(yelp_reviews.to_json(orient='records'))
     
     # 将Amazon评论转换为json格式
     amazon_reviews = amazon_reviews.rename(columns={
-        'asin': 'business_id',
-        'parent_asin': 'parent_business_id',
+        'asin': 'item_id',
+        'parent_asin': 'parent_item_id',
     })
     amazon_reviews['review_id'] = [str(uuid.uuid4()) for _ in range(len(amazon_reviews))]
     amazon_reviews['source'] = 'amazon'
@@ -178,7 +184,7 @@ def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_fi
     
     # 将Goodreads评论转换为json格式
     goodreads_reviews = goodreads_reviews.rename(columns={
-        'book_id': 'business_id',
+        'book_id': 'item_id',
     })
     goodreads_reviews['source'] = 'goodreads'
     goodreads_reviews['type'] = 'book'
@@ -248,7 +254,7 @@ def main():
     
     # Merge all data
     os.makedirs(args.output_dir, exist_ok=True)
-    merge_business_data(filtered_businesses, amazon_meta, goodreads_books, os.path.join(args.output_dir, 'business.json'))
+    merge_business_data(filtered_businesses, amazon_meta, goodreads_books, os.path.join(args.output_dir, 'item.json'))
     merge_review_data(filtered_reviews, amazon_reviews, goodreads_reviews, os.path.join(args.output_dir, 'review.json'))
     create_unified_users(filtered_users, amazon_reviews, goodreads_reviews, os.path.join(args.output_dir, 'user.json'))
 

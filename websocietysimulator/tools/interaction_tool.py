@@ -12,12 +12,10 @@ class InteractionTool:
         """
         self.data_dir = data_dir
 
-        self.business_data = self._load_data('business.json')
+        self.item_data = self._load_data('item.json')
         self.review_data = self._load_data('review.json')
         self.user_data = self._load_data('user.json')
-        self.tip_data = self._load_data('tip.json')
-        self.checkin_data = self._load_data('checkin.json')
-        self.scenario = None
+        self.task = None
 
     def _load_data(self, filename: str) -> pd.DataFrame:
         """Load a dataset as a Pandas DataFrame."""
@@ -43,7 +41,7 @@ class InteractionTool:
         """Fetch user data based on user_id or scenario."""
         self._ensure_task()
         
-        user_id = user_id or self.scenario.get('user') if self.scenario else None
+        user_id = user_id or self.task.get('user') if self.task else None
         if not user_id:
             return None
         
@@ -53,18 +51,18 @@ class InteractionTool:
         user = user.to_dict(orient='records')[0]
         return user
 
-    def get_business(self, business_id: Optional[str] = None) -> Optional[Dict]:
-        """Fetch business data based on business_id or scenario."""
+    def get_item(self, item_id: Optional[str] = None) -> Optional[Dict]:
+        """Fetch item data based on item_id or scenario."""
         self._ensure_task()  # Ensure scenario is set
-        business_id = business_id or self.scenario.get('business') if self.scenario else None
-        if not business_id:
+        item_id = item_id or self.task.get('item') if self.task else None
+        if not item_id:
             return None
-        business = self.business_data[self.business_data['business_id'] == business_id]
-        return business.to_dict(orient='records')[0] if not business.empty else None
+        item = self.item_data[self.item_data['item_id'] == item_id]
+        return item.to_dict(orient='records')[0] if not item.empty else None
 
     def get_reviews(
         self, 
-        business_id: Optional[str] = None, 
+        item_id: Optional[str] = None, 
         user_id: Optional[str] = None, 
         review_id: Optional[str] = None
     ) -> List[Dict]:
@@ -76,32 +74,10 @@ class InteractionTool:
         if review_id:
             reviews = reviews[reviews['review_id'] == review_id]
         else:
-            business_id = business_id or (self.scenario.get('business') if self.scenario else None)
-            user_id = user_id or (self.scenario.get('user') if self.scenario else None)
-            if business_id:
-                reviews = reviews[reviews['business_id'] == business_id]
+            item_id = item_id or (self.task.get('item') if self.task else None)
+            user_id = user_id or (self.task.get('user') if self.task else None)
+            if item_id:
+                reviews = reviews[reviews['item_id'] == item_id]
             if user_id:
                 reviews = reviews[reviews['user_id'] == user_id]
         return reviews.to_dict(orient='records')
-
-    def get_tips(self, business_id: Optional[str] = None, user_id: Optional[str] = None) -> List[Dict]:
-        """Fetch tips with date filter."""
-        self._ensure_task()
-        business_id = business_id or (self.task.get('business') if self.task else None)
-        user_id = user_id or (self.task.get('user') if self.task else None)
-        tips = self.tip_data
-        if business_id:
-            tips = tips[tips['business_id'] == business_id]
-        if user_id:
-            tips = tips[tips['user_id'] == user_id]
-        return tips.to_dict(orient='records')
-
-    def get_checkins(self, business_id: Optional[str] = None) -> List[Dict]:
-        """Fetch checkins with date filter."""
-        self._ensure_task()
-        business_id = business_id or (self.task.get('business') if self.task else None)
-        if not business_id:
-            return []   
-        checkins = self.checkin_data
-        checkins = checkins[checkins['business_id'] == business_id]
-        return checkins.to_dict(orient='records')

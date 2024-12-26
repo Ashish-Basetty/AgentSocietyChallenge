@@ -11,6 +11,8 @@ from .tasks.simulation_task import SimulationTask
 from .tasks.recommendation_task import RecommendationTask
 import numpy as np
 
+logger = logging.getLogger("websocietysimulator")
+
 class Simulator:
     def __init__(self, data_dir: str):
         """
@@ -18,7 +20,7 @@ class Simulator:
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
         """
-        logging.info("Start initializing Simulator")
+        logger.info("Start initializing Simulator")
         self.data_dir = data_dir
         
         self.interaction_tool = InteractionTool(data_dir)
@@ -31,7 +33,7 @@ class Simulator:
         self.simulation_evaluator = SimulationEvaluator()
         self.simulation_outputs = []
         self.evaluation_results = []
-        logging.info("Simulator initialized")
+        logger.info("Simulator initialized")
 
     def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
         """
@@ -65,7 +67,7 @@ class Simulator:
                     raise ValueError(f"Unsupported task type: {task_type}")
                 
                 self.tasks.append(task)
-        logging.info("Tasks loaded")
+        logger.info("Tasks loaded")
 
         self.groundtruth_data = []
         for file_name in os.listdir(groundtruth_dir):
@@ -73,7 +75,7 @@ class Simulator:
             with open(file_path, 'r') as f:
                 groundtruth_data = json.load(f)
                 self.groundtruth_data.append(groundtruth_data)
-        logging.info("Groundtruth data loaded")
+        logger.info("Groundtruth data loaded")
 
     def set_agent(self, agent_class: Type):
         """
@@ -84,7 +86,7 @@ class Simulator:
         if not issubclass(agent_class, (SimulationAgent, RecommendationAgent)):
             raise ValueError("Agent class must inherit from SimulationAgent or RecommendationAgent.")
         self.agent_class = agent_class
-        logging.info("Agent class set")
+        logger.info("Agent class set")
     def set_llm(self, llm: LLMBase):
         """
         Set the LLM to be used for the simulation.
@@ -92,7 +94,7 @@ class Simulator:
             llm: A class inheriting from the abstract LLM class.
         """
         self.llm = llm
-        logging.info("LLM set")
+        logger.info("LLM set")
     def run_simulation(self) -> List[Any]:
         """
         Run the simulation.
@@ -100,11 +102,13 @@ class Simulator:
         Returns:
             List of outputs from agents for each scenario.
         """
-        logging.info("Running simulation")
+        logger.info("Running simulation")
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
         self.simulation_outputs = []
+        logger.info(f"Total tasks: {len(self.tasks)}")
+        index = 0
         for task in self.tasks:
             # Initialize the agent
             agent = self.agent_class(llm=self.llm)
@@ -127,7 +131,9 @@ class Simulator:
                     "error": "Forward method not implemented by participant."
                 }
                 self.simulation_outputs.append(result)
-        logging.info("Simulation finished")
+            logger.info(f"Simulation finished for task {index}")
+            index += 1
+        logger.info("Simulation finished")
         return self.simulation_outputs
 
     def evaluate(self) -> Dict[str, Any]:
@@ -136,7 +142,7 @@ class Simulator:
         Returns:
             Dictionary containing evaluation metrics
         """
-        logging.info("Evaluating simulation results")
+        logger.info("Evaluating simulation results")
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
         
@@ -145,7 +151,7 @@ class Simulator:
         gt_count = len(self.groundtruth_data)
         
         if sim_count != gt_count:
-            logging.warning(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
+            logger.warning(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
             # 使用较小的数量
             eval_count = min(sim_count, gt_count)
             groundtruth_data = self.groundtruth_data[:eval_count]
@@ -169,7 +175,7 @@ class Simulator:
         }
         
         self.evaluation_results.append(evaluation_results)
-        logging.info("Evaluation finished")
+        logger.info("Evaluation finished")
         return evaluation_results
 
     def _evaluate_recommendation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:

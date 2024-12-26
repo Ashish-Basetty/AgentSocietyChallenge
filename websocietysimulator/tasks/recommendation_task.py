@@ -1,16 +1,16 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 class RecommendationTask:
     def __init__(self, user_id: str,  
                  candidate_category: str,
                  candidate_list: List[str],
-                 loc: List[float]):
+                 loc: Optional[List[float]] = None):
         """
         Recommendation Task for the RecommendationAgent.
         Args:
             user_id: The ID of the user requesting recommendations.
-            candidate_category: The category of the candidate businesses.
-            candidate_list: List of candidate business IDs.
+            candidate_category: The category of the candidate items.
+            candidate_list: List of candidate item IDs.
             loc: User's location as [latitude, longitude].
         """
         self.user_id = user_id

@@ -65,18 +65,14 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
 
 ---
 
-### 2. Download the Dataset
+### 2. Data Preparation
 
-#### Option One: Process the Raw Yelp Dataset
-1. Download the raw Yelp dataset from the [Yelp Dataset Challenge page](https://www.yelp.com/dataset).
+1. Download the raw dataset from the Yelp[1], Amazon[2] or Goodreads[3].
 2. Run the `data_process.py` script to process the dataset:
    ```bash
    python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
    ```
-
-#### Option Two: Use a Preprocessed Dataset
-1. Download the preprocessed dataset from [TBD]().
-2. Unzip the dataset into your working directory.
+- Check out the [Data Preparation Guide](./tutorials/data_preparation.md) for more information.
 
 ---
 
@@ -86,11 +82,9 @@ Ensure the dataset is organized in a directory structure similar to this:
 
 ```
 <your_dataset_directory>/
-├── business.json
+├── item.json
 ├── review.json
 ├── user.json
-├── tip.json
-└── checkin.json
 ```
 
 You can name the dataset directory whatever you prefer (e.g., `dataset/`).
@@ -135,6 +129,9 @@ simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtrut
 # Set your custom agent
 simulator.set_agent(MySimulationAgent)
 
+# Set LLM client
+simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
+
 # Run evaluation
 agent_outputs = simulator.run_simulation()
 
@@ -156,28 +153,16 @@ The `InteractionTool` is the core utility for interacting with the raw dataset. 
   user_info = interaction_tool.get_user(user_id="example_user_id")
   ```
 
-- **Get Business Information**:
-  Retrieve business data by business ID or current scenario context.
+- **Get Item Information**:
+  Retrieve item data by item ID or current scenario context.
   ```python
-  business_info = interaction_tool.get_business(business_id="example_business_id")
+  item_info = interaction_tool.get_item(item_id="example_item_id")
   ```
 
 - **Get Reviews**:
-  Fetch reviews related to a specific business or user, filtered by time.
+  Fetch reviews related to a specific item or user, filtered by time.
   ```python
-  reviews = interaction_tool.get_reviews(business_id="example_business_id")
-  ```
-
-- **Get Tips**:
-  Fetch tips related to a specific business or user, filtered by time.
-  ```python
-  tips = interaction_tool.get_tips(business_id="example_business_id")
-  ```
-
-- **Get Check-ins**:
-  Fetch check-in data related to a specific business, filtered by time.
-  ```python
-  checkins = interaction_tool.get_checkins(business_id="example_business_id")
+  reviews = interaction_tool.get_reviews(item_id="example_item_id")
   ```
 
 
