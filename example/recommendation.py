@@ -17,20 +17,17 @@ class CustomRecommendationAgent(RecommendationAgent):
         Returns:
             List[Dict[str, Any]]: A sorted list of candidate POIs (business dictionaries).
         """
-        # Access scenario data
-        if not self.scenario:
-            raise RuntimeError("No scenario has been set. Please call insert_scenario before forward.")
-        candidate_poi = self.scenario['candidate_poi']
+        # Access task data
+        if not self.task:
+            raise RuntimeError("No task has been set. Please call insert_task before forward.")
+        candidate_list = self.task['candidate_list']
 
-        # Example sorting logic: sort businesses by "stars" (highest rating first)
-        sorted_poi = sorted(candidate_poi, key=lambda poi: poi.get('stars', 0), reverse=True)
-
-        return sorted_poi
+        return candidate_list
 
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="path-to-data")
+    simulator = Simulator(data_dir="your data dir")
     simulator.set_task_and_groundtruth(task_dir="./track2/tasks", groundtruth_dir="./track2/groundtruth")
 
     # Set the agent and LLM
