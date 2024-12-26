@@ -128,21 +128,18 @@ class MySimulationAgent(SimulationAgent):
             
         return {
             "stars": stars,
-            "useful": useful,
-            "funny": funny,
-            "cool": cool,
-            "review": review_text
+            "useful": useful
         }
 
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="../__local")
+    simulator = Simulator(data_dir="Your data dir")
     simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(DeepseekLLM(api_key="sk-4b9640af765c49678c9ab2560032ff60"))
+    simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
 
     # Run the simulation
     outputs = simulator.run_simulation()
