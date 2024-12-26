@@ -54,7 +54,7 @@ class InteractionTool:
     def get_item(self, item_id: Optional[str] = None) -> Optional[Dict]:
         """Fetch item data based on item_id or scenario."""
         self._ensure_task()  # Ensure scenario is set
-        item_id = item_id or self.task.get('item') if self.task else None
+        item_id = item_id or self.task.get('item_id') if self.task else None
         if not item_id:
             return None
         item = self.item_data[self.item_data['item_id'] == item_id]
@@ -74,8 +74,8 @@ class InteractionTool:
         if review_id:
             reviews = reviews[reviews['review_id'] == review_id]
         else:
-            item_id = item_id or (self.task.get('item') if self.task else None)
-            user_id = user_id or (self.task.get('user') if self.task else None)
+            item_id = item_id or (self.task.get('item_id') if self.task else None)
+            user_id = user_id or (self.task.get('user_id') if self.task else None)
             if item_id:
                 reviews = reviews[reviews['item_id'] == item_id]
             if user_id:
