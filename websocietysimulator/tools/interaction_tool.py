@@ -17,7 +17,7 @@ class InteractionTool:
         self.user_data = self._load_data('user.json')
         self.tip_data = self._load_data('tip.json')
         self.checkin_data = self._load_data('checkin.json')
-        self.scenario = None
+        self.task = None
 
     def _load_data(self, filename: str) -> pd.DataFrame:
         """Load a dataset as a Pandas DataFrame."""
@@ -40,10 +40,10 @@ class InteractionTool:
             raise RuntimeError("No task has been set. Please set a task before interacting.")
 
     def get_user(self, user_id: Optional[str] = None) -> Optional[Dict]:
-        """Fetch user data based on user_id or scenario."""
+        """Fetch user data based on user_id or task."""
         self._ensure_task()
         
-        user_id = user_id or self.scenario.get('user') if self.scenario else None
+        user_id = user_id or self.task.get('user_id') if self.task else None
         if not user_id:
             return None
         
@@ -54,9 +54,9 @@ class InteractionTool:
         return user
 
     def get_business(self, business_id: Optional[str] = None) -> Optional[Dict]:
-        """Fetch business data based on business_id or scenario."""
-        self._ensure_task()  # Ensure scenario is set
-        business_id = business_id or self.scenario.get('business') if self.scenario else None
+        """Fetch business data based on business_id or task."""
+        self._ensure_task()  # Ensure task is set
+        business_id = business_id or self.task.get('business_id') if self.task else None
         if not business_id:
             return None
         business = self.business_data[self.business_data['business_id'] == business_id]
@@ -76,8 +76,8 @@ class InteractionTool:
         if review_id:
             reviews = reviews[reviews['review_id'] == review_id]
         else:
-            business_id = business_id or (self.scenario.get('business') if self.scenario else None)
-            user_id = user_id or (self.scenario.get('user') if self.scenario else None)
+            business_id = business_id or (self.task.get('business_id') if self.task else None)
+            user_id = user_id or (self.task.get('user_id') if self.task else None)
             if business_id:
                 reviews = reviews[reviews['business_id'] == business_id]
             if user_id:

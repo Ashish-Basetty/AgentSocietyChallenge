@@ -1,11 +1,12 @@
 import json
+import logging
 import numpy as np
 from typing import List, Dict, Union, Optional
 from dataclasses import dataclass
 from nltk.sentiment import SentimentIntensityAnalyzer
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
-
+import torch
 import nltk
 nltk.download('vader_lexicon')
 
@@ -79,15 +80,39 @@ class RecommendationEvaluator(BaseEvaluator):
 class SimulationEvaluator(BaseEvaluator):
     """Evaluator for simulation tasks"""
     
-    def __init__(self):
+    def __init__(self, device: str = "auto"):
         super().__init__()
+        self.device = self._get_device(device)
+        
+        pipeline_device = self.device
+        st_device = "cuda" if self.device == 0 else "cpu" 
+        
         self.sia = SentimentIntensityAnalyzer()
         self.emotion_classifier = pipeline(
             "text-classification",
             model="cardiffnlp/twitter-roberta-base-emotion",
-            top_k=5
+            top_k=5,
+            device=pipeline_device
         )
-        self.topic_model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+        self.topic_model = SentenceTransformer(
+            'paraphrase-MiniLM-L6-v2',
+            device=st_device
+        )
+        
+    def _get_device(self, device: str) -> int:
+        """Parse device from string"""
+        if device == "gpu":
+            if torch.cuda.is_available():
+                return 0  # GPU
+            else:
+                logging.warning("GPU is not available, falling back to CPU")
+                return -1  # CPU
+        elif device == "cpu":
+            return -1  # CPU
+        elif device == "auto":
+            return 0 if torch.cuda.is_available() else -1
+        else:
+            raise ValueError("Device type must be 'cpu', 'gpu' or 'auto'")
 
     def calculate_metrics(
         self,

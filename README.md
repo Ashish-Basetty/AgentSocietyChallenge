@@ -53,14 +53,28 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
    cd websocietysimulator
    ```
 
-2. Install dependencies using Poetry:
-   ```bash
-   poetry install
-   ```
+2. Install dependencies:
+  - Option 1: Install dependencies using Poetry: (Recommended)
+    ```bash
+    poetry install  && \
+    poetry shell
+    ```
+  - Option 2: Install dependencies using pip:
+    ```bash
+    pip install -r requirements.txt && \
+    pip install .
+    ```
+  - Option 3: Install dependencies using conda:
+    ```bash
+    conda create -n websocietysimulator python=3.11 && \
+    conda activate websocietysimulator && \
+    pip install -r requirements.txt && \
+    pip install .
+    ```
 
-3. Activate the virtual environment:
-   ```bash
-   poetry shell
+3. Verify the installation:
+   ```python
+   import websocietysimulator
    ```
 
 ---
@@ -127,7 +141,7 @@ from websocietysimulator import Simulator
 from my_agent import MySimulationAgent
 
 # Initialize Simulator
-simulator = Simulator(data_dir="path/to/your/dataset")
+simulator = Simulator(data_dir="path/to/your/dataset", device="auto")
 
 # Load scenarios
 simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtruth_dir="path/to/groundtruth_directory")

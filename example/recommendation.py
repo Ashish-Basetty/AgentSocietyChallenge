@@ -5,6 +5,9 @@ from typing import List, Dict, Any
 
 from websocietysimulator.llm import DeepseekLLM
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 class CustomRecommendationAgent(RecommendationAgent):
     """
@@ -27,7 +30,7 @@ class CustomRecommendationAgent(RecommendationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="your data dir")
+    simulator = Simulator(data_dir="your data dir", device="auto")
     simulator.set_task_and_groundtruth(task_dir="./track2/tasks", groundtruth_dir="./track2/groundtruth")
 
     # Set the agent and LLM
