@@ -169,3 +169,11 @@ The `InteractionTool` is the core utility for interacting with the raw dataset. 
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## References
+
+[1] Yelp Dataset: https://www.yelp.com/dataset
+
+[2] Amazon Dataset: https://amazon-reviews-2023.github.io/
+
+[3] Goodreads Dataset: https://sites.google.com/eng.ucsd.edu/ucsdbookgraph/home

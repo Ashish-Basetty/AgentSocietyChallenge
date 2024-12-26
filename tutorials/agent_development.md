@@ -9,11 +9,32 @@ To develop an agent, first inherit from the appropriate base class depending on 
 - For Simulation Track: Inherit from `websocietysimulator.agent.SimulationAgent`
 - For Recommendation Track: Inherit from `websocietysimulator.agent.RecommendationAgent`
 
-### 1.2 Implementing the Forward Method
+### 1.2 Basic Attributes and Tools of Agents for both tracks
+- `self.task`: The task (dict) to be processed (e.g., SimulationTask or RecommendationTask).
+    - for SimulationTask, it contains `description`, `user_id` and `item_id`.
+        - `description`: The description of the task.
+        - `user_id`: The id of the user you are simulating.
+        - `item_id`: The id of the item that the user is reviewing.
+    - for RecommendationTask, it contains `description`, `user_id`, `candidate_category`, `candidate_list` and `loc`.
+        - `description`: The description of the task.
+        - `user_id`: The id of the user you are recommending items to.
+        - `candidate_category`: The category of the candidate items.
+        - `candidate_list`: The list of candidate item ids.
+        - `loc`: The location of the user. If is [-1, -1], the user is not in a specific location (actually only for yelp dataset).
+- `self.interaction_tool`: The interaction tool to interact with the environment. Supporting:
+    - `get_user(user_id: Optional[str] = None) -> Optional[Dict]`: Get the user data based on user_id or task (if user_id is None).
+    - `get_item(item_id: Optional[str] = None) -> Optional[Dict]`: Get the item data based on item_id or task (if item_id is None).
+    - `get_reviews(item_id: Optional[str] = None, user_id: Optional[str] = None, review_id: Optional[str] = None) -> List[Dict]`: Get the reviews data based on item_id, user_id or review_id.
+        - if provide `item_id`, return all reviews of the item.
+        - if provide `user_id`, return all reviews of the user.
+        - if provide `review_id`, return the review of the id.
+- `self.llm`: The LLM to generate reasoning.
+
+### 1.3 Implementing the Forward Method
 
 The key step is to override the `forward()` method in your agent class. This method contains your agent's core logic.
 
-### 1.3 Track-Specific Return Values
+### 1.4 Track-Specific Return Values
 
 Different tracks require different return values from the `forward()` method:
 
@@ -22,11 +43,8 @@ Different tracks require different return values from the `forward()` method:
 def forward(self) -> Dict[str, Any]:
     # Must return a dictionary with:
     return {
-        'star': float,  # Rating (1.0-5.0)
+        'stars': float,  # Rating (1.0-5.0)
         'review': str,  # Review text
-        'useful': int,  # Useful votes
-        'cool': int,    # Cool votes
-        'funny': int    # Funny votes
     }
 ```
 
@@ -34,10 +52,10 @@ def forward(self) -> Dict[str, Any]:
 ```python
 def forward(self) -> List[Dict[str, Any]]:
     # Must return a sorted list of POI dictionaries
-    return sorted_poi_list
+    return sorted_candidate_list
 ```
 
-### 1.4 Example Implementations
+### 1.5 Example Implementations
 Example implementations for both tracks can be found in the `example` folder:
 
 - Simulation Track: `example/userBehaviorSimulation.py`

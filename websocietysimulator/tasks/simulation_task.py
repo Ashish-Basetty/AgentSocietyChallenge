@@ -18,6 +18,9 @@ class SimulationTask:
             dict: The task in dictionary format.
         """
         return {
+            "description": """This is a simulation task. 
+            You are a simulation agent that simulates a user's rating and review with an item. 
+            There is a user with id and an item with id. """,
             "user_id": self.user_id,
             "item_id": self.item_id
         }

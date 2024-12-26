@@ -54,7 +54,7 @@ class Simulator:
                 if task_type == 'user_behavior_simulation':
                     task = SimulationTask(
                         user_id=task_data['user_id'],
-                        business_id=task_data['business_id']
+                        item_id=task_data['item_id']
                     )
                 elif task_type == 'recommendation':
                     task = RecommendationTask(

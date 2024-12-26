@@ -26,15 +26,9 @@ class SimulationAgent(Agent):
         Participants must override this method to provide:
             - stars (float): Simulated rating
             - review (str): Simulated review text
-            - useful (int): Simulated useful count
-            - cool (int): Simulated cool count
-            - funny (int): Simulated funny count
         """
         result = {
             'stars': 0,
             'review': '',
-            'useful': 0,
-            'funny': 0,
-            'cool': 0
         }
         return result
