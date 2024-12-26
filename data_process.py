@@ -15,12 +15,15 @@ REQUIRED_FILES_YELP = [
 ]
 
 REQUIRED_FILES_AMAZON = [
-    'All_Beauty.jsonl', 
-    'meta_ALL_Beauty.jsonl', 
-    'Handmade_Products.jsonl', 
-    'meta_Handmade_Products.jsonl', 
-    'Health_and_Personal_Care.jsonl', 
-    'meta_Health_and_Personal_Care.jsonl'
+    'Industrial_and_Scientific.csv', 
+    'Musical_Instruments.csv', 
+    'Video_Games.csv',
+    'Industrial_and_Scientific.jsonl', 
+    'Musical_Instruments.jsonl', 
+    'Video_Games.jsonl',
+    'meta_Industrial_and_Scientific.jsonl', 
+    'meta_Musical_Instruments.jsonl', 
+    'meta_Video_Games.jsonl'
 ]
 
 REQUIRED_FILES_GOODREADS = [
@@ -103,12 +106,30 @@ def load_and_process_yelp_data(input_dir):
 def load_and_process_amazon_data(input_dir):
     """Load and process Amazon dataset."""
     logging.info("Loading and processing Amazon data...")
-    product_files = ['All_Beauty.jsonl', 'Handmade_Products.jsonl', 'Health_and_Personal_Care.jsonl']
-    meta_files = ['meta_ALL_Beauty.jsonl', 'meta_Handmade_Products.jsonl', 'meta_Health_and_Personal_Care.jsonl']
+    rating_only_files = ['Industrial_and_Scientific.csv', 'Musical_Instruments.csv', 'Video_Games.csv']
+    review_files = ['Industrial_and_Scientific.jsonl', 'Musical_Instruments.jsonl', 'Video_Games.jsonl']
+    meta_files = ['meta_Industrial_and_Scientific.jsonl', 'meta_Musical_Instruments.jsonl', 'meta_Video_Games.jsonl']
+
+    # Load rating-only data
+    all_rating_only = pd.concat([pd.read_csv(os.path.join(input_dir, f)) for f in rating_only_files])
+    users = all_rating_only['user_id'].unique().tolist()
+    items = all_rating_only['parent_asin'].unique().tolist()
+
+    # Load review data
+    all_reviews = pd.DataFrame()
+    for f in review_files:
+        data = load_data(os.path.join(input_dir, f))
+        # Filter data based on users and items from rating-only data
+        data = data[data['user_id'].isin(users) & data['parent_asin'].isin(items)] 
+        all_reviews = pd.concat([all_reviews, data])
     
-    all_reviews = pd.concat([load_data(os.path.join(input_dir, f)) for f in product_files])
-    all_meta = pd.concat([load_data(os.path.join(input_dir, f)) for f in meta_files])
-    
+    # Load meta data
+    all_meta = pd.DataFrame()
+    for f in meta_files:
+        data = load_data(os.path.join(input_dir, f))
+        data = data[data['parent_asin'].isin(items)]
+        all_meta = pd.concat([all_meta, data])
+
     return all_reviews, all_meta
 
 def load_and_process_goodreads_data(input_dir):
@@ -136,7 +157,7 @@ def merge_business_data(yelp_business, amazon_meta, goodreads_books, output_file
     
     # 将Amazon数据转换为json格式
     amazon_business = amazon_meta.rename(columns={
-        'parent_asin': 'item_id',
+        'parent_asin': 'item_id'
     })
     amazon_business['source'] = 'amazon'
     amazon_business['type'] = 'product'
@@ -144,7 +165,7 @@ def merge_business_data(yelp_business, amazon_meta, goodreads_books, output_file
     
     # 将Goodreads数据转换为json格式
     goodreads_business = goodreads_books.rename(columns={
-        'book_id': 'item_id',
+        'book_id': 'item_id', 
     })
     goodreads_business['source'] = 'goodreads'
     goodreads_business['type'] = 'book'
@@ -176,6 +197,7 @@ def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_fi
     amazon_reviews = amazon_reviews.rename(columns={
         'asin': 'item_id',
         'parent_asin': 'parent_item_id',
+        'rating': 'stars',
     })
     amazon_reviews['review_id'] = [str(uuid.uuid4()) for _ in range(len(amazon_reviews))]
     amazon_reviews['source'] = 'amazon'
@@ -185,6 +207,8 @@ def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_fi
     # 将Goodreads评论转换为json格式
     goodreads_reviews = goodreads_reviews.rename(columns={
         'book_id': 'item_id',
+        'rating': 'stars',
+        'review_text': 'text',
     })
     goodreads_reviews['source'] = 'goodreads'
     goodreads_reviews['type'] = 'book'
