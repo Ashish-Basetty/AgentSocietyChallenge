@@ -14,11 +14,12 @@ import numpy as np
 logger = logging.getLogger("websocietysimulator")
 
 class Simulator:
-    def __init__(self, data_dir: str):
+    def __init__(self, data_dir: str, device: str = "auto"):
         """
         Initialize the Simulator.
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
+            device: Device to use for evaluation. "auto" (default) will use GPU if available, otherwise CPU. Available options: "gpu", "cpu", "auto".
         """
         logger.info("Start initializing Simulator")
         self.data_dir = data_dir
@@ -30,7 +31,7 @@ class Simulator:
         self.agent_class = None
         self.llm = None
         self.recommendation_evaluator = RecommendationEvaluator()
-        self.simulation_evaluator = SimulationEvaluator()
+        self.simulation_evaluator = SimulationEvaluator(device)
         self.simulation_outputs = []
         self.evaluation_results = []
         logger.info("Simulator initialized")

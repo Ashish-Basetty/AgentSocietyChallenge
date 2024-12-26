@@ -38,10 +38,10 @@ class InteractionTool:
             raise RuntimeError("No task has been set. Please set a task before interacting.")
 
     def get_user(self, user_id: Optional[str] = None) -> Optional[Dict]:
-        """Fetch user data based on user_id or scenario."""
+        """Fetch user data based on user_id or task."""
         self._ensure_task()
         
-        user_id = user_id or self.task.get('user') if self.task else None
+        user_id = user_id or self.task.get('user_id') if self.task else None
         if not user_id:
             return None
         

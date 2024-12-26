@@ -5,6 +5,9 @@ from websocietysimulator.llm import LLMBase, DeepseekLLM
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 class PlanningBaseline(PlanningBase):
     """Inherit from PlanningBase"""
     
@@ -134,7 +137,7 @@ class MySimulationAgent(SimulationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="Your data dir")
+    simulator = Simulator(data_dir="your data dir", device="gpu")
     simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
