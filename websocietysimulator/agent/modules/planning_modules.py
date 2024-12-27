@@ -4,10 +4,10 @@ import ast
 class PlanningBase():
     def __init__(self, llm):
         """
-        初始化规划基类
+        Initialize the planning base class
         
         Args:
-            llm: LLM 实例,用于生成规划
+            llm: LLM instance used to generate planning
         """
         self.plan = []
         self.llm = llm
@@ -19,7 +19,7 @@ class PlanningBase():
         few_shot = 'few_shot'
         prompt = self.create_prompt(task_type, task_description, feedback, few_shot)
         
-        # 使用新的 LLM 调用方式
+        # Use the new LLM call method
         messages = [{"role": "user", "content": prompt}]
         string = self.llm(
             messages=messages,

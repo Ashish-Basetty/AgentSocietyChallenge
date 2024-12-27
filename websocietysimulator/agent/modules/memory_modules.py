@@ -8,11 +8,11 @@ import shutil
 class MemoryBase:
     def __init__(self, memory_type: str, llm) -> None:
         """
-        初始化记忆基类
+        Initialize the memory base class
         
         Args:
-            memory_type: 记忆类型
-            llm: LLM 实例,用于生成记忆相关的文本
+            memory_type: Type of memory
+            llm: LLM instance used to generate memory-related text
         """
         self.llm = llm
         self.embedding = OpenAIEmbeddings()
