@@ -15,7 +15,6 @@ class InteractionTool:
         self.item_data = self._load_data('item.json')
         self.review_data = self._load_data('review.json')
         self.user_data = self._load_data('user.json')
-        self.task = None
 
     def _load_data(self, filename: str) -> pd.DataFrame:
         """Load a dataset as a Pandas DataFrame."""
@@ -24,37 +23,16 @@ class InteractionTool:
             data = [json.loads(line) for line in file]
         return pd.DataFrame(data)
 
-    def set_task(self, task: Dict[str, Any]):
-        """
-        Update the context of the tool based on a task.
-        Args:
-            task: Task dictionary with context parameters.
-        """
-        self.task = task
-
-    def _ensure_task(self):
-        """Ensure that a task has been set before any action."""
-        if not self.task:
-            raise RuntimeError("No task has been set. Please set a task before interacting.")
-
-    def get_user(self, user_id: Optional[str] = None) -> Optional[Dict]:
-        """Fetch user data based on user_id or task."""
-        self._ensure_task()
-        
-        user_id = user_id or self.task.get('user_id') if self.task else None
-        if not user_id:
-            return None
-        
+    def get_user(self, user_id: str) -> Optional[Dict]:
+        """Fetch user data based on user_id."""  
         user = self.user_data[self.user_data['user_id'] == user_id]
         if user.empty:
             return None
         user = user.to_dict(orient='records')[0]
         return user
 
-    def get_item(self, item_id: Optional[str] = None) -> Optional[Dict]:
+    def get_item(self, item_id: str = None) -> Optional[Dict]:
         """Fetch item data based on item_id or scenario."""
-        self._ensure_task()  # Ensure scenario is set
-        item_id = item_id or self.task.get('item_id') if self.task else None
         if not item_id:
             return None
         item = self.item_data[self.item_data['item_id'] == item_id]
@@ -67,15 +45,12 @@ class InteractionTool:
         review_id: Optional[str] = None
     ) -> List[Dict]:
         """Fetch reviews filtered by various parameters."""
-        self._ensure_task()
-        
+        if item_id is None and user_id is None and review_id is None:
+            return []
         reviews = self.review_data
-
         if review_id:
             reviews = reviews[reviews['review_id'] == review_id]
         else:
-            item_id = item_id or (self.task.get('item_id') if self.task else None)
-            user_id = user_id or (self.task.get('user_id') if self.task else None)
             if item_id:
                 reviews = reviews[reviews['item_id'] == item_id]
             if user_id:

@@ -21,7 +21,6 @@ class RecommendationAgent(Agent):
         if not task:
             raise ValueError("The task cannot be None.")
         self.task = task.to_dict()
-        self.interaction_tool.set_task(self.task)
 
     def forward(self) -> List[str]:
         """
