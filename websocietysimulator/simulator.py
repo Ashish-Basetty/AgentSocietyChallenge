@@ -12,7 +12,7 @@ from .tasks.recommendation_task import RecommendationTask
 import numpy as np
 
 class Simulator:
-    def __init__(self, data_dir: str, device: str = "auto"):
+    def __init__(self, data_dir: str = None, device: str = "auto"):
         """
         Initialize the Simulator.
         Args:
@@ -21,8 +21,10 @@ class Simulator:
         """
         logging.info("Start initializing Simulator")
         self.data_dir = data_dir
-        
-        self.interaction_tool = InteractionTool(data_dir)
+        if data_dir is None:
+            self.interaction_tool = None
+        else:
+            self.interaction_tool = InteractionTool(data_dir)
         
         self.tasks = []  # List to store tasks
         self.groundtruth_data = []  # List to store groundtruth data
@@ -33,6 +35,9 @@ class Simulator:
         self.simulation_outputs = []
         self.evaluation_results = []
         logging.info("Simulator initialized")
+
+    def set_interaction_tool(self, interaction_tool: InteractionTool):
+        self.interaction_tool = interaction_tool
 
     def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
         """
