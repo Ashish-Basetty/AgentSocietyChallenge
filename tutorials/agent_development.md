@@ -9,17 +9,17 @@ To develop an agent, first inherit from the appropriate base class depending on 
 - For Simulation Track: Inherit from `websocietysimulator.agent.SimulationAgent`
 - For Recommendation Track: Inherit from `websocietysimulator.agent.RecommendationAgent`
 
-### 1.2 Implementing the Forward Method
+### 1.2 Implementing the Workflow Method
 
-The key step is to override the `forward()` method in your agent class. This method contains your agent's core logic.
+The key step is to override the `workflow()` method in your agent class. This method contains your agent's core logic.
 
 ### 1.3 Track-Specific Return Values
 
-Different tracks require different return values from the `forward()` method:
+Different tracks require different return values from the `workflow()` method:
 
 **Simulation Track**
 ```python
-def forward(self) -> Dict[str, Any]:
+def workflow(self) -> Dict[str, Any]:
     # Must return a dictionary with:
     return {
         'star': float,  # Rating (1.0-5.0)
@@ -32,7 +32,7 @@ def forward(self) -> Dict[str, Any]:
 
 **Recommendation Track**
 ```python
-def forward(self) -> List[Dict[str, Any]]:
+def workflow(self) -> List[Dict[str, Any]]:
     # Must return a sorted list of POI dictionaries
     return sorted_poi_list
 ```
@@ -41,7 +41,7 @@ def forward(self) -> List[Dict[str, Any]]:
 Example implementations for both tracks can be found in the `example` folder:
 
 - Simulation Track: `example/userBehaviorSimulation.py`
-- Recommendation Track: `example/recommendationExample.py`
+- Recommendation Track: `example/recommendationAgent.py`
 
 
 ## 2. LLM Client Integration

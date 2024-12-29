@@ -24,10 +24,10 @@ class ReasoningIO(ReasoningBase):
         examples, task_description = self.process_task_description(task_description)
         prompt = '''Your instructions must follow the examples.
 Here are some examples.
-{examples}{memory}
+{examples}
 Here is the task:
 {task_description}'''
-        prompt = prompt.format(task_description=task_description, examples=examples, memory=self.memory_cache)
+        prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
         reasoning_result = self.llm(
             messages=messages,
@@ -41,10 +41,10 @@ class ReasoningCOT(ReasoningBase):
         examples, task_description = self.process_task_description(task_description)
         prompt = '''Solve the task step by step. Your instructions must follow the examples.
 Here are some examples.
-{examples}{memory}
+{examples}
 Here is the task:
 {task_description}'''
-        prompt = prompt.format(task_description=task_description, examples=examples, memory=self.memory_cache)
+        prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
         reasoning_result = self.llm(
             messages=messages,
@@ -57,10 +57,10 @@ class ReasoningCOTSC(ReasoningBase):
         examples, task_description = self.process_task_description(task_description)
         prompt = '''Solve the task step by step. Your instructions must follow the examples.
 Here are some examples.
-{examples}{memory}
+{examples}
 Here is the task:
 {task_description}'''
-        prompt = prompt.format(task_description=task_description, examples=examples, memory=self.memory_cache)
+        prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
         reasoning_results = self.llm(
             messages=messages,
@@ -76,10 +76,10 @@ class ReasoningTOT(ReasoningBase):
         examples, task_description = self.process_task_description(task_description)
         prompt = '''Solve the task step by step. Your instructions must follow the examples.
 Here are some examples.
-{examples}{memory}
+{examples}
 Here is the task:
 {task_description}'''
-        prompt = prompt.format(task_description=task_description, examples=examples, memory=self.memory_cache)
+        prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
         reasoning_results = self.llm(
             messages=messages,
@@ -134,7 +134,7 @@ class ReasoningDILU(ReasoningBase):
                 "role": "user",
                 "content": f'''Above messages are some examples of how you make a step successfully in the past. Those scenarios are similar to the current scenario. You should refer to those examples to make a step for the current scenario. Your instructions must follow the examples.
 Here are two examples.
-{examples}{self.memory_cache}
+{examples}
 Here is the task:
 {task_description}'''
             }
@@ -150,10 +150,10 @@ class ReasoningSelfRefine(ReasoningBase):
         examples, task_description = self.process_task_description(task_description)
         prompt = '''Solve the task step by step. Your instructions must follow the examples.
 Here are some examples.
-{examples}{memory}
+{examples}
 Here is the task:
 {task_description}'''
-        prompt = prompt.format(task_description=task_description, examples=examples, memory=self.memory_cache)
+        prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
         reasoning_result = self.llm(
             messages=messages,
@@ -176,12 +176,11 @@ Here is the original reasoning:
 class ReasoningStepBack(ReasoningBase):
     def __call__(self, task_description: str, feedback :str= ''):
         examples, task_description = self.process_task_description(task_description)
-        if task_description.split('Your')[-1].count('>') == 1:
-            self.principle = self.stepback(task_description)
+        self.principle = self.stepback(task_description)
             
         prompt = f'''Solve the task step by step. Your instructions must follow the examples.
 Here are some examples.
-{examples}{self.memory_cache}{self.principle}
+{examples}{self.principle}
 Here is the task:
 {task_description}'''
         messages = [{"role": "user", "content": prompt}]
@@ -191,8 +190,6 @@ Here is the task:
         )
         return reasoning_result
     def stepback(self, task_description):
-        last_index = task_description.rfind('>')
-        task_description = task_description[:last_index]
         stepback_prompt = f'''What common sense, instruction structure is involved in solving this task?
 {task_description}'''
         messages = [{"role": "user", "content": stepback_prompt}]
