@@ -40,13 +40,13 @@ class LLMBase:
         raise NotImplementedError("Subclasses need to implement this method")
 
 class InfinigenceLLM(LLMBase):
-    def __init__(self, api_key: str, model: str = "deepseek-chat"):
+    def __init__(self, api_key: str, model: str = "qwen2.5-72b-instruct"):
         """
         Initialize Deepseek LLM
         
         Args:
             api_key: Deepseek API key
-            model: Model name, defaults to deepseek-chat
+            model: Model name, defaults to qwen2.5-72b-instruct
         """
         super().__init__(model)
         self.client = OpenAI(

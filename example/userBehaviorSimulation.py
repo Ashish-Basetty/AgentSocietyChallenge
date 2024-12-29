@@ -26,7 +26,7 @@ class PlanningBaseline(PlanningBase):
             {
                 'description': 'Next, I need to find business information',
                 'reasoning instruction': 'None',
-                'tool use instruction': {task_description['business_id']}
+                'tool use instruction': {task_description['item_id']}
             }
         ]
         return self.plan
