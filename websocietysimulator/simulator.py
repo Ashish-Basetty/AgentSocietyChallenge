@@ -207,7 +207,6 @@ class Simulator:
         """
         Evaluate simulation results
         """
-        all_metrics = []
         simulated_data = [output['output'] for output in self.simulation_outputs]
         metrics = self.simulation_evaluator.calculate_metrics(
             simulated_data=simulated_data,

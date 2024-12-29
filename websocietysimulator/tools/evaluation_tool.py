@@ -23,11 +23,11 @@ class RecommendationMetrics:
 
 @dataclass
 class SimulationMetrics:
-    star_mapr: float
-    polarity_mapr: float
-    emotion_mapr: float
-    topic_mapr: float
-    overall_mapr: float
+    star_mape: float
+    polarity_mape: float
+    emotion_mape: float
+    topic_mape: float
+    overall_mape: float
 
 class BaseEvaluator:
     """Base class for evaluation tools"""
@@ -127,10 +127,10 @@ class SimulationEvaluator(BaseEvaluator):
         # Calculate stars metrics
         simulated_stars = [item['stars'] for item in simulated_data]
         real_stars = [item['stars'] for item in real_data]
-        star_mapr = 0
+        star_mape = 0
         for sim_star, real_star in zip(simulated_stars, real_stars):
-            star_mapr += np.abs(sim_star - real_star) / real_star
-        star_mapr = star_mapr / len(real_stars)
+            star_mape += np.abs(sim_star - real_star) / real_star
+        star_mape = star_mape / len(real_stars)
 
         # Calculate review metrics
         simulated_reviews = [item['review'] for item in simulated_data]
@@ -140,23 +140,23 @@ class SimulationEvaluator(BaseEvaluator):
             real_reviews
         )
 
-        polarity_mapr = review_details['polarity_mapr']
-        emotion_mapr = review_details['emotion_mapr']
-        topic_mapr = review_details['topic_mapr']
-        # Calculate overall MAPR
-        overall_mapr = np.mean([
-            star_mapr,
-            polarity_mapr,
-            emotion_mapr,
-            topic_mapr,
+        polarity_mape = review_details['polarity_mape']
+        emotion_mape = review_details['emotion_mape']
+        topic_mape = review_details['topic_mape']
+        # Calculate overall MAPE
+        overall_mape = np.mean([
+            star_mape,
+            polarity_mape,
+            emotion_mape,
+            topic_mape,
         ])
 
         metrics = SimulationMetrics(
-            star_mapr=star_mapr,
-            polarity_mapr=polarity_mapr,
-            emotion_mapr=emotion_mapr,
-            topic_mapr=topic_mapr,
-            overall_mapr=overall_mapr,
+            star_mape=star_mape,
+            polarity_mape=polarity_mape,
+            emotion_mape=emotion_mape,
+            topic_mape=topic_mape,
+            overall_mape=overall_mape,
         )
 
         self.save_metrics(metrics)
@@ -169,34 +169,34 @@ class SimulationEvaluator(BaseEvaluator):
     ) -> Dict[str, float]:
         """Calculate detailed review metrics between two texts"""
         # Polarity analysis
-        polarity_mapr = 0
-        emotion_mapr = 0
-        topic_mapr = 0
+        polarity_mape = 0
+        emotion_mape = 0
+        topic_mape = 0
         for simulated_review, real_review in zip(simulated_reviews, real_reviews):
             # Polarity analysis
             polarity1 = self.sia.polarity_scores(simulated_review)['compound']
             polarity2 = self.sia.polarity_scores(real_review)['compound']
             polarity_error = abs(polarity1 - polarity2) / polarity2
-            polarity_mapr += polarity_error
+            polarity_mape += polarity_error
 
             # Emotion analysis
             emotions1 = self.emotion_classifier(simulated_review)[0]
             emotions2 = self.emotion_classifier(real_review)[0]
             emotion_error = self._calculate_emotion_similarity(emotions1, emotions2)
-            emotion_mapr += emotion_error
+            emotion_mape += emotion_error
 
             # Topic analysis
             embeddings = self.topic_model.encode([simulated_review, real_review])
             topic_error = np.mean(np.abs(embeddings[0] - embeddings[1]) / (embeddings[1] + 1e-10))
-            topic_mapr += topic_error
+            topic_mape += topic_error
 
-        polarity_mapr = polarity_mapr / len(real_reviews)
-        emotion_mapr = emotion_mapr / len(real_reviews)
-        topic_mapr = topic_mapr / len(real_reviews)
+        polarity_mape = polarity_mape / len(real_reviews)
+        emotion_mape = emotion_mape / len(real_reviews)
+        topic_mape = topic_mape / len(real_reviews)
         return {
-            'polarity_mapr': polarity_mapr,
-            'emotion_mapr': emotion_mapr,
-            'topic_mapr': topic_mapr,
+            'polarity_mape': polarity_mape,
+            'emotion_mape': emotion_mape,
+            'topic_mape': topic_mape,
         }
 
     def _calculate_emotion_similarity(
