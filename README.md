@@ -87,6 +87,7 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
    python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
    ```
 - Check out the [Data Preparation Guide](./tutorials/data_preparation.md) for more information.
+- **NOTICE: You Need at least 16GB RAM to process the dataset.**
 
 ---
 
@@ -113,12 +114,23 @@ Create a custom agent by extending either `SimulationAgent` or `RecommendationAg
 from yelpsimulator.agents.simulation_agent import SimulationAgent
 
 class MySimulationAgent(SimulationAgent):
-    def forward(self):
+    def workflow(self):
+        # The simulator will automatically set the task for your agent. You can access the task by `self.task` to get task information.
+        print(self.task)
+
+        # You can also use the `interaction_tool` to get data from the dataset.
+        # For example, you can get the user information by `interaction_tool.get_user(user_id="example_user_id")`.
+        # You can also get the item information by `interaction_tool.get_item(item_id="example_item_id")`.
+        # You can also get the reviews by `interaction_tool.get_reviews(review_id="example_review_id")`.
+        user_info = interaction_tool.get_user(user_id="example_user_id")
+
         # Implement your logic here
-        star = 4.0
-        review_text = "Great experience!"
-        behavior_metrics = (10, 2, 1)
-        return star, review_text, behavior_metrics
+        
+        # Finally, you need to return the result in the format of `stars` and `review`.
+        # For recommendation track, you need to return a candidate list of items, in which the first item is the most recommended item.
+        stars = 4.0
+        review = "Great experience!"
+        return stars, review
 ```
 
 - Check out the [Tutorial](./tutorials/agent_development.md) for Agent Development.
@@ -152,12 +164,24 @@ agent_outputs = simulator.run_simulation()
 # Evaluate the agent
 evaluation_results = simulator.evaluate()
 ```
+- If you want to use your own LLMClient, you can easily implement it by inheriting the `LLMBase` class. Refer to the [Tutorial](./tutorials/agent_development.md) for more information.
+
+---
+
+### 6. Submit your agent in Codabench
+- [The link to the Codabench Platform](https://www.codabench.org/competitions/4574/)
+  - You need a codabench account to submit your agent.
+  - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
+- **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
+- Example submissions:
+  - For Track 1: [submission_1]()
+  - For Track 2: [submission_2]()
 
 ---
 
 ## Introduction to the `InteractionTool`
 
-The `InteractionTool` is the core utility for interacting with the raw dataset. It provides an interface for querying user, business, review, tip, and check-in data within the context of a task.
+The `InteractionTool` is the core utility for interacting with the dataset. It provides an interface for querying user, item, and review data.
 
 ### Functions
 
@@ -176,9 +200,10 @@ The `InteractionTool` is the core utility for interacting with the raw dataset. 
 - **Get Reviews**:
   Fetch reviews related to a specific item or user, filtered by time.
   ```python
-  reviews = interaction_tool.get_reviews(item_id="example_item_id")
+  reviews = interaction_tool.get_reviews(review_id="example_review_id")  # Fetch a specific review
+  reviews = interaction_tool.get_reviews(item_id="example_item_id")  # Fetch all reviews for a specific item
+  reviews = interaction_tool.get_reviews(user_id="example_user_id")  # Fetch all reviews for a specific user
   ```
-
 
 ## License
 
