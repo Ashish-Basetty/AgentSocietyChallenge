@@ -25,6 +25,6 @@ class Agent(ABC):
         pass
 
     @abstractmethod
-    def forward(self) -> Any:
+    def workflow(self) -> Any:
         """Abstract forward method for evaluation."""
         pass

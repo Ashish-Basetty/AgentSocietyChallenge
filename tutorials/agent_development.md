@@ -101,8 +101,7 @@ The module consists of multiple implementations:
 5. **ReasoningTOT**[4]
 6. **ReasoningSelfRefine**[5]
 7. **ReasoningStepBack**[6]
-8. **ReasoningSelfReflectiveTOT**[4, 6]
-9. **ReasoningDILU**[7]
+8. **ReasoningDILU**[7]
 
 #### Interface
 

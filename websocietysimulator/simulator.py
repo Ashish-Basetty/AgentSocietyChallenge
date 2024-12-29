@@ -11,6 +11,8 @@ from .tasks.simulation_task import SimulationTask
 from .tasks.recommendation_task import RecommendationTask
 import numpy as np
 
+logger = logging.getLogger("websocietysimulator")
+
 class Simulator:
     def __init__(self, data_dir: str = None, device: str = "auto"):
         """
@@ -19,7 +21,7 @@ class Simulator:
             data_dir: Path to the directory containing Yelp dataset files.
             device: Device to use for evaluation. "auto" (default) will use GPU if available, otherwise CPU. Available options: "gpu", "cpu", "auto".
         """
-        logging.info("Start initializing Simulator")
+        logger.info("Start initializing Simulator")
         self.data_dir = data_dir
         if data_dir is None:
             self.interaction_tool = None
@@ -34,7 +36,10 @@ class Simulator:
         self.simulation_evaluator = SimulationEvaluator(device)
         self.simulation_outputs = []
         self.evaluation_results = []
-        logging.info("Simulator initialized")
+        logger.info("Simulator initialized")
+
+    def set_interaction_tool(self, interaction_tool: InteractionTool):
+        self.interaction_tool = interaction_tool
 
     def set_interaction_tool(self, interaction_tool: InteractionTool):
         self.interaction_tool = interaction_tool
@@ -58,20 +63,20 @@ class Simulator:
                 if task_type == 'user_behavior_simulation':
                     task = SimulationTask(
                         user_id=task_data['user_id'],
-                        business_id=task_data['business_id']
+                        item_id=task_data['item_id']
                     )
                 elif task_type == 'recommendation':
                     task = RecommendationTask(
                         user_id=task_data['user_id'],
                         candidate_category=task_data['candidate_category'],
-                        candidate_list=task_data['candidate_id_list'],
+                        candidate_list=task_data['candidate_list'],
                         loc=task_data['loc']
                     )
                 else:
                     raise ValueError(f"Unsupported task type: {task_type}")
                 
                 self.tasks.append(task)
-        logging.info("Tasks loaded")
+        logger.info("Tasks loaded")
 
         self.groundtruth_data = []
         for file_name in os.listdir(groundtruth_dir):
@@ -79,7 +84,7 @@ class Simulator:
             with open(file_path, 'r') as f:
                 groundtruth_data = json.load(f)
                 self.groundtruth_data.append(groundtruth_data)
-        logging.info("Groundtruth data loaded")
+        logger.info("Groundtruth data loaded")
 
     def set_agent(self, agent_class: Type):
         """
@@ -90,7 +95,7 @@ class Simulator:
         if not issubclass(agent_class, (SimulationAgent, RecommendationAgent)):
             raise ValueError("Agent class must inherit from SimulationAgent or RecommendationAgent.")
         self.agent_class = agent_class
-        logging.info("Agent class set")
+        logger.info("Agent class set")
     def set_llm(self, llm: LLMBase):
         """
         Set the LLM to be used for the simulation.
@@ -98,20 +103,23 @@ class Simulator:
             llm: A class inheriting from the abstract LLM class.
         """
         self.llm = llm
-        logging.info("LLM set")
-    def run_simulation(self) -> List[Any]:
+        logger.info("LLM set")
+    def run_simulation(self, number_of_tasks: int = None) -> List[Any]:
         """
         Run the simulation.
         Creates agents, invokes their forward methods, and collects outputs.
         Returns:
             List of outputs from agents for each scenario.
         """
-        logging.info("Running simulation")
+        logger.info("Running simulation")
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
+        task_to_run = self.tasks[:number_of_tasks] if number_of_tasks is not None else self.tasks
         self.simulation_outputs = []
-        for task in self.tasks:
+        logger.info(f"Total tasks: {len(task_to_run)}")
+        index = 0
+        for task in task_to_run:
             # Initialize the agent
             agent = self.agent_class(llm=self.llm)
             agent.set_interaction_tool(self.interaction_tool)
@@ -121,7 +129,7 @@ class Simulator:
             
             # Invoke the forward method and collect output
             try:
-                output = agent.forward()
+                output = agent.workflow()
                 result = {
                     "task": task.to_dict(),
                     "output": output
@@ -133,7 +141,9 @@ class Simulator:
                     "error": "Forward method not implemented by participant."
                 }
                 self.simulation_outputs.append(result)
-        logging.info("Simulation finished")
+            logger.info(f"Simulation finished for task {index}")
+            index += 1
+        logger.info("Simulation finished")
         return self.simulation_outputs
 
     def evaluate(self) -> Dict[str, Any]:
@@ -142,7 +152,7 @@ class Simulator:
         Returns:
             Dictionary containing evaluation metrics
         """
-        logging.info("Evaluating simulation results")
+        logger.info("Evaluating simulation results")
         if not self.simulation_outputs:
             raise RuntimeError("No simulation outputs to evaluate. Run simulation first.")
         
@@ -151,7 +161,7 @@ class Simulator:
         gt_count = len(self.groundtruth_data)
         
         if sim_count != gt_count:
-            logging.warning(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
+            logger.warning(f"Warning: Number of simulation outputs ({sim_count}) does not match ground truth data ({gt_count})")
             # 使用较小的数量
             eval_count = min(sim_count, gt_count)
             groundtruth_data = self.groundtruth_data[:eval_count]
@@ -175,7 +185,7 @@ class Simulator:
         }
         
         self.evaluation_results.append(evaluation_results)
-        logging.info("Evaluation finished")
+        logger.info("Evaluation finished")
         return evaluation_results
 
     def _evaluate_recommendation(self, ground_truth_data: List[Dict]) -> Dict[str, Any]:
@@ -206,41 +216,14 @@ class Simulator:
         """
         Evaluate simulation results
         """
-        all_metrics = []
-        for sim_output, gt_data in zip(self.simulation_outputs, ground_truth_data):
-            if 'error' in sim_output:
-                continue
-            
-            # 准备评估数据：从ground truth中提取所需字段
-            gt_info = {
-                'stars': gt_data['stars'],
-                'useful': gt_data['useful'],
-                'funny': gt_data['funny'],
-                'cool': gt_data['cool'],
-                'review': gt_data['review']
-            }
-            
-            simulated_data = sim_output['output']
-            metrics = self.simulation_evaluator.calculate_metrics(
-                simulated_data=simulated_data,
-                real_data=gt_info
-            )
-            all_metrics.append(metrics)
-        
-        # 计算平均指标
-        avg_metrics = {
-            'star_rmse': np.mean([m.star_rmse for m in all_metrics]),
-            'sentiment_rmse': np.mean([m.sentiment_rmse for m in all_metrics]),
-            'useful_rmse': np.mean([m.useful_rmse for m in all_metrics]),
-            'cool_rmse': np.mean([m.cool_rmse for m in all_metrics]),
-            'funny_rmse': np.mean([m.funny_rmse for m in all_metrics]),
-            'overall_rmse': np.mean([m.overall_rmse for m in all_metrics])
-        }
-
+        simulated_data = [output['output'] for output in self.simulation_outputs]
+        metrics = self.simulation_evaluator.calculate_metrics(
+            simulated_data=simulated_data,
+            real_data=ground_truth_data
+        )
         return {
             'type': 'simulation',
-            'metrics': avg_metrics,
-            'detailed_metrics': [m.__dict__ for m in all_metrics],
+            'metrics': metrics.__dict__,
         }
 
     def get_evaluation_history(self) -> List[Dict[str, Any]]:

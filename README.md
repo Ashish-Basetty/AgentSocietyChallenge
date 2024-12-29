@@ -79,18 +79,15 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
 
 ---
 
-### 2. Download the Dataset
+### 2. Data Preparation
 
-#### Option One: Process the Raw Yelp Dataset
-1. Download the raw Yelp dataset from the [Yelp Dataset Challenge page](https://www.yelp.com/dataset).
+1. Download the raw dataset from the Yelp[1], Amazon[2] or Goodreads[3].
 2. Run the `data_process.py` script to process the dataset:
    ```bash
    python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
    ```
-
-#### Option Two: Use a Preprocessed Dataset
-1. Download the preprocessed dataset from [TBD]().
-2. Unzip the dataset into your working directory.
+- Check out the [Data Preparation Guide](./tutorials/data_preparation.md) for more information.
+- **NOTICE: You Need at least 16GB RAM to process the dataset.**
 
 ---
 
@@ -100,11 +97,9 @@ Ensure the dataset is organized in a directory structure similar to this:
 
 ```
 <your_dataset_directory>/
-├── business.json
+├── item.json
 ├── review.json
 ├── user.json
-├── tip.json
-└── checkin.json
 ```
 
 You can name the dataset directory whatever you prefer (e.g., `dataset/`).
@@ -119,12 +114,23 @@ Create a custom agent by extending either `SimulationAgent` or `RecommendationAg
 from yelpsimulator.agents.simulation_agent import SimulationAgent
 
 class MySimulationAgent(SimulationAgent):
-    def forward(self):
+    def workflow(self):
+        # The simulator will automatically set the task for your agent. You can access the task by `self.task` to get task information.
+        print(self.task)
+
+        # You can also use the `interaction_tool` to get data from the dataset.
+        # For example, you can get the user information by `interaction_tool.get_user(user_id="example_user_id")`.
+        # You can also get the item information by `interaction_tool.get_item(item_id="example_item_id")`.
+        # You can also get the reviews by `interaction_tool.get_reviews(review_id="example_review_id")`.
+        user_info = interaction_tool.get_user(user_id="example_user_id")
+
         # Implement your logic here
-        star = 4.0
-        review_text = "Great experience!"
-        behavior_metrics = (10, 2, 1)
-        return star, review_text, behavior_metrics
+        
+        # Finally, you need to return the result in the format of `stars` and `review`.
+        # For recommendation track, you need to return a candidate list of items, in which the first item is the most recommended item.
+        stars = 4.0
+        review = "Great experience!"
+        return stars, review
 ```
 
 - Check out the [Tutorial](./tutorials/agent_development.md) for Agent Development.
@@ -149,18 +155,33 @@ simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtrut
 # Set your custom agent
 simulator.set_agent(MySimulationAgent)
 
+# Set LLM client
+simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
+
 # Run evaluation
 agent_outputs = simulator.run_simulation()
 
 # Evaluate the agent
 evaluation_results = simulator.evaluate()
 ```
+- If you want to use your own LLMClient, you can easily implement it by inheriting the `LLMBase` class. Refer to the [Tutorial](./tutorials/agent_development.md) for more information.
+
+---
+
+### 6. Submit your agent in Codabench
+- [The link to the Codabench Platform](https://www.codabench.org/competitions/4574/)
+  - You need a codabench account to submit your agent.
+  - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
+- **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
+- Example submissions:
+  - For Track 1: [submission_1]()
+  - For Track 2: [submission_2]()
 
 ---
 
 ## Introduction to the `InteractionTool`
 
-The `InteractionTool` is the core utility for interacting with the raw dataset. It provides an interface for querying user, business, review, tip, and check-in data within the context of a task.
+The `InteractionTool` is the core utility for interacting with the dataset. It provides an interface for querying user, item, and review data.
 
 ### Functions
 
@@ -170,31 +191,28 @@ The `InteractionTool` is the core utility for interacting with the raw dataset. 
   user_info = interaction_tool.get_user(user_id="example_user_id")
   ```
 
-- **Get Business Information**:
-  Retrieve business data by business ID or current scenario context.
+- **Get Item Information**:
+  Retrieve item data by item ID or current scenario context.
   ```python
-  business_info = interaction_tool.get_business(business_id="example_business_id")
+  item_info = interaction_tool.get_item(item_id="example_item_id")
   ```
 
 - **Get Reviews**:
-  Fetch reviews related to a specific business or user, filtered by time.
+  Fetch reviews related to a specific item or user, filtered by time.
   ```python
-  reviews = interaction_tool.get_reviews(business_id="example_business_id")
+  reviews = interaction_tool.get_reviews(review_id="example_review_id")  # Fetch a specific review
+  reviews = interaction_tool.get_reviews(item_id="example_item_id")  # Fetch all reviews for a specific item
+  reviews = interaction_tool.get_reviews(user_id="example_user_id")  # Fetch all reviews for a specific user
   ```
-
-- **Get Tips**:
-  Fetch tips related to a specific business or user, filtered by time.
-  ```python
-  tips = interaction_tool.get_tips(business_id="example_business_id")
-  ```
-
-- **Get Check-ins**:
-  Fetch check-in data related to a specific business, filtered by time.
-  ```python
-  checkins = interaction_tool.get_checkins(business_id="example_business_id")
-  ```
-
 
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## References
+
+[1] Yelp Dataset: https://www.yelp.com/dataset
+
+[2] Amazon Dataset: https://amazon-reviews-2023.github.io/
+
+[3] Goodreads Dataset: https://sites.google.com/eng.ucsd.edu/ucsdbookgraph/home

@@ -9,10 +9,10 @@ from .tooluse_pool import tooluse_pool
 class ToolUseBase():
     def __init__(self, llm):
         """
-        初始化工具使用基类
+        Initialize the tool use base class
         
         Args:
-            llm: LLM 实例,用于生成工具使用指令
+            llm: LLM instance used to generate tool use instructions
         """
         self.llm = llm
     

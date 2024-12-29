@@ -1,22 +1,22 @@
 import os
 import re
-from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain.docstore.document import Document
 import shutil
+import uuid
 
 class MemoryBase:
     def __init__(self, memory_type: str, llm) -> None:
         """
-        初始化记忆基类
+        Initialize the memory base class
         
         Args:
-            memory_type: 记忆类型
-            llm: LLM 实例,用于生成记忆相关的文本
+            memory_type: Type of memory
+            llm: LLM instance used to generate memory-related text
         """
         self.llm = llm
-        self.embedding = OpenAIEmbeddings()
-        db_path = os.path.join('./db', memory_type)
+        self.embedding = self.llm.get_embedding_model()
+        db_path = os.path.join('./db', memory_type, f'{str(uuid.uuid4())}')
         if os.path.exists(db_path):
             shutil.rmtree(db_path)
         self.scenario_memory = Chroma(
@@ -25,24 +25,24 @@ class MemoryBase:
         )
 
     def __call__(self, current_situation: str = ''):
-        if 'success.' in current_situation:
-            self.addMemory(current_situation.replace('success.', ''))
+        if 'review:' in current_situation:
+            self.addMemory(current_situation.replace('review:', ''))
         else:
             return self.retriveMemory(current_situation)
 
-    def retriveMemory(self, query_scenario):
+    def retriveMemory(self, query_scenario: str):
         raise NotImplementedError("This method should be implemented by subclasses.")
 
-    def addMemory(self, current_situation):
+    def addMemory(self, current_situation: str):
         raise NotImplementedError("This method should be implemented by subclasses.")
 
 class MemoryDILU(MemoryBase):
     def __init__(self, llm):
         super().__init__(memory_type='dilu', llm=llm)
 
-    def retriveMemory(self, query_scenario):
+    def retriveMemory(self, query_scenario: str):
         # Extract task name from query scenario
-        task_name = re.findall(r'Your task is to:\s*(.*?)\s*>', query_scenario)[2]        
+        task_name = query_scenario
         
         # Return empty string if memory is empty
         if self.scenario_memory._collection.count() == 0:
@@ -60,9 +60,9 @@ class MemoryDILU(MemoryBase):
         # Join trajectories with newlines and return
         return '\n'.join(task_trajectories)
 
-    def addMemory(self, current_situation):
+    def addMemory(self, current_situation: str):
         # Extract task description
-        task_name = re.search(r'Your task is to:\s*(.*?)\s*>', current_situation).group(1)
+        task_name = current_situation
         
         # Create document with metadata
         memory_doc = Document(
@@ -80,9 +80,9 @@ class MemoryGenerative(MemoryBase):
     def __init__(self, llm):
         super().__init__(memory_type='generative', llm=llm)
 
-    def retriveMemory(self, query_scenario):
+    def retriveMemory(self, query_scenario: str):
         # Extract task name from query
-        task_name = re.findall(r'Your task is to:\s*(.*?)\s*>', query_scenario)[2]
+        task_name = query_scenario
         
         # Return empty if no memories exist
         if self.scenario_memory._collection.count() == 0:
@@ -118,9 +118,9 @@ Score: '''
         max_score_idx = importance_scores.index(max(importance_scores))
         return similarity_results[max_score_idx][0].metadata['task_trajectory']
     
-    def addMemory(self, current_situation):
+    def addMemory(self, current_situation: str):
         # Extract task description
-        task_name = re.search(r'Your task is to:\s*(.*?)\s*>', current_situation).group(1)
+        task_name = current_situation
         
         # Create document with metadata
         memory_doc = Document(
@@ -138,9 +138,9 @@ class MemoryTP(MemoryBase):
     def __init__(self, llm):
         super().__init__(memory_type='tp', llm=llm)
 
-    def retriveMemory(self, query_scenario):
+    def retriveMemory(self, query_scenario: str):
         # Extract task name from scenario
-        task_name = re.findall(r'Your task is to:\s*(.*?)\s*>', query_scenario)[2]
+        task_name = query_scenario
         
         # Return empty if no memories exist
         if self.scenario_memory._collection.count() == 0:
@@ -166,9 +166,9 @@ Plan:
             
         return 'Plan from successful attempt in similar task:\n' + '\n'.join(experience_plans)
 
-    def addMemory(self, current_situation):
+    def addMemory(self, current_situation: str):
         # Extract task name
-        task_name = re.search(r'Your task is to:\s*(.*?)\s*>', current_situation).group(1)
+        task_name = current_situation
         
         # Create document with metadata
         memory_doc = Document(
@@ -186,9 +186,9 @@ class MemoryVoyager(MemoryBase):
     def __init__(self, llm):
         super().__init__(memory_type='voyager', llm=llm)
 
-    def retriveMemory(self, query_scenario):
+    def retriveMemory(self, query_scenario: str):
         # Extract task name from query
-        task_name = re.findall(r'Your task is to:\s*(.*?)\s*>', query_scenario)[2]
+        task_name = query_scenario
         
         # Return empty if no memories exist
         if self.scenario_memory._collection.count() == 0:
@@ -203,7 +203,7 @@ class MemoryVoyager(MemoryBase):
                              
         return '\n'.join(memory_trajectories)
 
-    def addMemory(self, current_situation):
+    def addMemory(self, current_situation: str):
         # Prompt template for summarizing trajectory
         voyager_prompt = '''You are a helpful assistant that writes a description of the task resolution trajectory.
 

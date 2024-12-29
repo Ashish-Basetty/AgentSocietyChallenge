@@ -19,21 +19,15 @@ class SimulationAgent(Agent):
             raise ValueError("The task cannot be None.")
         self.task = task.to_dict()
 
-    def forward(self) -> Dict[str, Any]:
+    def workflow(self) -> Dict[str, Any]:
         """
         Abstract forward method for SimulationAgent.
         Participants must override this method to provide:
             - stars (float): Simulated rating
             - review (str): Simulated review text
-            - useful (int): Simulated useful count
-            - cool (int): Simulated cool count
-            - funny (int): Simulated funny count
         """
         result = {
             'stars': 0,
             'review': '',
-            'useful': 0,
-            'funny': 0,
-            'cool': 0
         }
         return result
