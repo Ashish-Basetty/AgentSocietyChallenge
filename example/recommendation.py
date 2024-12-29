@@ -29,9 +29,10 @@ class CustomRecommendationAgent(RecommendationAgent):
 
 
 if __name__ == "__main__":
+    task_set = "amazon" # "goodreads" or "yelp"
     # Set the data
     simulator = Simulator(data_dir="your data dir", device="auto")
-    simulator.set_task_and_groundtruth(task_dir="./track2/tasks", groundtruth_dir="./track2/groundtruth")
+    simulator.set_task_and_groundtruth(task_dir=f"./track2/{task_set}/tasks", groundtruth_dir=f"./track2/{task_set}/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(CustomRecommendationAgent)
@@ -42,7 +43,7 @@ if __name__ == "__main__":
 
     # Evaluate the agent
     evaluation_results = simulator.evaluate()       
-    with open('./evaluation_results_track2.json', 'w') as f:
+    with open(f'./evaluation_results_track2_{task_set}.json', 'w') as f:
         json.dump(evaluation_results, f, indent=4)
 
     # 获取评估历史
