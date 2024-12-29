@@ -59,10 +59,9 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
     poetry install  && \
     poetry shell
     ```
-  - Option 2: Install dependencies using pip:
+  - Option 2: Install dependencies using pip(COMING SOON):
     ```bash
-    pip install -r requirements.txt && \
-    pip install .
+    pip install websocietysimulator
     ```
   - Option 3: Install dependencies using conda:
     ```bash
