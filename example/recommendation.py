@@ -3,7 +3,7 @@ from websocietysimulator import Simulator
 from websocietysimulator.agent.recommendation_agent import RecommendationAgent
 from typing import List, Dict, Any
 
-from websocietysimulator.llm import DeepseekLLM
+from websocietysimulator.llm import InfinigenceLLM
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -14,7 +14,7 @@ class CustomRecommendationAgent(RecommendationAgent):
     Example of a custom RecommendationAgent for the Recommendation Track.
     """
 
-    def forward(self) -> List[Dict[str, Any]]:
+    def workflow(self) -> List[Dict[str, Any]]:
         """
         Generate recommendations by sorting candidate POIs based on their ratings.
         Returns:
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Set the agent and LLM
     simulator.set_agent(CustomRecommendationAgent)
-    simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
+    simulator.set_llm(InfinigenceLLM(api_key="Your API Key"))
 
     # Run the simulation
     outputs = simulator.run_simulation()

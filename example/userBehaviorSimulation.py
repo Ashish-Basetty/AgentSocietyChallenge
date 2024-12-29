@@ -1,10 +1,10 @@
 from websocietysimulator import Simulator
 from websocietysimulator.agent import SimulationAgent
 import json 
-from websocietysimulator.llm import LLMBase, DeepseekLLM
+from websocietysimulator.llm import LLMBase, InfinigenceLLM
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
-
+from websocietysimulator.agent.modules.memory_modules import MemoryDILU
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -63,8 +63,9 @@ class MySimulationAgent(SimulationAgent):
         super().__init__(llm=llm)
         self.planning = PlanningBaseline(llm=self.llm)
         self.reasoning = ReasoningBaseline(profile_type_prompt='', llm=self.llm)
-
-    def forward(self):
+        self.memory = MemoryDILU(llm=self.llm)
+        
+    def workflow(self):
         """
         Simulate user behavior
         Returns:
@@ -76,12 +77,19 @@ class MySimulationAgent(SimulationAgent):
             if 'user' in sub_task['description']:
                 user = str(self.interaction_tool.get_user(user_id=self.task['user_id']))
             elif 'business' in sub_task['description']:
-                business = str(self.interaction_tool.get_business(business_id=self.task['business_id']))
-
+                business = str(self.interaction_tool.get_item(item_id=self.task['item_id']))
+        reviews_item = self.interaction_tool.get_reviews(item_id=self.task['item_id'])
+        for review in reviews_item:
+            review_text = review['text']
+            self.memory(f'review: {review_text}')
+        reviews_user = self.interaction_tool.get_reviews(user_id=self.task['user_id'])
+        review_similar = self.memory(f'{reviews_user[0]["text"]}')
         task_description = f'''
         You are a real human user on Yelp, a platform for crowd-sourced business reviews. Here is your Yelp profile and review history: {user}
 
         You need to write a review for this business: {business}
+
+        Others have reviewed this business before: {review_similar}
 
         Please analyze the following aspects carefully:
         1. Based on your user profile and review style, what rating would you give this business? Remember that many users give 5-star ratings for excellent experiences that exceed expectations, and 1-star ratings for very poor experiences that fail to meet basic standards.
@@ -140,12 +148,12 @@ class MySimulationAgent(SimulationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="your data dir", device="gpu")
+    simulator = Simulator(data_dir="/data2/liyu/yelpsimulator1/dataset", device="gpu")
     simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(DeepseekLLM(api_key="your api key"))
+    simulator.set_llm(InfinigenceLLM(api_key="sk-dakqyjy2pusruxx7"))
 
     # Run the simulation
     outputs = simulator.run_simulation()
@@ -155,5 +163,5 @@ if __name__ == "__main__":
     with open('./evaluation_results_track1.json', 'w') as f:
         json.dump(evaluation_results, f, indent=4)
 
-    # 获取评估历史
+    # Get evaluation history
     evaluation_history = simulator.get_evaluation_history()
