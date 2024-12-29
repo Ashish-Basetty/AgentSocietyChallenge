@@ -43,13 +43,6 @@ def load_data(file_path):
             data.append(json.loads(line))
     return pd.DataFrame(data)
 
-def get_top_cities_by_reviews(business_df):
-    """Find the top three cities with the most total review counts."""
-    logging.info("Calculating top cities...")
-    city_review_counts = business_df.groupby('city')['review_count'].sum().sort_values(ascending=False)
-    top_cities = city_review_counts.head(3).index.tolist()
-    return top_cities
-
 def save_json(dataframe, output_file):
     """Save a Pandas DataFrame to a JSON file."""
     logging.info(f"Saving {output_file}...")
@@ -97,7 +90,7 @@ def load_and_process_yelp_data(input_dir):
 
     # Find top cities and related data
     logging.info("Finding top cities by reviews for Yelp...")
-    top_cities = get_top_cities_by_reviews(business_df)
+    top_cities = ['Philadelphia', 'Tampa', 'Tucson']
 
     logging.info("Filtering data for top cities for Yelp...")
     filtered_businesses, filtered_reviews, filtered_users = filter_data(top_cities, business_df, user_df, review_df)
@@ -195,8 +188,8 @@ def merge_review_data(yelp_reviews, amazon_reviews, goodreads_reviews, output_fi
     
     # 将Amazon评论转换为json格式
     amazon_reviews = amazon_reviews.rename(columns={
-        'asin': 'item_id',
-        'parent_asin': 'parent_item_id',
+        'asin': 'sub_item_id',
+        'parent_asin': 'item_id',
         'rating': 'stars',
     })
     amazon_reviews['review_id'] = [str(uuid.uuid4()) for _ in range(len(amazon_reviews))]

@@ -208,40 +208,14 @@ class Simulator:
         Evaluate simulation results
         """
         all_metrics = []
-        for sim_output, gt_data in zip(self.simulation_outputs, ground_truth_data):
-            if 'error' in sim_output:
-                continue
-            
-            # 准备评估数据：从ground truth中提取所需字段
-            gt_info = {
-                'stars': gt_data['stars'],
-                'useful': gt_data['useful'],
-                'funny': gt_data['funny'],
-                'cool': gt_data['cool'],
-                'review': gt_data['review']
-            }
-            
-            simulated_data = sim_output['output']
-            metrics = self.simulation_evaluator.calculate_metrics(
-                simulated_data=simulated_data,
-                real_data=gt_info
-            )
-            all_metrics.append(metrics)
-        
-        # 计算平均指标
-        avg_metrics = {
-            'star_rmse': np.mean([m.star_rmse for m in all_metrics]),
-            'sentiment_rmse': np.mean([m.sentiment_rmse for m in all_metrics]),
-            'useful_rmse': np.mean([m.useful_rmse for m in all_metrics]),
-            'cool_rmse': np.mean([m.cool_rmse for m in all_metrics]),
-            'funny_rmse': np.mean([m.funny_rmse for m in all_metrics]),
-            'overall_rmse': np.mean([m.overall_rmse for m in all_metrics])
-        }
-
+        simulated_data = [output['output'] for output in self.simulation_outputs]
+        metrics = self.simulation_evaluator.calculate_metrics(
+            simulated_data=simulated_data,
+            real_data=ground_truth_data
+        )
         return {
             'type': 'simulation',
-            'metrics': avg_metrics,
-            'detailed_metrics': [m.__dict__ for m in all_metrics],
+            'metrics': metrics.__dict__,
         }
 
     def get_evaluation_history(self) -> List[Dict[str, Any]]:
