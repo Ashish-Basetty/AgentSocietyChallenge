@@ -4,7 +4,7 @@ from langchain_openai import OpenAIEmbeddings
 from .infinigence_embeddings import InfinigenceEmbeddings
 
 class LLMBase:
-    def __init__(self, model: str = "deepseek-chat"):
+    def __init__(self, model: str = "qwen2.5-72b-instruct"):
         """
         Initialize LLM base class
         

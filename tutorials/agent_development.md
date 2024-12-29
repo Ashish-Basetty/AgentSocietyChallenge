@@ -44,23 +44,27 @@ Example implementations for both tracks can be found in the `example` folder:
 - Recommendation Track: `example/recommendationAgent.py`
 
 
-## 2. LLM Client Integration
+## 2. LLM Client and Embedding Model Integration
 
-### 2.1 Available LLM Clients
+### 2.1 Available LLM Client and Embedding Model
 
-The framework provides a base LLM class and two implementations:
+The framework provides a base class and two implementations:
 
 ```python
 # Base LLM class
 class LLMBase:
-    def __call__(self, messages: List[Dict[str, str]], 
-                 temperature: float = 0.0,
-                 max_tokens: int = 500) -> str:
+    def __init__(self, model: str = "qwen2.5-72b-instruct"):
+        pass
+
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> str:
+        pass
+
+    def get_embedding_model(self):
         pass
 
 # Available implementations
-class DeepseekLLM(LLMBase):
-    # Deepseek API implementation
+class InfinigenceLLM(LLMBase):
+    # Infinigence AI API implementation
     pass
 
 class OpenAILLM(LLMBase):
@@ -68,9 +72,9 @@ class OpenAILLM(LLMBase):
     pass
 ```
 
-### 2.2 Custom LLM Implementation
+### 2.2 Custom LLM Client and Embedding Model Implementation
 
-You can implement your own LLM client by inheriting from `LLMBase`. Note that during evaluation, we will use a standardized LLM client to ensure fair comparison.
+You can implement your own LLM client and embedding model by inheriting from `LLMBase`. Note that during evaluation, we will use a standardized LLM client and embedding model to ensure fair comparison.
 
 Example:
 ```python
@@ -78,10 +82,15 @@ class CustomLLM(LLMBase):
     def __init__(self, api_key: str, model: str = "custom-model"):
         super().__init__(model)
         self.client = CustomAPIClient(api_key)
+        self.embedding_model = CustomEmbeddings(api_key=api_key)
         
     def __call__(self, messages, temperature=0.0, max_tokens=500):
         # Implement your LLM call logic here
         return response_text
+    
+    def get_embedding_model(self):
+        # Implement your embedding model logic here
+        return self.embedding_model
 ```
 
 ## 3. Agent Modules Documentation
