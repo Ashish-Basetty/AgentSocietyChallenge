@@ -18,7 +18,7 @@ class InteractionTool:
     def _load_data(self, filename: str) -> pd.DataFrame:
         """Load a dataset as a Pandas DataFrame."""
         file_path = os.path.join(self.data_dir, filename)
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             data = [json.loads(line) for line in file]
         return pd.DataFrame(data)
 
