@@ -1,8 +1,8 @@
 import logging
 import os
 import json
-from typing import List, Type, Dict, Any, Optional
-from .tools.interaction_tool import InteractionTool
+from typing import List, Type, Dict, Any, Union
+from .tools import InteractionTool, CacheInteractionTool
 from .tools.evaluation_tool import RecommendationEvaluator, SimulationEvaluator
 from .agent.simulation_agent import SimulationAgent
 from .llm import LLMBase
@@ -14,19 +14,25 @@ import numpy as np
 logger = logging.getLogger("websocietysimulator")
 
 class Simulator:
-    def __init__(self, data_dir: str = None, device: str = "auto"):
+    def __init__(self, data_dir: str = None, device: str = "auto", cache: bool = False):
         """
         Initialize the Simulator.
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
             device: Device to use for evaluation. "auto" (default) will use GPU if available, otherwise CPU. Available options: "gpu", "cpu", "auto".
+            cache: Whether to use cache for interaction tool.
         """
         logger.info("Start initializing Simulator")
         self.data_dir = data_dir
         if data_dir is None:
             self.interaction_tool = None
         else:
-            self.interaction_tool = InteractionTool(data_dir)
+            if cache:
+                logger.info("Using CacheInteractionTool")
+                self.interaction_tool = CacheInteractionTool(data_dir)
+            else:
+                logger.info("Using Normal InteractionTool")
+                self.interaction_tool = InteractionTool(data_dir)
         
         self.tasks = []  # List to store tasks
         self.groundtruth_data = []  # List to store groundtruth data
@@ -38,10 +44,7 @@ class Simulator:
         self.evaluation_results = []
         logger.info("Simulator initialized")
 
-    def set_interaction_tool(self, interaction_tool: InteractionTool):
-        self.interaction_tool = interaction_tool
-
-    def set_interaction_tool(self, interaction_tool: InteractionTool):
+    def set_interaction_tool(self, interaction_tool: Union[InteractionTool, CacheInteractionTool]):
         self.interaction_tool = interaction_tool
 
     def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
@@ -96,6 +99,7 @@ class Simulator:
             raise ValueError("Agent class must inherit from SimulationAgent or RecommendationAgent.")
         self.agent_class = agent_class
         logger.info("Agent class set")
+
     def set_llm(self, llm: LLMBase):
         """
         Set the LLM to be used for the simulation.
@@ -104,6 +108,7 @@ class Simulator:
         """
         self.llm = llm
         logger.info("LLM set")
+
     def run_simulation(self, number_of_tasks: int = None) -> List[Any]:
         """
         Run the simulation.
@@ -122,6 +127,8 @@ class Simulator:
         for task in task_to_run:
             # Initialize the agent
             agent = self.agent_class(llm=self.llm)
+            if not self.interaction_tool:
+                raise RuntimeError("Interaction tool is not set. Use set_interaction_tool() to set it.")
             agent.set_interaction_tool(self.interaction_tool)
             
             # Set the scenario in the agent

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any
-from ..tools.interaction_tool import InteractionTool
+from typing import Any, Union
+from ..tools import InteractionTool, CacheInteractionTool
 from ..llm import LLMBase
 
 class Agent(ABC):
@@ -11,7 +11,7 @@ class Agent(ABC):
         self.interaction_tool = None
         self.llm = llm
 
-    def set_interaction_tool(self, interaction_tool: InteractionTool):
+    def set_interaction_tool(self, interaction_tool: Union[InteractionTool, CacheInteractionTool]):
         """
         Set the interaction tool for the agent.
         Args:

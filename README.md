@@ -146,7 +146,10 @@ from websocietysimulator import Simulator
 from my_agent import MySimulationAgent
 
 # Initialize Simulator
-simulator = Simulator(data_dir="path/to/your/dataset", device="auto")
+simulator = Simulator(data_dir="path/to/your/dataset", device="auto", cache=False)
+# The cache parameter controls whether to use cache for interaction tool.
+# If you want to use cache, you can set cache=True. When using cache, the simulator will only load data into memory when it is needed, which saves a lot of memory.
+# If you want to use normal interaction tool, you can set cache=False. Notice that, normal interaction tool will load all data into memory at the beginning, which needs a lot of memory (20GB+).
 
 # Load scenarios
 simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtruth_dir="path/to/groundtruth_directory")
