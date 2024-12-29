@@ -22,19 +22,16 @@ Different tracks require different return values from the `workflow()` method:
 def workflow(self) -> Dict[str, Any]:
     # Must return a dictionary with:
     return {
-        'star': float,  # Rating (1.0-5.0)
+        'stars': float,  # Rating (1.0-5.0)
         'review': str,  # Review text
-        'useful': int,  # Useful votes
-        'cool': int,    # Cool votes
-        'funny': int    # Funny votes
     }
 ```
 
 **Recommendation Track**
 ```python
 def workflow(self) -> List[Dict[str, Any]]:
-    # Must return a sorted list of POI dictionaries
-    return sorted_poi_list
+    # Must return a sorted list of candidate
+    return sorted_candidate_list
 ```
 
 ### 1.4 Example Implementations

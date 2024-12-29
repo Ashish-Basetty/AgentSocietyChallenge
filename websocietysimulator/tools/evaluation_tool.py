@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from nltk.sentiment import SentimentIntensityAnalyzer
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
+from scipy.spatial import distance
 import torch
 import nltk
 nltk.download('vader_lexicon')
@@ -15,7 +16,7 @@ class RecommendationMetrics:
     hr_at_1: float
     hr_at_3: float
     hr_at_5: float
-    average_hr: float
+    final_hr: float
     total_scenarios: int
     hits_at_1: int
     hits_at_3: int
@@ -23,10 +24,11 @@ class RecommendationMetrics:
 
 @dataclass
 class SimulationMetrics:
-    star_mape: float
-    polarity_mape: float
-    emotion_similarity_avg: float
-    topic_similarity_avg: float
+    star_error: float
+    sentiment_error: float
+    emotion_error: float
+    topic_error: float
+    overall_error: float
 
 class BaseEvaluator:
     """Base class for evaluation tools"""
@@ -65,12 +67,12 @@ class RecommendationEvaluator(BaseEvaluator):
         hr_at_1 = hits[1] / total if total > 0 else 0
         hr_at_3 = hits[3] / total if total > 0 else 0
         hr_at_5 = hits[5] / total if total > 0 else 0
-        average_hr = (hr_at_1 + hr_at_3 + hr_at_5) / 3
+        final_hr = (hr_at_1 + hr_at_3 + hr_at_5) / 3
         metrics = RecommendationMetrics(
             hr_at_1=hr_at_1,
             hr_at_3=hr_at_3,
             hr_at_5=hr_at_5,
-            average_hr=average_hr,
+            final_hr=final_hr,
             total_scenarios=total,
             hits_at_1=hits[1],
             hits_at_3=hits[3],
@@ -123,13 +125,17 @@ class SimulationEvaluator(BaseEvaluator):
         real_data: List[Dict]
     ) -> SimulationMetrics:
         """Calculate all simulation metrics"""
-        # Calculate stars metrics
+        # Calculate star error
         simulated_stars = [item['stars'] for item in simulated_data]
         real_stars = [item['stars'] for item in real_data]
-        star_mape = 0
+        star_error = 0
         for sim_star, real_star in zip(simulated_stars, real_stars):
-            star_mape += np.abs(sim_star - real_star) / real_star
-        star_mape = star_mape / len(real_stars)
+            if sim_star > 5:
+                sim_star = 5
+            elif sim_star < 0:
+                sim_star = 0
+            star_error += abs(sim_star - real_star) / 5
+        star_error = star_error / len(real_stars)
 
         # Calculate review metrics
         simulated_reviews = [item['review'] for item in simulated_data]
@@ -139,15 +145,18 @@ class SimulationEvaluator(BaseEvaluator):
             real_reviews
         )
 
-        polarity_mape = review_details['polarity_mape']
-        emotion_similarity_avg = review_details['emotion_similarity_avg']
-        topic_similarity_avg = review_details['topic_similarity_avg']
+        sentiment_error = review_details['sentiment_error']
+        emotion_error = review_details['emotion_error']
+        topic_error = review_details['topic_error']
+
+        overall_error = (star_error + (sentiment_error + emotion_error + topic_error) / 3) / 2
 
         metrics = SimulationMetrics(
-            star_mape=star_mape,
-            polarity_mape=polarity_mape,
-            emotion_similarity_avg=emotion_similarity_avg,
-            topic_similarity_avg=topic_similarity_avg,
+            star_error=star_error,
+            sentiment_error=sentiment_error,
+            emotion_error=emotion_error,
+            topic_error=topic_error,
+            overall_error=overall_error
         )
 
         self.save_metrics(metrics)
@@ -159,16 +168,16 @@ class SimulationEvaluator(BaseEvaluator):
         real_reviews: List[str]
     ) -> Dict[str, float]:
         """Calculate detailed review metrics between two texts"""
-        # Polarity analysis
-        polarity_mape = 0
-        emotion_similarity_avg = []
-        topic_similaritys = []
+        # sentiment analysis
+        sentiment_error = []
+        emotion_error = []
+        topic_error = []
         for simulated_review, real_review in zip(simulated_reviews, real_reviews):
-            # Polarity analysis
-            polarity1 = self.sia.polarity_scores(simulated_review)['compound']
-            polarity2 = self.sia.polarity_scores(real_review)['compound']
-            polarity_error = abs(polarity1 - polarity2) / (polarity2 + 1e-10)
-            polarity_mape += polarity_error
+            # sentiment analysis
+            sentiment1 = self.sia.polarity_scores(simulated_review)['compound']
+            sentiment2 = self.sia.polarity_scores(real_review)['compound']
+            sentiment_error_single = abs(sentiment1 - sentiment2) / 2
+            sentiment_error.append(sentiment_error_single)
 
             # Emotion analysis
             try:
@@ -181,25 +190,24 @@ class SimulationEvaluator(BaseEvaluator):
             except Exception as e:
                 truncated_review = real_review.split(".")[0]
                 emotions2 = self.emotion_classifier(truncated_review)[0]
-            emotion_similarity = self._calculate_emotion_similarity(emotions1, emotions2)
-            emotion_similarity_avg.append(emotion_similarity)
+            emotion_error_single = self._calculate_emotion_error(emotions1, emotions2)
+            emotion_error.append(emotion_error_single)
 
             # Topic analysis
             embeddings = self.topic_model.encode([simulated_review, real_review])
-            topic_similarity = float(np.dot(embeddings[0], embeddings[1]) / 
-                               (np.linalg.norm(embeddings[0]) * np.linalg.norm(embeddings[1])))
-            topic_similaritys.append(topic_similarity)
+            topic_error_single = distance.cosine(embeddings[0], embeddings[1]) / 2
+            topic_error.append(topic_error_single)
 
-        polarity_mape = polarity_mape / len(real_reviews)
-        emotion_similarity_avg = np.mean(emotion_similarity_avg)
-        topic_similarity_avg = np.mean(topic_similaritys)
+        sentiment_error = np.mean(sentiment_error)
+        emotion_error = np.mean(emotion_error)
+        topic_error = np.mean(topic_error)
         return {
-            'polarity_mape': polarity_mape,
-            'emotion_similarity_avg': emotion_similarity_avg,
-            'topic_similarity_avg': topic_similarity_avg,
+            'sentiment_error': sentiment_error,
+            'emotion_error': emotion_error,
+            'topic_error': topic_error,
         }
 
-    def _calculate_emotion_similarity(
+    def _calculate_emotion_error(
         self,
         emotions1: List[Dict],
         emotions2: List[Dict]
@@ -216,5 +224,5 @@ class SimulationEvaluator(BaseEvaluator):
         vec1 = np.array([emotion_dict1.get(e, 0) for e in all_emotions])
         vec2 = np.array([emotion_dict2.get(e, 0) for e in all_emotions])
 
-        # Calculate cosine similarity
-        return float(np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        # Calculate emotion error
+        return float(np.mean(np.abs(vec1 - vec2)))
