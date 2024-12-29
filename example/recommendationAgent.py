@@ -158,7 +158,8 @@ if __name__ == "__main__":
     simulator.set_llm(InfinigenceLLM(api_key="your api_key"))
 
     # Run evaluation
-    agent_outputs = simulator.run_simulation()
+    # If you don't set the number of tasks, the simulator will run all tasks.
+    agent_outputs = simulator.run_simulation(number_of_tasks=None)
 
     # Evaluate the agent
     evaluation_results = simulator.evaluate()
