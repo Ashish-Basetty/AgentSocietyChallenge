@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "YkGL75EhX3fQZoo2Fj2TQw",
-    "candidate_category": "Food & Dining",
-    "candidate_id_list": [
-        "W-RVZSGas8B26O-kx5MD3A",
-        "0swbH3HFkIX9SvMkRwCMSA",
-        "ddmwkOVNategY1klPbAFsw",
-        "2PX8MOkN6cPG7-gte7IpIQ",
-        "Rt_uLkn_Ha0BiDoktBkYrg",
-        "ohWH383r60AREWh-aphpSw",
-        "FGUeyrd0lKyWn1Eb_3H7Pg",
-        "PvT44WlqJLkUrCITo6AjRA",
-        "pojLkG9I0ZJaNncNKqIEow",
-        "Ux1CCrhp7mqBJG5ZdmK0EA",
-        "fBOoOWHRWPXIrMvVVkZqMg",
-        "hnGqJ78Y4Ph9gyQmtqnhVg",
-        "UlSJow4H5WF-HHkBW9aXxg",
-        "OH7EpZrKPnZwZDNKQ5S8iA",
-        "kz8OeP88ZYjDBWb0LePJ3A",
-        "OKPUO8zvBBL-OA6-SfDx8Q",
-        "o6-sdAt6oTC3A52azk6FBQ",
-        "WnnfNMayJxtPBEHqR9EbrQ",
-        "86BkHfhvm7pVTMUSyJlttQ",
-        "OHplb2m_dKPXY46mS0CqJQ"
-    ],
-    "loc": [
-        4603718.100789303,
-        5698453.793581606
-    ]
+  "type": "recommendation",
+  "user_id": "HJbtO7q_RJDQBbUFCmpfUQ",
+  "candidate_category": "business - Beverages & Bars",
+  "candidate_list": [
+    "kC6C9mqUq_hMUYZZ-5kKWA",
+    "E_w9t1HQtcizm9didoC4yQ",
+    "hpFdLZ0KE0ICdMeG4hLjDg",
+    "hRlly5EvaG487NoZ55-qmw",
+    "799eRxVni0-aZ_W628moDQ",
+    "AVCsL26Asb5vsPnACWvkqg",
+    "jM-oH5U5zcnfpmcbsgMVHQ",
+    "pr4NB_zaJxaOAto7HYh6Ag",
+    "PxEiXqMAzzvp8GFlb5EoLg",
+    "3ccAyGhQyN7XOcMNWvytYw",
+    "OFzOce5dfz1BgayT33KtjA",
+    "Qq4bJfagVGJ3Z7BDbkiXuA",
+    "5qVt5XufPXTztxneUzUriw",
+    "XylObKandNdgPcvqdbA64w",
+    "NKYguP2dJdd6ng5UxxLVHg",
+    "Am5wWa0v13NZRsJ-g9f9cQ",
+    "QQGyPctWtd9WOZnMKUChUQ",
+    "vhE94NRER_4utAtbryLOiQ",
+    "5UN1B7XqZohGuULLNlWL1A",
+    "K_CS--rB2jpdZ_YmffEInQ"
+  ],
+  "loc": [
+    4606461.686627195,
+    5695844.407381005
+  ]
 }

@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "iQrUP5JkivaoT-_kTLiPcw",
-    "candidate_category": "Food & Dining",
-    "candidate_id_list": [
-        "Fe5Q2saATrFH4V-y6yhfAw",
-        "ex85GwzAdGm0cWiZ7toVGg",
-        "ZVu9TDpTvIgCN8x6IY-KmA",
-        "T8lxi3V2avTVXCanVkAFNg",
-        "toMVWIsPJmS7-LiLAf2AfA",
-        "4x_DhrjTcrpieMkbrrCU-g",
-        "2zSQu6_cLgWAVbZ2LbSLBA",
-        "Hb4xDlnBd2N9jJND4RsqLw",
-        "j5IsoB-xT1Kqp8yQjQnaXA",
-        "NwNGKIf_eQwvr6tzFX6eRA",
-        "Y7bpk83gKWgCmi7yKGTTug",
-        "BXDV7WRidHmDl-JwLQBxNg",
-        "cd-EkTwPP0G-bOoZtRTaVA",
-        "Qt_gJJ0BmFB1lwfp1XS-sw",
-        "ZqBwsiBlMqiMTSjlXAenMA",
-        "2sTSM3x0kWafo1SlEEWZHA",
-        "RNgb844JJbo6vO1iUod8vA",
-        "VTjol5UWd1hMwldC3wFXTw",
-        "H0eLQFT7e0U4ZAPURjASEw",
-        "VBJenKqcBasewkS7PoLOWA"
-    ],
-    "loc": [
-        4621623.766102061,
-        5683983.802381277
-    ]
+  "type": "recommendation",
+  "user_id": "nuzIlWleyEHdXDrVKOAyDQ",
+  "candidate_category": "business - Food & Dining",
+  "candidate_list": [
+    "ceSjm0nHamTmAd1tWcuDhw",
+    "Fyi_Mf7UsTNVNQii-RGzTA",
+    "vBwDwbU52z6Daw29McXCCw",
+    "fUKvUex3TPrxH3n_9pR9FQ",
+    "TLcwutJ1pVrmj_2p_OdJXA",
+    "a-p-n7JMqAtF133Ckn-DYg",
+    "M9rS-MFOGN8MEbXiEA2ifg",
+    "ZynowAYBV6-mBBJb7dWN8w",
+    "1I58IN0Ar5Qd3WnE1smgVg",
+    "TYylLv7GZ46PIiuum_G0gA",
+    "2-oXhioK5KFCSUVNjv2GCg",
+    "0WJRKvGsX3NdoNdZuDFlWg",
+    "4KJqpqPuD887Nwlrn-aZHw",
+    "VQaIkoE4CslcvNC-4qxLiA",
+    "qeGoudzR2NO9KtLdmSHtpQ",
+    "i-eQ41eTQRKKZlUg23SUdQ",
+    "jsL0EmA3k75npcRvleq2VA",
+    "rZre3HdC3fDO93pkvjpw8g",
+    "mNu6xYO2bn-rvacN12h9WA",
+    "_QqLPONYQiUu3u7VsbYhQg"
+  ],
+  "loc": [
+    4607748.938366377,
+    5700952.079333162
+  ]
 }

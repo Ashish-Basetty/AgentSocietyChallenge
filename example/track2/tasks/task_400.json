@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "NCZTSwXkGR_BFgg_7-3ozQ",
-    "candidate_category": "Shopping",
-    "candidate_id_list": [
-        "EkA1I4kODCDTHg021sXgFQ",
-        "ibJ2fbXsuFLwNfLkeCPhrQ",
-        "L4TYFwhUHYoDmkUKfUUqCg",
-        "9VRg8Ho9SoZWKPmjfrpVmw",
-        "vkPfTX9aja-XTb2PfpA2SQ",
-        "CDG9wwQI-miX2Q7mXAgPLw",
-        "ZZTJCY44LuvYqfafnUq1Nw",
-        "XkWLvNeJWIQqNp2oX4XzKw",
-        "BJzC-TOSsYhlYo8l6Gy3yQ",
-        "NCG3ErZ3CWUb0M2yOw51qg",
-        "LmgIeoy78oFqJpX7wtd5JA",
-        "djtU6hvMyFN7emAJu9FvhQ",
-        "Qy9vRAMvHGApXvzf9rZEyg",
-        "WdS4JMt-sSS5pZkeHIpahg",
-        "-QwHN9KoluPcA0YFllwFYQ",
-        "AuLdRDaloS-jY5s5yGJADA",
-        "6bzJ7Hc84lv5rEVEDaashQ",
-        "T2PFxmNFPoEBBr-prV9aMg",
-        "nGwaubljBpHFASIiMQ_8-w",
-        "t-9LJ6-J1yCiSmY8OygLSA"
-    ],
-    "loc": [
-        4619974.679125691,
-        5710278.436027882
-    ]
+  "type": "recommendation",
+  "user_id": "e5349f9232db517fdfb473641811ac06",
+  "candidate_category": "book",
+  "candidate_list": [
+    "534180",
+    "9951085",
+    "827260",
+    "1998313",
+    "6203342",
+    "33359704",
+    "26226676",
+    "2880751",
+    "646040",
+    "741429",
+    "17999159",
+    "12140102",
+    "7987574",
+    "63477",
+    "29741418",
+    "1292972",
+    "5945516",
+    "27398274",
+    "275624",
+    "13517756"
+  ],
+  "loc": [
+    -1,
+    -1
+  ]
 }

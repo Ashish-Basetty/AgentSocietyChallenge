@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "33qR4zGgaZYe-IxWutNNmA",
-    "candidate_category": "Shopping",
-    "candidate_id_list": [
-        "67TtOZH91MEUxpnt6SyRug",
-        "aCfGcj4H7rrRhBvRzNmdow",
-        "bHzjGwIksxxVhV1y2v5f7A",
-        "My5_W97qij_TuBAsuHOSOg",
-        "NgLsXmpzZY2f2ePefMYtdA",
-        "KJe08nAYey85uYQrOW3TiQ",
-        "Bhz9yYEpREoiBH8qrPfC4Q",
-        "Fv6EIYsJaUCqyvvAr6kLew",
-        "zDAPljNKUka4vGyKFR-KkQ",
-        "-2xzyHY8uWnLmyQkkfwMuQ",
-        "SfrCpke2fi6nynKPms2jZA",
-        "XhoODVSS1ri5Mr6yUB7hWw",
-        "kkSYxSQD3xKKKSafETpMRw",
-        "IEcLzwD9o5hj3N5aKzD-ZQ",
-        "hJDMkcbGi--LaTQCzzD4lQ",
-        "uU_2ciWqk4-BvpBFIRewEQ",
-        "HXNnAl94bXuhBJjP0jPL2A",
-        "TB86XyHuen8Lj6MqU8gEIg",
-        "67QoVuGSTw5vQP9xs93LuQ",
-        "DdJybF-pDd47ibomniz7Cg"
-    ],
-    "loc": [
-        4603876.8800535835,
-        5698030.0808781115
-    ]
+  "type": "recommendation",
+  "user_id": "AEQN4WH7T5NWROAZDW2NCRVXHWDQ",
+  "candidate_category": "product",
+  "candidate_list": [
+    "B0BKB3KJT8",
+    "B003QP30O4",
+    "B0BZ3Z8CL6",
+    "B0B3LG6RNP",
+    "B0B1481JTM",
+    "B0002D0IUM",
+    "B01LOVJ5GS",
+    "B0017XFSJ2",
+    "B0B14VG97K",
+    "B00WRI103Y",
+    "B00GXNRAG0",
+    "B004V7437O",
+    "B01M7R5YIB",
+    "B0010HDS1U",
+    "B083DKN9SC",
+    "B00JA4T7NI",
+    "B079JJZXJ4",
+    "B000069TDF",
+    "B09ZJF8VR1",
+    "B09YXQ31N8"
+  ],
+  "loc": [
+    -1,
+    -1
+  ]
 }

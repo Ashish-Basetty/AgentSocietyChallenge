@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "dIOI26ZnUUbQvZIXqZaKyQ",
-    "candidate_category": "Food & Dining",
-    "candidate_id_list": [
-        "zJnRztekQRb6nGe-3Q4mQA",
-        "XBdaG2kQ2Iz9VNGPZokjYg",
-        "NxFuPjGPqM0X1RK4kOzdtg",
-        "_msFUghqBbYNmO8grFJNAQ",
-        "OXFCsM7_GkJ9KC93_UIbuw",
-        "a9tI3YQyIXHqt0c1AxaSbA",
-        "65sPpkVbRSYS0droEoRavw",
-        "qot32tHVWZpiJibLTwQGyw",
-        "vTpA-4yzldOJEXHFEOO4QQ",
-        "bSuADas9mTPxI2UUGR8PGg",
-        "cYnKgRTfDGS0Z3oupc30NQ",
-        "VZPqQGDDGRwKFG79eP-ZjQ",
-        "45N54l3hjvR8IhSrPNVcPQ",
-        "1w1H1kYUN60zpfdP-0qmGQ",
-        "Gnn3GHyNiMHk4A7FiGgrOA",
-        "vhd7sbDlz9gT453ITmCa_Q",
-        "8-1vYscR7TNGF7LcJeNZBQ",
-        "zODRL6SF5Re-8ZRHWsTraQ",
-        "mrF5yU8TBZDAeSyUq-6LSg",
-        "xMH3_UDXy4oKyVrLmyooNw"
-    ],
-    "loc": [
-        4603465.819073645,
-        5694586.054736764
-    ]
+  "type": "recommendation",
+  "user_id": "57e8eed0226e8a7c4ac531476823bd2e",
+  "candidate_category": "book",
+  "candidate_list": [
+    "34673909",
+    "2426625",
+    "28588056",
+    "557978",
+    "1764365",
+    "33006548",
+    "27414455",
+    "17836463",
+    "6934464",
+    "13495199",
+    "20820331",
+    "16637282",
+    "602345",
+    "13614099",
+    "955589",
+    "46579",
+    "1269792",
+    "15738494",
+    "13517115",
+    "24162523"
+  ],
+  "loc": [
+    -1,
+    -1
+  ]
 }

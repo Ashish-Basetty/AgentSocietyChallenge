@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "SD4Ug7LvDVMMABKMjZmMNg",
-    "candidate_category": "Beauty & Wellness",
-    "candidate_id_list": [
-        "ZEhjngDrFHB15WEArU4p1g",
-        "Rf9AqIzZyfrQHjkyXDJaHw",
-        "ZUI1uvefVj94JLE1kIfAmA",
-        "gLy70C_C07OMDryHSdMJMg",
-        "qci60H4AWEOcXZcJg4E2EQ",
-        "hXg5o5F2Q4YifUZY8eTDMQ",
-        "8pSi7jAI-oXiIPb40Vgp5g",
-        "Kb68faOZmCQfrzRba-vfNg",
-        "juBH0j95bJVWs642WFCe-A",
-        "bBHrPJqqwDxSIxtxMMuQZg",
-        "1RReuaDA18lalPMY5VCvyg",
-        "iB3HjB9Bj80_WYO0SHsqtg",
-        "xoHg2bSnRSnfLlSgnCQ_TQ",
-        "MBXWooDbmhwUYDe8HWVRQA",
-        "tzgrrqQ0SCVXQV02D37Ydw",
-        "rkf0KYNWsyExnVdETNh8sg",
-        "2UJGBc63o8XAWqzYIfhijQ",
-        "Pwe0o-B52HVdQ6ForPl-SQ",
-        "tkUQLPtSNzG7y9vXD7uj1Q",
-        "cpnIFN5G_J2UK7PNDT0j0A"
-    ],
-    "loc": [
-        4617390.058048399,
-        5710714.648188777
-    ]
+  "type": "recommendation",
+  "user_id": "AFYTU4ZZEHT5QTOIQJW2RYEWPWBQ",
+  "candidate_category": "product",
+  "candidate_list": [
+    "B08RB15SPS",
+    "B005OM6CGU",
+    "B0BBR5T6YG",
+    "B004HKIU5G",
+    "B00421BLTM",
+    "B0BHYHN3L2",
+    "B07C7N2GVY",
+    "B01N3AJOYK",
+    "B09QJ27FQX",
+    "B00A2GYIBE",
+    "B0BNM9ZBLV",
+    "B006SNL0JI",
+    "B00MQ691WE",
+    "B083K6N6GV",
+    "B0761RHT1R",
+    "B00AHHPBJQ",
+    "B093WPCJ9Y",
+    "B09BLRFGZH",
+    "B0002F7IRQ",
+    "B01N4OMVLI"
+  ],
+  "loc": [
+    -1,
+    -1
+  ]
 }

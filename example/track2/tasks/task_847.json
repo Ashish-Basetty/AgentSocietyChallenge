@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "5FjQUrRe6e_BGBUugf0T-g",
-    "candidate_category": "Food & Dining",
-    "candidate_id_list": [
-        "9YxqrKuDxwbMqcbKmTQFtQ",
-        "eXGnRQMGYgH4dahF7SiHCg",
-        "bdqfARL8x5EGK6IKPEdVQQ",
-        "Aelkw-nyg9I8aQM9mK_yhw",
-        "E_EJIx6Qw74r6clNeVpldQ",
-        "lDJsJI1Ixe3tjPxoHC_Lvw",
-        "-3ArWZfDjfab8qVHf3WVtg",
-        "CWtiEPVlirbiteeK9U60lA",
-        "j2ix9c4vxxoRgS_U6IBLvQ",
-        "J-7oP_UaDIYG8CZwFL70kg",
-        "TUCm1lCkh-usRYRl3U0S8w",
-        "8VZd61Jo4WUdacQuRjrZoQ",
-        "pFMGXlE1NwEXYPBgw3kRnA",
-        "FtT_HlYiyOrE-TzKl6_qgg",
-        "Tg1wUs7niPlD68hXbzP1gw",
-        "_alfsQK682Bke9MAfWRKdA",
-        "G-FrjKHpQVoH_P1saaMNRQ",
-        "udg8hY-1iGS9aQmEDLGR1Q",
-        "9PCPV34KV1B_E3v1IUi4tQ",
-        "cPBngGz1gvCS8J8kK8frpw"
-    ],
-    "loc": [
-        4613715.8354799785,
-        5680649.406806855
-    ]
+  "type": "recommendation",
+  "user_id": "RufF9yfNzkGipiM7pW30MA",
+  "candidate_category": "business - Beauty & Wellness",
+  "candidate_list": [
+    "1lUfhypIZhfP8UmZBh6bxg",
+    "VndJMY1frtXpFp7QPsYV0w",
+    "nUFA34NsBSBm1LZZIsZlsw",
+    "ODxEEgKQoacLOiiBsCKUzA",
+    "LB19zg7guFOqO1KatskCUg",
+    "SSBsKbKd0VAIupsjDGmmRQ",
+    "qHQTp_4sZjvtHL2kn3tZrw",
+    "B6N3pLuRTvOOYjzD112yIQ",
+    "7JbXsIfzdyHagov1ZGtlqA",
+    "I5ueHDysyhKzHkE5Nw4Rew",
+    "t7vVRlyF9_lxuL1auqVchg",
+    "E89UTlNjtofPbRnn1mICrw",
+    "JXHEyz6h5xl5Xd2ZpmXceQ",
+    "ViO6ziYwKwdVTNrFZz0gDQ",
+    "94s_AwUQmy41Dp3fslgdjA",
+    "RY0ojWzOlDOjEjiAOsSMVQ",
+    "t0u_YYND1OWPDGUL4bCWbA",
+    "YWfOxkw6ZqMOsVm3hsv2ig",
+    "fbH6tCBIDYRARQSPNxJvmg",
+    "C7ZNfxgDQWinNzRfTkevxg"
+  ],
+  "loc": [
+    4604652.9906475805,
+    5697039.110371813
+  ]
 }

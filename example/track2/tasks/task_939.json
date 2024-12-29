@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "9NgJPYtWzGAfLfRjKsbzmA",
-    "candidate_category": "Food & Dining",
-    "candidate_id_list": [
-        "mprtNLSD_AQ7pTb1vzbSdw",
-        "x-eCOnXocZIlaAZznK8E_Q",
-        "HxdaEwpoXKll0Ze4nhS0XA",
-        "Hcpnj06bcY9AuvhDjMGTkw",
-        "sxDxM54lLvUNaya7o75b0w",
-        "6tgrhfz8XsTH2ItEShoohA",
-        "4Env6uGYxMhXFKPfcuzUuQ",
-        "6zEWIsb6Lhr3BeoC3gm1lw",
-        "1hMteDtsI0JMNBCtKpb24A",
-        "C4JRZbx9La4VONDO-zEkgA",
-        "SrMiiB-Y6osUezq9s5nnYw",
-        "kuUgMFCIQAGFZX4rk4jj0Q",
-        "YBjFuFJXKBKdsxx2TlQVPw",
-        "ANmX99M5KtNWi5g39TFIKw",
-        "GWH_fPOdtIjFZT4-XpP7wQ",
-        "p4cIEx3GrI4R1OYbMjiGBg",
-        "y44MbCvvtmg1FpkNGSWisw",
-        "GpYDs9W3cM5D1mjNx6pxug",
-        "tGzu2uZYz0Yqh5F0H9jmFQ",
-        "TOGQERO4hdon5DoVXHooEw"
-    ],
-    "loc": [
-        4616704.649673648,
-        5674373.715098849
-    ]
+  "type": "recommendation",
+  "user_id": "Xejp85N5_YwaC7eOwO3MmQ",
+  "candidate_category": "business - Shopping",
+  "candidate_list": [
+    "KeciMW8XlB8CY2OZfQKhFw",
+    "lInYEIj1qrXJ8jS70FoSwg",
+    "mkMFBgmA2oECdpxwXi9ZwA",
+    "Gh7CumEuDbHjEf97BkSWmQ",
+    "22pC6FLcRjjdJ5Is34NSKg",
+    "7XsrY2Vnk3mEpAptHHJYCA",
+    "Ty9WWJ3OmDg8UbiTA8Eufw",
+    "esVdHIU-lsFWRWaIm7_pug",
+    "Xffs0XzJD1feygtz2a0lWg",
+    "qH4sR6U98EEfM8hUrmXMOg",
+    "5pvm6cipS6YeaS5r6cgvcg",
+    "4DBhbIyHGi-nw7RbUhZ3Sw",
+    "E9kAJ17gVMvFCmsl6nJzGA",
+    "EH25hIn3p1TX56vK6KFYLA",
+    "RYLGohzuMvtADK19ZfbBBg",
+    "DiFP6DoPZTFdGtArLF3YCQ",
+    "bNiMFB1fk08AXMuLxA6Adw",
+    "hZTaTVsigf9rngodD2VIjw",
+    "ImfWM_EShTaz4F300vZs5Q",
+    "W05Sre_mDBPxyILHATDiLQ"
+  ],
+  "loc": [
+    4620547.479277999,
+    5702888.593938443
+  ]
 }

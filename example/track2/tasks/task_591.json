@@ -1,31 +1,31 @@
 {
-    "type": "recommendation",
-    "user_id": "84c__FzfoewLmecrLBz_fg",
-    "candidate_category": "Beverages & Bars",
-    "candidate_id_list": [
-        "tKL_MbA8s_ZeU4RV5m-0QQ",
-        "qZmJGx9UOd6JaE1gMJh2jg",
-        "vA5MHe9LqNQcp8k_CaFkHg",
-        "li4Yw2cG968EiymHMCdoXg",
-        "vLVl8wvXWU1nYCair-8r6A",
-        "p6n22yw61I_8qOMb81Myig",
-        "qL2h5u9j0fAzRU5K7Ya2fw",
-        "8grIwJYQJ16EUImULDCdQw",
-        "7uG4WyAMMyo2eI3uQnBTeg",
-        "wg_2oIPo-3pIwj24qvYOaw",
-        "zLwqBfXiICl6moUA8yjmwA",
-        "3QpErOK9RfahtAfrKSZYig",
-        "grctd1K-eeYOKEkN-WW9pw",
-        "AV0oofqbYjWYXPQzxNDj2w",
-        "gyRfeBAYTAx-Nh1xIoF50Q",
-        "KnXWxp0DO4043CyWAnAx9g",
-        "A73hMO-Ireqx47M88FWYTw",
-        "f1oDIZxQ7V44PvzPCQ-tEQ",
-        "n2976VTltvlSwENZxYJoNQ",
-        "72_X-wxr9TyT6OqYb-y0sA"
-    ],
-    "loc": [
-        4620403.664150739,
-        5709660.947584644
-    ]
+  "type": "recommendation",
+  "user_id": "4085e3157f1084ed229d9b16618f254d",
+  "candidate_category": "book",
+  "candidate_list": [
+    "6386575",
+    "29007131",
+    "169004",
+    "18743",
+    "991663",
+    "484433",
+    "34102792",
+    "443527",
+    "29972504",
+    "10198827",
+    "23448800",
+    "30740440",
+    "1930756",
+    "452817",
+    "78418",
+    "13260199",
+    "25550726",
+    "25119161",
+    "13531794",
+    "22749544"
+  ],
+  "loc": [
+    -1,
+    -1
+  ]
 }
