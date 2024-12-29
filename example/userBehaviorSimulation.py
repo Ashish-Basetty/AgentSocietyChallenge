@@ -148,12 +148,12 @@ class MySimulationAgent(SimulationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    simulator = Simulator(data_dir="/data2/liyu/yelpsimulator1/dataset", device="gpu")
+    simulator = Simulator(data_dir="your data dir", device="gpu")
     simulator.set_task_and_groundtruth(task_dir="./track1/tasks", groundtruth_dir="./track1/groundtruth")
 
     # Set the agent and LLM
     simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(InfinigenceLLM(api_key="sk-dakqyjy2pusruxx7"))
+    simulator.set_llm(InfinigenceLLM(api_key="your api key"))
 
     # Run the simulation
     outputs = simulator.run_simulation()
