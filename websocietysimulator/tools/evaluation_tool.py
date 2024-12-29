@@ -67,7 +67,7 @@ class RecommendationEvaluator(BaseEvaluator):
         hr_at_1 = hits[1] / total if total > 0 else 0
         hr_at_3 = hits[3] / total if total > 0 else 0
         hr_at_5 = hits[5] / total if total > 0 else 0
-        final_hr = (hr_at_1 * 5 + hr_at_3 * 3 + hr_at_5) / 9
+        final_hr = (hr_at_1 + hr_at_3 + hr_at_5) / 3
         metrics = RecommendationMetrics(
             hr_at_1=hr_at_1,
             hr_at_3=hr_at_3,
