@@ -195,7 +195,7 @@ class SimulationEvaluator(BaseEvaluator):
 
             # Topic analysis
             embeddings = self.topic_model.encode([simulated_review, real_review])
-            topic_error_single = distance.cosine(embeddings[0], embeddings[1])
+            topic_error_single = distance.cosine(embeddings[0], embeddings[1]) / 2
             topic_error.append(topic_error_single)
 
         sentiment_error = np.mean(sentiment_error)
