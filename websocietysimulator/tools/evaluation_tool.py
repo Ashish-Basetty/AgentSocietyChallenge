@@ -187,7 +187,6 @@ class SimulationEvaluator(BaseEvaluator):
 
             # Topic analysis
             embeddings = self.topic_model.encode([simulated_review, real_review])
-            print(embeddings[0], embeddings[1])
             topic_error = np.mean(np.abs(embeddings[0] - embeddings[1]) / (embeddings[1] + 1e-10))
             topic_mape += topic_error
 
@@ -216,7 +215,7 @@ class SimulationEvaluator(BaseEvaluator):
         # Create vectors
         vec1 = np.array([emotion_dict1.get(e, 0) for e in all_emotions])
         vec2 = np.array([emotion_dict2.get(e, 0) for e in all_emotions])
-        print(vec1, vec2)
+
         # Calculate error between emotion vectors
         error = np.mean(np.abs(vec1 - vec2) / (vec2 + 1e-10))
         return float(error)
