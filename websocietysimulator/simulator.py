@@ -66,7 +66,7 @@ class Simulator:
                     task = RecommendationTask(
                         user_id=task_data['user_id'],
                         candidate_category=task_data['candidate_category'],
-                        candidate_list=task_data['candidate_id_list'],
+                        candidate_list=task_data['candidate_list'],
                         loc=task_data['loc']
                     )
                 else:
@@ -101,7 +101,7 @@ class Simulator:
         """
         self.llm = llm
         logger.info("LLM set")
-    def run_simulation(self) -> List[Any]:
+    def run_simulation(self, number_of_tasks: int = None) -> List[Any]:
         """
         Run the simulation.
         Creates agents, invokes their forward methods, and collects outputs.
@@ -112,10 +112,11 @@ class Simulator:
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
 
+        task_to_run = self.tasks[:number_of_tasks] if number_of_tasks is not None else self.tasks
         self.simulation_outputs = []
-        logger.info(f"Total tasks: {len(self.tasks)}")
+        logger.info(f"Total tasks: {len(task_to_run)}")
         index = 0
-        for task in self.tasks:
+        for task in task_to_run:
             # Initialize the agent
             agent = self.agent_class(llm=self.llm)
             agent.set_interaction_tool(self.interaction_tool)
