@@ -11,7 +11,6 @@ class InteractionTool:
             data_dir: Path to the directory containing Yelp dataset files.
         """
         self.data_dir = data_dir
-
         self.item_data = self._load_data('item.json')
         self.review_data = self._load_data('review.json')
         self.user_data = self._load_data('user.json')

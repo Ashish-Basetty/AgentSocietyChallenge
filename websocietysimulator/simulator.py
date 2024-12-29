@@ -41,6 +41,9 @@ class Simulator:
     def set_interaction_tool(self, interaction_tool: InteractionTool):
         self.interaction_tool = interaction_tool
 
+    def set_interaction_tool(self, interaction_tool: InteractionTool):
+        self.interaction_tool = interaction_tool
+
     def set_task_and_groundtruth(self, task_dir: str, groundtruth_dir: str):
         """
         Load tasks from a directory.
