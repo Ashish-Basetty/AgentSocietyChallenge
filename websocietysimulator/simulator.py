@@ -126,7 +126,7 @@ class Simulator:
             
             # Invoke the forward method and collect output
             try:
-                output = agent.forward()
+                output = agent.workflow()
                 result = {
                     "task": task.to_dict(),
                     "output": output
