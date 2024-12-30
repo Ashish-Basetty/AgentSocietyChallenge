@@ -149,7 +149,7 @@ class SimulationEvaluator(BaseEvaluator):
         emotion_error = review_details['emotion_error']
         topic_error = review_details['topic_error']
 
-        overall_error = (star_error + (sentiment_error + emotion_error + topic_error) / 3) / 2
+        overall_error = (star_error + (sentiment_error * 0.25 + emotion_error * 0.25 + topic_error * 0.5)) / 2
 
         metrics = SimulationMetrics(
             star_error=star_error,

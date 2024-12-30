@@ -14,5 +14,4 @@ dist/
 __*
 __*/
 !__init__.py
-docs/
 TODO
