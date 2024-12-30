@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation Leaderboard - WWW'25 AgentSociety Challenge</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">  <!-- 确保我们的样式在最后加载 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
+    <style>
+        /* DataTables 样式 */
+        .dataTables_wrapper {
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        table.dataTable {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100% !important;
+        }
+
+        table.dataTable thead th {
+            background: linear-gradient(180deg, #f8f9fa, #e9ecef);
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px 12px;
+            position: relative;
+        }
+
+        table.dataTable thead th:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #007bff, #00ff88);
+            opacity: 0.5;
+        }
+
+        table.dataTable tbody td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table.dataTable tbody tr:nth-child(even) {
+            background-color: #f8faff;
+        }
+
+        /* 团队名称列样式 */
+        .team-name {
+            font-weight: 600;
+            color: #2c3e50;
+            background: linear-gradient(90deg, rgba(0, 123, 255, 0.05), transparent);
+            border-left: 3px solid #007bff;
+        }
+
+        /* 数值列样式 */
+        .error-value {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 500;
+            background: rgba(0, 123, 255, 0.03);
+        }
+
+        /* 提交时间列样式 */
+        .submission-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* 表头图标样式 */
+        .header-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+            vertical-align: middle;
+            opacity: 0.8;
+        }
+
+        /* DataTables 功能样式 */
+        .dataTables_filter input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-left: 10px;
+            width: 200px;
+        }
+
+        .dataTables_length select {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin: 0 5px;
+        }
+
+        .dataTables_paginate {
+            margin-top: 20px;
+        }
+
+        .dataTables_paginate .paginate_button {
+            padding: 8px 14px;
+            margin: 0 3px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: white;
+            color: #495057 !important;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(45deg, #007bff, #00ff88) !important;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+            color: white !important;
+        }
+
+        .dataTables_paginate .paginate_button:hover:not(.current) {
+            background: #e9ecef !important;
+            border-color: #dee2e6;
+            color: #212529 !important;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .dataTables_wrapper {
+                padding: 15px;
+            }
+            
+            table.dataTable thead th,
+            table.dataTable tbody td {
+                padding: 10px 5px;
+                font-size: 0.9em;
+            }
+        }
+        
+        .hr-value {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 500;
+            background: rgba(0, 123, 255, 0.03);
+        }
+
+        /* 标题样式 */
+        .behavior-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(to right, #007bff, #00ff88) 1;
+            display: inline-block;
+        }
+
+        /* 调整表格容器样式 */
+        .section {
+            padding: 2rem;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* 调整表格宽度 */
+        .dataTables_wrapper {
+            max-width: 100%;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        /* 确保表格不会超出容器 */
+        table.dataTable {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* 优化表格在小屏幕上的显示 */
+        @media (max-width: 1200px) {
+            .behavior-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .behavior-title {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+
+        /* 标题样式 */
+        .recommendation-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(to right, #007bff, #00ff88) 1;
+            display: inline-block;
+        }
+
+        /* 调整表格容器样式 */
+        .section {
+            padding: 2rem;
+            width: 95%;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        /* DataTables 顶部控件样式 */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+
+        /* Show entries 样式 */
+        .dataTables_length {
+            float: left;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #495057;
+        }
+
+        .dataTables_length select {
+            padding: 8px 12px;
+            margin: 0 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background-color: white;
+            color: #495057;
+            cursor: pointer;
+            min-width: 80px;
+        }
+
+        /* 搜索框样式 */
+        .dataTables_filter {
+            float: right;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #495057;
+        }
+
+        .dataTables_filter input {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-left: 12px;
+            width: 250px;
+            background-color: white;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .dataTables_filter input:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* 清除浮动 */
+        .dataTables_wrapper::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+
+        /* 调整表格上方空间 */
+        .dataTables_wrapper {
+            padding: 25px 35px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .section {
+                padding: 1rem;
+                width: 100%;
+            }
+
+            .dataTables_wrapper {
+                padding: 15px;
+            }
+
+            .dataTables_length,
+            .dataTables_filter {
+                float: none;
+                text-align: left;
+                margin-bottom: 15px;
+            }
+
+            .dataTables_filter input {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 8px;
+            }
+
+            .recommendation-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .recommendation-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../assets/images/ASC.jpg" alt="Logo">
+            <h1>AgentSociety Challenge</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="overview.html" class="active">Overview</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+            <li><a href="rules.html">Rules</a></li>
+            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="recommendation-track.html">Recommendation Track</a></li>
+            <li><a href="behavior-leaderboard.html">Behavior Leaderboard</a></li>
+            <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section class="section">
+            <h1 class="recommendation-title">Recommendation Track Leaderboard</h1>
+            <table id="leaderboard" class="display responsive nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th><i class="header-icon">👥</i>Team Name</th>
+                        <th><i class="header-icon">⏰</i>Submission Time</th>
+                        <th><i class="header-icon">🎯</i>Top-1 HR</th>
+                        <th><i class="header-icon">🎯</i>Top-3 HR</th>
+                        <th><i class="header-icon">🎯</i>Top-5 HR</th>
+                        <th><i class="header-icon">🏆</i>Overall HR</th>
+                    </tr>
+                </thead>
+            </table>
+        </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#leaderboard').DataTable({
+                ajax: {
+                    url: '../assets/data/recommendation_leaderboard.csv',
+                    dataType: 'text',
+                    cache: false,
+                    dataSrc: function(csvData) {
+                        const data = $.csv.toObjects(csvData);
+                        console.log('Loaded data:', data);
+                        return data;
+                    },
+                    error: function(xhr, error, thrown) {
+                        console.error('Error loading data:', error);
+                    }
+                },
+                columns: [
+                    { data: 'Team name', className: 'team-name' },
+                    { data: 'Submission Time', className: 'submission-time' },
+                    { data: 'Top-1 hr', className: 'hr-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Top-3 hr', className: 'hr-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Top-5 hr', className: 'hr-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Overall hr', className: 'hr-value', render: function(data) { return parseFloat(data).toFixed(4); } }
+                ],
+                order: [[5, 'desc']],
+                pageLength: 10,
+                responsive: false
+            });
+        });
+    </script>
+</body>
+</html> 
