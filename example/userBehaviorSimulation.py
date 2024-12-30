@@ -113,9 +113,6 @@ class MySimulationAgent(SimulationAgent):
 
             Format your response exactly as follows:
             stars: [your rating]
-            useful: [count]
-            funny: [count] 
-            cool: [count]
             review: [your review]
             '''
             result = self.reasoning(task_description)
