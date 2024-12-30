@@ -171,8 +171,11 @@ evaluation_results = simulator.evaluate()
 
 ---
 
-### 6. Submit your agent in Codabench
-- Submit your solution through this [Form](https://forms.gle/dB3sZnif1yiWFNrb9)
+### 6. Submit your agent
+- Submit your registration form through this [Registration Form](https://forms.gle/MARrrNfKFSZX2Hpp9)
+  - Please fill in the form carefully.
+- Submit your solution through this [Submission Form](https://forms.gle/dB3sZnif1yiWFNrb9)
+  - Please register your team first.
   - Please fill in the form carefully.
   - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
 - **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
