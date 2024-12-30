@@ -67,13 +67,6 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.nav-links a.active,
-.nav-links a[aria-current="page"] {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border-left: 4px solid #00ff88;
-}
-
 /* 主要内容区域 */
 .main-content {
     margin-left: 280px;

@@ -58,5 +58,19 @@ To encourage and reward excellence, the competition will offer prizes for first,
         // Render the markdown content
         document.getElementById('content').innerHTML = marked.parse(markdownContent);
     </script>
+    <script>
+        // 获取当前页面的文件名
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // 移除所有导航链接的active类
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+        });
+        
+        // 为当前页面的导航链接添加active类
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.classList.add('active');
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.setAttribute('aria-current', 'page');
+    </script>
 </body>
 </html> 

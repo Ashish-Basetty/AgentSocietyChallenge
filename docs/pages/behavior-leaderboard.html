@@ -142,9 +142,64 @@
                 font-size: 0.9em;
             }
         }
+        
+        .hr-value {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 500;
+            background: rgba(0, 123, 255, 0.03);
+        }
 
         /* 标题样式 */
         .behavior-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(to right, #007bff, #00ff88) 1;
+            display: inline-block;
+        }
+
+        /* 调整表格容器样式 */
+        .section {
+            padding: 2rem;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* 调整表格宽度 */
+        .dataTables_wrapper {
+            max-width: 100%;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        /* 确保表格不会超出容器 */
+        table.dataTable {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* 优化表格在小屏幕上的显示 */
+        @media (max-width: 1200px) {
+            .behavior-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .behavior-title {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+
+        /* 标题样式 */
+        .recommendation-title {
             font-size: 2.5rem;
             font-weight: 700;
             color: #2c3e50;
@@ -233,44 +288,6 @@
             overflow-x: auto;
         }
 
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .section {
-                padding: 1rem;
-                width: 100%;
-            }
-
-            .dataTables_wrapper {
-                padding: 15px;
-            }
-
-            .dataTables_length,
-            .dataTables_filter {
-                float: none;
-                text-align: left;
-                margin-bottom: 15px;
-            }
-
-            .dataTables_filter input {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 8px;
-            }
-        }
-
-        /* 调整表格宽度 */
-        .dataTables_wrapper {
-            max-width: 100%;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-
-        /* 确保表格不会超出容器 */
-        table.dataTable {
-            width: 100% !important;
-            margin: 0 !important;
-        }
-
         /* 优化表格在小屏幕上的显示 */
         @media (max-width: 1200px) {
             .behavior-title {
@@ -308,7 +325,7 @@
 
     <main class="main-content">
         <section class="section">
-            <h1 class="behavior-title">User Behavior Modeling Leaderboard</h1>
+            <h1>User Behavior Modeling Leaderboard</h1>
             <table id="leaderboard" class="display responsive nowrap" style="width:100%">
                 <thead>
                     <tr>
@@ -360,5 +377,19 @@
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
+    <script>
+        // 获取当前页面的文件名
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // 移除所有导航链接的active类
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+        });
+        
+        // 为当前页面的导航链接添加active类
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.classList.add('active');
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.setAttribute('aria-current', 'page');
+    </script>
 </body>
 </html> 

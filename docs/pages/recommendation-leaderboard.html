@@ -343,7 +343,7 @@
 
     <main class="main-content">
         <section class="section">
-            <h1 class="recommendation-title">Recommendation Track Leaderboard</h1>
+            <h1>Recommendation Track Leaderboard</h1>
             <table id="leaderboard" class="display responsive nowrap" style="width:100%">
                 <thead>
                     <tr>
@@ -392,6 +392,20 @@
                 responsive: false
             });
         });
+    </script>
+    <script>
+        // 获取当前页面的文件名
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // 移除所有导航链接的active类
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+        });
+        
+        // 为当前页面的导航链接添加active类
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.classList.add('active');
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.setAttribute('aria-current', 'page');
     </script>
 </body>
 </html> 

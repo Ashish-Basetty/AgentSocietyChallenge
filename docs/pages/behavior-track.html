@@ -29,7 +29,7 @@
     </main>
 
     <script>
-        const markdownContent = `## User Behavior Modeling Track
+        const markdownContent = `# User Behavior Modeling Track
 ### Introduction
 
 In this track, participants will use a classic open-source dataset to simulate social interactions and information access behaviors on social media. This is crucial for designing effective information retrieval algorithms for web applications. Using LLM-based agents, participants will combine historical user behavior records and interact with the environment to model how users might review businesses and engage with reviews. The track focuses on **User Preference Simulation**: Participants should design LLM agents that can understand user preferences and behavior patterns to model user preferences. The agent may integrate user characteristics, business attributes, and other users' reviews to form a comprehensive judgment. Each review must include two components: a star rating (a numerical score reflecting the user's opinion) and review text (detailed commentary providing specific feedback).  This track explores the potential and scalability of LLM agents in simulating human behavior, offering insights into their applications in behavioral modeling.
@@ -40,6 +40,20 @@ In the User Behavior Modeling Track, participants are expected to use LLM agents
 Checkout [User Behavior Modeling Evaluation](https://github.com/tsinghua-fib-lab/WebSocietySimulator/blob/main/websocietysimulator/tools/evaluation_tool.py) for more calculation details.`;
 
         document.getElementById('content').innerHTML = marked.parse(markdownContent);
+    </script>
+    <script>
+        // 获取当前页面的文件名
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // 移除所有导航链接的active类
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+        });
+        
+        // 为当前页面的导航链接添加active类
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.classList.add('active');
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.setAttribute('aria-current', 'page');
     </script>
 </body>
 </html> 

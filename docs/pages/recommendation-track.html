@@ -29,7 +29,7 @@
     </main>
 
     <script>
-        const markdownContent = `## Recommendation Track
+        const markdownContent = `# Recommendation Track
 ### Introduction
 In this track, participants will develop an LLM agent that acts as a recommendation assistant. Participants are expected to design recommendation agents capable of handling tasks across diverse scenarios. Each task involves a specific user and a list of item candidates. Participants will need to extract the user's preferences and item information from datasets to generate personalized recommendations. This track explores the potential of LLM agents in recommendation tasks, offering new perspectives and application scenarios for advancing next-generation information retrieval and recommendation systems.
 
@@ -39,6 +39,20 @@ In the Recommendation Track, participants are tasked with designing a recommenda
 Checkout [Recommendation Evaluation](https://github.com/tsinghua-fib-lab/WebSocietySimulator/blob/main/websocietysimulator/tools/evaluation_tool.py) for more calculation details.`;
 
         document.getElementById('content').innerHTML = marked.parse(markdownContent);
+    </script>
+    <script>
+        // 获取当前页面的文件名
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // 移除所有导航链接的active类
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+        });
+        
+        // 为当前页面的导航链接添加active类
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.classList.add('active');
+        document.querySelector(`.nav-links a[href="${currentPage}"]`)?.setAttribute('aria-current', 'page');
     </script>
 </body>
 </html> 
