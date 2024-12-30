@@ -90,7 +90,8 @@ class MyRecommendationAgent(RecommendationAgent):
         """
         plan = self.planning(task_type='Recommendation Task',
                              task_description="Please make a plan to query user information, you can choose to query user, item, and review information",
-                             feedback='')
+                             feedback='',
+                             few_shot='')
         print(f"The plan is :{plan}")
 
         user = ''

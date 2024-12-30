@@ -199,7 +199,7 @@ class PlanningBase:
             llm: LLM instance for generating plans
         """
     
-    def __call__(self, task_type: str, task_description: str, feedback: str = ''):
+    def __call__(self, task_type: str, task_description: str, feedback: str = '', few_shot: str = ''):
         """
         Generate task decomposition plan
         

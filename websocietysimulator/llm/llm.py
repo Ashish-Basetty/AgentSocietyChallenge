@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from openai import OpenAI
 from langchain_openai import OpenAIEmbeddings
 from .infinigence_embeddings import InfinigenceEmbeddings
@@ -13,7 +13,7 @@ class LLMBase:
         """
         self.model = model
         
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> str:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call LLM to get response
         
@@ -26,7 +26,7 @@ class LLMBase:
             n: Number of responses to generate, defaults to 1
             
         Returns:
-            str: Response text from LLM
+            Union[str, List[str]]: Response text from LLM, either a single string or list of strings
         """
         raise NotImplementedError("Subclasses need to implement this method")
     
@@ -55,7 +55,7 @@ class InfinigenceLLM(LLMBase):
         )
         self.embedding_model = InfinigenceEmbeddings(api_key=api_key)
         
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> str:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call Infinigence AI API to get response
         
@@ -68,7 +68,7 @@ class InfinigenceLLM(LLMBase):
             n: Number of responses to generate, defaults to 1
             
         Returns:
-            str: Response text from LLM
+            Union[str, List[str]]: Response text from LLM, either a single string or list of strings
         """
         response = self.client.chat.completions.create(
             model=model or self.model,
@@ -79,7 +79,10 @@ class InfinigenceLLM(LLMBase):
             n=n
         )
         
-        return response.choices[0].message.content
+        if n == 1:
+            return response.choices[0].message.content
+        else:
+            return [choice.message.content for choice in response.choices]
     
     def get_embedding_model(self):
         return self.embedding_model
@@ -97,7 +100,7 @@ class OpenAILLM(LLMBase):
         self.client = OpenAI(api_key=api_key)
         self.embedding_model = OpenAIEmbeddings(api_key=api_key)
         
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> str:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call OpenAI API to get response
         
@@ -110,7 +113,7 @@ class OpenAILLM(LLMBase):
             n: Number of responses to generate, defaults to 1
             
         Returns:
-            str: Response text from LLM
+            Union[str, List[str]]: Response text from LLM, either a single string or list of strings
         """
         response = self.client.chat.completions.create(
             model=model or self.model,
@@ -121,7 +124,10 @@ class OpenAILLM(LLMBase):
             n=n
         )
         
-        return response.choices[0].message.content
+        if n == 1:
+            return response.choices[0].message.content
+        else:
+            return [choice.message.content for choice in response.choices]
     
     def get_embedding_model(self):
         return self.embedding_model 

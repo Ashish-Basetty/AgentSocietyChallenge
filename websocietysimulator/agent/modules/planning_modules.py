@@ -15,8 +15,7 @@ class PlanningBase():
     def create_prompt(self, task_type, task_description, feedback, few_shot):
         raise NotImplementedError("Subclasses should implement this method")
     
-    def __call__(self, task_type, task_description, feedback):
-        few_shot = 'few_shot'
+    def __call__(self, task_type, task_description, feedback, few_shot='few_shot'):
         prompt = self.create_prompt(task_type, task_description, feedback, few_shot)
         
         # Use the new LLM call method
