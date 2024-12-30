@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules - WWW'25 AgentSociety Challenge</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../assets/images/ASC.jpg" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="overview.html">Overview</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+            <li><a href="participation.html">Participation</a></li>
+            <li><a href="rules.html" class="active">Rules</a></li>
+            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="recommendation-track.html">Recommendation Track</a></li>
+            <li><a href="submission.html">Submission</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section class="section" id="content"></section>
+    </main>
+
+    <script>
+        const markdownContent = `# Terms and Conditions
+
+## Competition Format
+
+### Rules
+1. Participants should devise LLM agentic workflows within the predefined modular design space, including:
+   - **Module Recombination**
+   - **Module Design**
+   - **Workflow Construction**
+   
+Uniform LLMs will be provided for evaluating the submitted workflows. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
+
+2. During the evaluation of submitted agents, any direct interaction with the original dataset is strictly prohibited. All data access must go through the interaction tools provided by the competition organizers.
+
+3. Participants are permitted to utilize inference services from any platform during the **Development Phase**. However, during the **Evaluation Phase**, all submitted agents will be evaluated exclusively on the Infinigence AI Tech platform.
+
+4. Submission limits:
+   - **Development Phase**: Each participant may submit up to **2 times per day**, with a maximum of **100 submissions** allowed throughout the phase.
+   - **Evaluation Phase**: Each participant is allowed a maximum of **2 submissions** within the designated time frame.
+
+5. Evaluation will be **time- and token-limited**.
+
+6. Any form of dishonest conduct is strictly prohibited and will result in **immediate disqualification** if detected.
+
+---
+
+### Schedule
+- **October 2024**: Competition organization building, competition planning, and proposal writing.
+- **November 2024**: Preparation of competition materials and promotion of the competition.
+- **December 2024**: Acceptance of participant registrations.
+- **Official Competition**:
+  - Participants submit solutions, and organizers evaluate and maintain a public leaderboard.
+- **February 2025**: Notification of winners, invitation of winners to write papers, and preparation of the competition presentation.
+
+---
+
+### Fairness Mechanisms
+1. **Public Leaderboard**: The organizers will provide a public leaderboard for all participants to monitor and review performance.
+2. **Rigorous Review**: Submissions will undergo a thorough review to ensure compliance with competition rules and the integrity of results.
+3. **Equal Access to Resources**: The organizers will ensure all participants have access to sufficient and fair computational resources.`;
+
+        document.getElementById('content').innerHTML = marked.parse(markdownContent);
+    </script>
+</body>
+</html> 

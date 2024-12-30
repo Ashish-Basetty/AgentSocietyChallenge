@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Behavior Modeling Track - WWW'25 AgentSociety Challenge</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../assets/images/ASC.jpg" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="overview.html">Overview</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+            <li><a href="participation.html">Participation</a></li>
+            <li><a href="rules.html">Rules</a></li>
+            <li><a href="behavior-track.html" class="active">User Behavior Modeling</a></li>
+            <li><a href="recommendation-track.html">Recommendation Track</a></li>
+            <li><a href="submission.html">Submission</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section class="section" id="content"></section>
+    </main>
+
+    <script>
+        const markdownContent = `## User Behavior Modeling Track
+### Introduction
+
+In this track, participants will use a classic open-source dataset to simulate social interactions and information access behaviors on social media. This is crucial for designing effective information retrieval algorithms for web applications. Using LLM-based agents, participants will combine historical user behavior records and interact with the environment to model how users might review businesses and engage with reviews. The track focuses on **User Preference Simulation**: Participants should design LLM agents that can understand user preferences and behavior patterns to model user preferences. The agent may integrate user characteristics, business attributes, and other users' reviews to form a comprehensive judgment. Each review must include two components: a star rating (a numerical score reflecting the user's opinion) and review text (detailed commentary providing specific feedback).  This track explores the potential and scalability of LLM agents in simulating human behavior, offering insights into their applications in behavioral modeling.
+
+### Evaluation
+In the User Behavior Modeling Track, participants are expected to use LLM agents to model user interactions with recommended items (e.g., businesses on Yelp), including star ratings and review texts. The evaluation for this track will use quantitative metrics to assess the accuracy of the models in simulating user behavior. Specifically, the predicted star ratings are compared with the ground truth using Mean Absolute Error (MAE) after normalizing the values to the range [0,1]. The MAE is calculated as: $MAE = \frac{1}{N} \sum_{i=1}^{N} |\hat{s_{ni}} - s_{ni}|$, where $N$ is the total number of reviews, and $\hat{s_{ni}}$ and$s_{ni}$ are the $i$-th normalized predicted star and normalized ground truth, respectively. For the generated review texts, semantic similarity will be evaluated across predefined sentiment dimensions, such as emotional tone, sentiment attitude, and topic relevance. For emotional tone and sentiment attitude, we first calculate the values using predefined models, normalize them to the range [0,1], and compute the MAE. For topic relevance, we calculate the cosine distance between text embeddings, defined as: $d = 1 - \frac{u \cdot v}{\|u\|_2 \cdot \|v\|_2}$. Finally, after obtaining the individual results, the final error score will be a weighted sum of these metrics.
+
+Checkout [User Behavior Modeling Evaluation](https://github.com/tsinghua-fib-lab/WebSocietySimulator/blob/main/websocietysimulator/tools/evaluation_tool.py) for more calculation details.`;
+
+        document.getElementById('content').innerHTML = marked.parse(markdownContent);
+    </script>
+</body>
+</html> 

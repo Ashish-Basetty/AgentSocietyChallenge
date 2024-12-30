@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview - WWW'25 AgentSociety Challenge</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../assets/images/ASC.jpg" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="overview.html" class="active">Overview</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+            <li><a href="participation.html">Participation</a></li>
+            <li><a href="rules.html">Rules</a></li>
+            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="recommendation-track.html">Recommendation Track</a></li>
+            <li><a href="submission.html">Submission</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section class="section" id="content">
+            <!-- Markdown content will be rendered here -->
+        </section>
+    </main>
+
+    <script>
+        // Markdown content as a JavaScript variable
+        const markdownContent = `# Overview
+The **AgentSociety Challenge** is an innovative competition designed to explore the potential of large language model (LLM) agents in modeling online social interaction and enhancing information retrieval systems. **The competition organizers will select the winners and recommend participants to submit their solutions as research papers for inclusion in the WWW’25 companion proceedings.** Authors of accepted papers will have the opportunity to present their work at the conference which is held in Sydney. [WWW Accepted-Competitions](https://www2025.thewebconf.org/accepted-competitions ).
+
+In this challenge, we are inspired by the concept of modular agent design and adopt an actionable modular design space with four key modules: **Planning**, **Reasoning**, **Tool use**, and **Memory**. These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. The participants are tasked to construct effective agent modules that work together to enhance the agent’s ability to process information, make decisions, and interact with dynamic environments in IR tasks. 
+
+### Modular Agent Design Space
+Within this framework, participants can explore LLM agent design with three levels:
+1. Module Recombination: Designing novel agent by recombining the classic modules (reasoning, planning, tool use, and memory).
+2. Module Design: Developing or modifying modules to implement new functionalities while ensuring compatibility with the standardized framework.
+3. Workflow Construction: Designing the overall structure and interaction flow of the agentic system to effectively integrate the modules and achieve the desired outcomes.  
+
+With the standard IO interfaces of these modules, participants can easily integrate different classic modules, facilitating the discovery of novel agent architectures through module recombination. This approach allows for the reuse of prior successful designs, significantly lowering the barrier for participants who may not have deep knowledge of LLM agents.Besides, this challenge also supports more in-depth agent design, allowing participants to reprogram each module and even rewrite the entire workflow. One key motivation of our challenge design is to ensure the discovered modules, with standard IO interfaces, can be reused in future research and applications, benefiting the LLM agent and web community. In the final phase, submissions will be required to adhere to a modular design.
+
+Specificly, this challenge consists of two tracks: **User Behavior Modeling Track**, which focuses on simulating user behavior in specific scenarios by leveraging their historical actions and accessible environmental data.In this track, we utilized datasets from **Yelp**, **Amazon**, and **Goodreads** to build a text simulation environment that allows participants to come up with new solutions to these problems in an interactive environment in agentic mode, ensuring a comprehensive and diverse evaluation of user behaviors; **Recommendation Track**, which emphasizes building personalized recommendation assistants that provide users with appropriate suggestions tailored to particular contexts. These tracks focus on key problems in information retrieval (IR), like understanding user intent, context-aware decision-making, and adaptive response generation. They aim to advance research in behavioral modeling and recommendation systems, driving innovation in how information is retrieved and applied to support users in various situations.In the User Behavior Modeling Track, participants must design agents to simulate user reviews and star ratings. In the Recommendation Track, participants are tasked with using agents to generate rankings based on the current user's preferences. 
+
+Here is the **Resource & Code base**: [This Link](https://github.com/tsinghua-fib-lab/WebSocietySimulator).
+
+### About Token Support    
+To support participants, we will provide API-key access during the development phase. This will be offered through InfinigenceAI, with the following specifications: RPM=100, TPM=60000, RPD=10000,and the ability to call models such as Qwen-72b-instruct. If you wish to use the API, please send your identification documents via email. Required documents include your full name, organization, proof of participation in this competition, track of participation and any other relevant identification details. Once your verification is completed, we will send you the API key. Please note that the number of API keys is **limited**.
+
+## Award  
+To encourage and reward excellence, the competition will offer prizes for first, second, and third place **FOR EACH TRACK**. The first place team will receive 3,000 USD, the second place team will receive 1,000 USD, and the third place team will receive 500 USD. (all pre-tax)`;
+
+        // Render the markdown content
+        document.getElementById('content').innerHTML = marked.parse(markdownContent);
+    </script>
+</body>
+</html> 
