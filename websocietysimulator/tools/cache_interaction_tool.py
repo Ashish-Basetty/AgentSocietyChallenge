@@ -1,28 +1,10 @@
 import logging
 import os
 import json
-from typing import Optional, Dict, List, Any, Iterator
-from collections import OrderedDict
+from typing import Optional, Dict, List, Iterator
+from cachetools import LRUCache
 
 logger = logging.getLogger("websocietysimulator")
-
-class LRUCache:
-    def __init__(self, capacity: int):
-        self.cache = OrderedDict()
-        self.capacity = capacity
-
-    def get(self, key):
-        if key in self.cache:
-            self.cache.move_to_end(key)
-            return self.cache[key]
-        return None
-
-    def put(self, key, value):
-        if key in self.cache:
-            self.cache.move_to_end(key)
-        self.cache[key] = value
-        if len(self.cache) > self.capacity:
-            self.cache.popitem(last=False)
 
 class CacheInteractionTool:
     def __init__(self, data_dir: str, cache_size: int = 10000):
@@ -34,11 +16,11 @@ class CacheInteractionTool:
         """
         logger.info(f"Initializing InteractionTool with data directory: {data_dir}")
         self.data_dir = data_dir
-        self.user_cache = LRUCache(cache_size)
-        self.item_cache = LRUCache(cache_size)
-        self.review_cache = LRUCache(cache_size)
-        self.item_reviews_cache = LRUCache(cache_size)
-        self.user_reviews_cache = LRUCache(cache_size)
+        self.user_cache = LRUCache(maxsize=cache_size)
+        self.item_cache = LRUCache(maxsize=cache_size)
+        self.review_cache = LRUCache(maxsize=cache_size)
+        self.item_reviews_cache = LRUCache(maxsize=cache_size)
+        self.user_reviews_cache = LRUCache(maxsize=cache_size)
 
     def _iter_file(self, filename: str) -> Iterator[Dict]:
         """Iterate through file line by line."""
@@ -55,7 +37,7 @@ class CacheInteractionTool:
         
         for user in self._iter_file('user.json'):
             if user['user_id'] == user_id:
-                self.user_cache.put(user_id, user)
+                self.user_cache[user_id] = user
                 return user
         return None
 
@@ -70,7 +52,7 @@ class CacheInteractionTool:
         
         for item in self._iter_file('item.json'):
             if item['item_id'] == item_id:
-                self.item_cache.put(item_id, item)
+                self.item_cache[item_id] = item
                 return item
         return None
 
@@ -88,7 +70,7 @@ class CacheInteractionTool:
             
             for review in self._iter_file('review.json'):
                 if review['review_id'] == review_id:
-                    self.review_cache.put(review_id, review)
+                    self.review_cache[review_id] = review
                     return [review]
             return []
 
@@ -101,7 +83,7 @@ class CacheInteractionTool:
             for review in self._iter_file('review.json'):
                 if review['item_id'] == item_id:
                     reviews.append(review)
-            self.item_reviews_cache.put(item_id, reviews)
+            self.item_reviews_cache[item_id] = reviews
             return reviews
             
         elif user_id:
@@ -113,7 +95,7 @@ class CacheInteractionTool:
             for review in self._iter_file('review.json'):
                 if review['user_id'] == user_id:
                     reviews.append(review)
-            self.user_reviews_cache.put(user_id, reviews)
+            self.user_reviews_cache[user_id] = reviews
             return reviews
         
         return []

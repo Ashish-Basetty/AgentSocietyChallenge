@@ -162,7 +162,7 @@ simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
 
 # Run evaluation
 # If you don't set the number of tasks, the simulator will run all tasks.
-agent_outputs = simulator.run_simulation(number_of_tasks=None)
+agent_outputs = simulator.run_simulation(number_of_tasks=None, enable_threading=True, max_workers=10)
 
 # Evaluate the agent
 evaluation_results = simulator.evaluate()

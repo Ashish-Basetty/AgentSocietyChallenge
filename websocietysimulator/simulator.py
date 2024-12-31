@@ -100,7 +100,7 @@ class Simulator:
         self.agent_class = agent_class
         logger.info("Agent class set")
 
-    def set_llm(self, llm: LLMBase):
+    def set_llm(self, llm: Union[LLMBase, list[LLMBase]]):
         """
         Set the LLM to be used for the simulation.
         Args:
@@ -109,47 +109,92 @@ class Simulator:
         self.llm = llm
         logger.info("LLM set")
 
-    def run_simulation(self, number_of_tasks: int = None) -> List[Any]:
+    def run_simulation(self, number_of_tasks: int = None, enable_threading: bool = False, max_workers: int = None) -> List[Any]:
         """
-        Run the simulation.
-        Creates agents, invokes their forward methods, and collects outputs.
+        Run the simulation with optional multi-threading support.
+        
+        Args:
+            number_of_tasks: Number of tasks to run. If None, run all tasks.
+            enable_threading: Whether to enable multi-threading. Default is False.
+            max_workers: Maximum number of threads to use. If None, will use min(32, number_of_tasks).
         Returns:
             List of outputs from agents for each scenario.
         """
         logger.info("Running simulation")
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
+        if not self.interaction_tool:
+            raise RuntimeError("Interaction tool is not set. Use set_interaction_tool() to set it.")
 
         task_to_run = self.tasks[:number_of_tasks] if number_of_tasks is not None else self.tasks
-        self.simulation_outputs = []
         logger.info(f"Total tasks: {len(task_to_run)}")
-        index = 0
-        for task in task_to_run:
-            # Initialize the agent
-            agent = self.agent_class(llm=self.llm)
-            if not self.interaction_tool:
-                raise RuntimeError("Interaction tool is not set. Use set_interaction_tool() to set it.")
-            agent.set_interaction_tool(self.interaction_tool)
-            
-            # Set the scenario in the agent
-            agent.insert_task(task)
-            
-            # Invoke the forward method and collect output
-            try:
-                output = agent.workflow()
-                result = {
-                    "task": task.to_dict(),
-                    "output": output
-                }
+
+        # 如果不启用多线程，使用原始的串行处理
+        if not enable_threading:
+            self.simulation_outputs = []
+            for index, task in enumerate(task_to_run):
+                if isinstance(self.llm, list):
+                    agent = self.agent_class(llm=self.llm[index%len(self.llm)])
+                else:
+                    agent = self.agent_class(llm=self.llm)
+                agent.set_interaction_tool(self.interaction_tool)
+                agent.insert_task(task)
+                
+                try:
+                    output = agent.workflow()
+                    result = {
+                        "task": task.to_dict(),
+                        "output": output
+                    }
+                except NotImplementedError:
+                    result = {
+                        "task": task.to_dict(),
+                        "error": "Forward method not implemented by participant."
+                    }
                 self.simulation_outputs.append(result)
-            except NotImplementedError:
-                result = {
-                    "task": task.to_dict(),
-                    "error": "Forward method not implemented by participant."
-                }
-                self.simulation_outputs.append(result)
-            logger.info(f"Simulation finished for task {index}")
-            index += 1
+                logger.info(f"Simulation finished for task {index}")
+        else:
+            # 多线程处理
+            from concurrent.futures import ThreadPoolExecutor
+            from threading import Lock
+
+            log_lock = Lock()
+            self.simulation_outputs = [None] * len(task_to_run)
+
+            def process_task(task_index_tuple):
+                index, task = task_index_tuple
+                agent = self.agent_class(llm=self.llm)
+                agent.set_interaction_tool(self.interaction_tool)
+                agent.insert_task(task)
+                
+                try:
+                    output = agent.workflow()
+                    result = {
+                        "task": task.to_dict(),
+                        "output": output
+                    }
+                except NotImplementedError:
+                    result = {
+                        "task": task.to_dict(),
+                        "error": "Forward method not implemented by participant."
+                    }
+                
+                with log_lock:
+                    logger.info(f"Simulation finished for task {index}")
+                
+                self.simulation_outputs[index] = result
+                return result
+
+            # 确定线程数
+            if max_workers is None:
+                max_workers = min(32, len(task_to_run))
+            else:
+                max_workers = min(max_workers, len(task_to_run))
+            
+            logger.info(f"Running with {max_workers} threads")
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                list(executor.map(process_task, enumerate(task_to_run)))
+
         logger.info("Simulation finished")
         return self.simulation_outputs
 
