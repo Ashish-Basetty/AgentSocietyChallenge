@@ -189,24 +189,22 @@ class SimulationEvaluator(BaseEvaluator):
             sentiment_error_single = abs(sentiment1 - sentiment2) / 2
             sentiment_error.append(sentiment_error_single)
 
-            # Emotion analysis
-            try:
-                emotions1 = self.emotion_classifier(simulated_review)[0]
-            except Exception as e:
-                truncated_review = simulated_review.split(".")[0]
-                emotions1 = self.emotion_classifier(truncated_review)[0]
-            try:
-                emotions2 = self.emotion_classifier(real_review)[0]
-            except Exception as e:
-                truncated_review = real_review.split(".")[0]
-                emotions2 = self.emotion_classifier(truncated_review)[0]
-            emotion_error_single = self._calculate_emotion_error(emotions1, emotions2)
-            emotion_error.append(emotion_error_single)
-
             # Topic analysis
             embeddings = self.topic_model.encode([simulated_review, real_review])
             topic_error_single = distance.cosine(embeddings[0], embeddings[1]) / 2
             topic_error.append(topic_error_single)
+
+        # Emotion analysis
+        for i in range(len(simulated_reviews)):
+            if len(simulated_reviews[i]) > 300:
+                simulated_reviews[i] = simulated_reviews[i][:300]
+            if len(real_reviews[i]) > 300:
+                real_reviews[i] = real_reviews[i][:300]
+        simulated_emotions = self.emotion_classifier(simulated_reviews)
+        real_emotions = self.emotion_classifier(real_reviews)
+        for sim_emotion, real_emotion in zip(simulated_emotions, real_emotions):
+            emotion_error_single = self._calculate_emotion_error(sim_emotion, real_emotion)
+            emotion_error.append(emotion_error_single)
 
         sentiment_error = np.mean(sentiment_error)
         emotion_error = np.mean(emotion_error)
