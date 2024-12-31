@@ -6,8 +6,114 @@
     <title>User Behavior Modeling Track - WWW'25 AgentSociety Challenge</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* 二级标题样式 */
+        .section h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            position: relative;
+        }
+
+        .section h2:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+        }
+
+        /* 三级标题样式 */
+        .section h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        /* 链接样式 */
+        .section a {
+            color: #007bff;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .section a:hover {
+            color: #0056b3;
+        }
+
+        .section a:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #0056b3;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .section a:hover:after {
+            transform: scaleX(1);
+        }
+
+        /* 列表样式 */
+        .section ul, .section ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .section ul li, .section ol li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .section ul {
+            list-style: none;
+        }
+
+        .section ul li:before {
+            content: '•';
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        } 
+
+        /* 提交按钮样式 */
+        .submit-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 1000;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
+    <button class="submit-button" onclick="window.open('https://forms.gle/XwWbGBQZcVZp7oMr9', '_blank')">
+        Submit
+    </button>
+
     <nav class="sidebar">
         <div class="sidebar-logo">
             <img src="../assets/images/ASC.jpg" alt="Logo">
@@ -15,32 +121,72 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html" class="active">Overview</a></li>
+            <li><a href="discussion.html" class="active">Discussion</a></li>
             <li><a href="timeline.html">Timeline</a></li>
             <li><a href="rules.html">Rules</a></li>
-            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="behavior-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="behavior-leaderboard.html">Behavior Leaderboard</a></li>
+            <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
-        <section class="section" id="content"></section>
+        <section class="section" id="content">
+            <h1>User Modeling Track</h1>
+
+            <h2>Introduction</h2>
+            <p>
+                In this track, participants will use a classic open-source dataset to simulate social interactions and information access behaviors on social media. This is crucial for designing effective information retrieval algorithms for web applications. Using LLM-based agents, participants will combine historical user behavior records and interact with the environment to model how users might review businesses and engage with reviews. 
+            </p>
+            <p>
+                The track focuses on <strong>User Preference Simulation</strong>: Participants should design LLM agents that can understand user preferences and behavior patterns to model user preferences. The agent may integrate user characteristics, business attributes, and other users' reviews to form a comprehensive judgment. Each review must include two components: 
+            </p>
+            <ul>
+                <li><strong>Star rating:</strong> A numerical score reflecting the user's opinion.</li>
+                <li><strong>Review text:</strong> Detailed commentary providing specific feedback.</li>
+            </ul>
+            <p>
+                This track explores the potential and scalability of LLM agents in simulating human behavior, offering insights into their applications in behavioral modeling.
+            </p>
+
+            <h2>Evaluation</h2>
+            <p>
+                In the User Behavior Modeling Track, participants are expected to use LLM agents to model user interactions with recommended items (e.g., businesses on Yelp), including star ratings and review texts. The evaluation for this track will use quantitative metrics to assess the accuracy of the models in simulating user behavior. 
+            </p>
+            <p>
+                Specifically, the predicted star ratings are compared with the ground truth using Mean Absolute Error (MAE) after normalizing the values to the range [0,1]. The MAE is calculated as: 
+            </p>
+            <p style="text-align: center;">
+                MAE = (1 / N) ∑ | ŝ<sub>ni</sub> - s<sub>ni</sub> |
+            </p>
+            <p>
+                Where <strong>N</strong> is the total number of reviews, and <strong>ŝ<sub>ni</sub></strong> and <strong>s<sub>ni</sub></strong> are the <strong>i</strong>-th normalized predicted star and normalized ground truth, respectively. 
+            </p>
+            <p>
+                For the generated review texts, semantic similarity will be evaluated across predefined sentiment dimensions, such as emotional tone, sentiment attitude, and topic relevance. 
+            </p>
+            <ul>
+                <li>
+                    <strong>Emotional tone and sentiment attitude:</strong> Calculated using predefined models, normalized to [0,1], and computed through MAE.
+                </li>
+                <li>
+                    <strong>Topic relevance:</strong> Measured using cosine distance between text embeddings, defined as:
+                </li>
+            </ul>
+            <p style="text-align: center;">
+                d = 1 - (u · v / ||u||<sub>2</sub> · ||v||<sub>2</sub>)
+            </p>
+            <p>
+                Finally, after obtaining the individual results, the final error score will be a weighted sum of these metrics.
+            </p>
+
+            <p>
+                Checkout <a href="https://github.com/tsinghua-fib-lab/WebSocietySimulator/blob/main/websocietysimulator/tools/evaluation_tool.py" target="_blank">User Behavior Modeling Evaluation</a> for more calculation details.
+            </p>
+        </section>
     </main>
 
-    <script>
-        const markdownContent = `# User Behavior Modeling Track
-### Introduction
-
-In this track, participants will use a classic open-source dataset to simulate social interactions and information access behaviors on social media. This is crucial for designing effective information retrieval algorithms for web applications. Using LLM-based agents, participants will combine historical user behavior records and interact with the environment to model how users might review businesses and engage with reviews. The track focuses on **User Preference Simulation**: Participants should design LLM agents that can understand user preferences and behavior patterns to model user preferences. The agent may integrate user characteristics, business attributes, and other users' reviews to form a comprehensive judgment. Each review must include two components: a star rating (a numerical score reflecting the user's opinion) and review text (detailed commentary providing specific feedback).  This track explores the potential and scalability of LLM agents in simulating human behavior, offering insights into their applications in behavioral modeling.
-
-### Evaluation
-In the User Behavior Modeling Track, participants are expected to use LLM agents to model user interactions with recommended items (e.g., businesses on Yelp), including star ratings and review texts. The evaluation for this track will use quantitative metrics to assess the accuracy of the models in simulating user behavior. Specifically, the predicted star ratings are compared with the ground truth using Mean Absolute Error (MAE) after normalizing the values to the range [0,1]. The MAE is calculated as: $MAE = \frac{1}{N} \sum_{i=1}^{N} |\hat{s_{ni}} - s_{ni}|$, where $N$ is the total number of reviews, and $\hat{s_{ni}}$ and$s_{ni}$ are the $i$-th normalized predicted star and normalized ground truth, respectively. For the generated review texts, semantic similarity will be evaluated across predefined sentiment dimensions, such as emotional tone, sentiment attitude, and topic relevance. For emotional tone and sentiment attitude, we first calculate the values using predefined models, normalize them to the range [0,1], and compute the MAE. For topic relevance, we calculate the cosine distance between text embeddings, defined as: $d = 1 - \frac{u \cdot v}{\|u\|_2 \cdot \|v\|_2}$. Finally, after obtaining the individual results, the final error score will be a weighted sum of these metrics.
-
-Checkout [User Behavior Modeling Evaluation](https://github.com/tsinghua-fib-lab/WebSocietySimulator/blob/main/websocietysimulator/tools/evaluation_tool.py) for more calculation details.`;
-
-        document.getElementById('content').innerHTML = marked.parse(markdownContent);
-    </script>
     <script>
         // 获取当前页面的文件名
         const currentPage = window.location.pathname.split('/').pop();

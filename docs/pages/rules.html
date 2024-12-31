@@ -6,6 +6,88 @@
     <title>Rules - WWW'25 AgentSociety Challenge</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* 二级标题样式 */
+        .section h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            position: relative;
+        }
+
+        .section h2:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+        }
+
+        /* 三级标题样式 */
+        .section h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        /* 链接样式 */
+        .section a {
+            color: #007bff;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .section a:hover {
+            color: #0056b3;
+        }
+
+        .section a:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #0056b3;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .section a:hover:after {
+            transform: scaleX(1);
+        }
+
+        /* 列表样式 */
+        .section ul, .section ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .section ul li, .section ol li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .section ul {
+            list-style: none;
+        }
+
+        .section ul li:before {
+            content: '•';
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        } 
+    </style>
 </head>
 <body>
     <nav class="sidebar">
@@ -15,63 +97,83 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html" class="active">Overview</a></li>
+            <li><a href="discussion.html" class="active">Discussion</a></li>
             <li><a href="timeline.html">Timeline</a></li>
             <li><a href="rules.html">Rules</a></li>
-            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="behavior-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="behavior-leaderboard.html">Behavior Leaderboard</a></li>
+            <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
-        <section class="section" id="content"></section>
+        <section class="section" id="content">
+            <h1>Terms and Conditions</h1>
+
+            <h2>Competition Format</h2>
+
+            <h3>Rules</h3>
+            <ol>
+                <li>
+                    Participants should devise LLM agentic workflows within the predefined modular design space, including:
+                    <ul>
+                        <li><strong>Module Recombination</strong></li>
+                        <li><strong>Module Design</strong></li>
+                        <li><strong>Workflow Construction</strong></li>
+                    </ul>
+                    Uniform LLMs will be provided for evaluating the submitted workflows. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
+                </li>
+                <li>
+                    During the evaluation of submitted agents, any direct interaction with the original dataset is strictly prohibited. All data access must go through the interaction tools provided by the competition organizers.
+                </li>
+                <li>
+                    Participants are permitted to utilize inference services from any platform during the <strong>Development Phase</strong>. However, during the <strong>Evaluation Phase</strong>, all submitted agents will be evaluated exclusively on the Infinigence AI Tech platform.
+                </li>
+                <li>
+                    Submission limits:
+                    <ul>
+                        <li><strong>Development Phase:</strong> Each participant may submit up to <strong>2 times per day</strong>, with a maximum of <strong>100 submissions</strong> allowed throughout the phase.</li>
+                        <li><strong>Evaluation Phase:</strong> Each participant is allowed a maximum of <strong>2 submissions</strong> within the designated time frame.</li>
+                    </ul>
+                </li>
+                <li>Evaluation will be <strong>time- and token-limited</strong>.</li>
+                <li>Any form of dishonest conduct is strictly prohibited and will result in <strong>immediate disqualification</strong> if detected.</li>
+            </ol>
+
+            <hr>
+
+            <h3>Schedule</h3>
+            <ul>
+                <li><strong>October 2024:</strong> Competition organization building, competition planning, and proposal writing.</li>
+                <li><strong>November 2024:</strong> Preparation of competition materials and promotion of the competition.</li>
+                <li><strong>December 2024:</strong> Acceptance of participant registrations.</li>
+                <li>
+                    <strong>Official Competition:</strong>
+                    <ul>
+                        <li>Participants submit solutions, and organizers evaluate and maintain a public leaderboard.</li>
+                    </ul>
+                </li>
+                <li><strong>February 2025:</strong> Notification of winners, invitation of winners to write papers, and preparation of the competition presentation.</li>
+            </ul>
+
+            <hr>
+
+            <h3>Fairness Mechanisms</h3>
+            <ol>
+                <li>
+                    <strong>Public Leaderboard:</strong> The organizers will provide a public leaderboard for all participants to monitor and review performance.
+                </li>
+                <li>
+                    <strong>Rigorous Review:</strong> Submissions will undergo a thorough review to ensure compliance with competition rules and the integrity of results.
+                </li>
+                <li>
+                    <strong>Equal Access to Resources:</strong> The organizers will ensure all participants have access to sufficient and fair computational resources.
+                </li>
+            </ol>
+        </section>
     </main>
 
-    <script>
-        const markdownContent = `# Terms and Conditions
-
-## Competition Format
-
-### Rules
-1. Participants should devise LLM agentic workflows within the predefined modular design space, including:
-   - **Module Recombination**
-   - **Module Design**
-   - **Workflow Construction**
-   
-Uniform LLMs will be provided for evaluating the submitted workflows. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
-
-2. During the evaluation of submitted agents, any direct interaction with the original dataset is strictly prohibited. All data access must go through the interaction tools provided by the competition organizers.
-
-3. Participants are permitted to utilize inference services from any platform during the **Development Phase**. However, during the **Evaluation Phase**, all submitted agents will be evaluated exclusively on the Infinigence AI Tech platform.
-
-4. Submission limits:
-   - **Development Phase**: Each participant may submit up to **2 times per day**, with a maximum of **100 submissions** allowed throughout the phase.
-   - **Evaluation Phase**: Each participant is allowed a maximum of **2 submissions** within the designated time frame.
-
-5. Evaluation will be **time- and token-limited**.
-
-6. Any form of dishonest conduct is strictly prohibited and will result in **immediate disqualification** if detected.
-
----
-
-### Schedule
-- **October 2024**: Competition organization building, competition planning, and proposal writing.
-- **November 2024**: Preparation of competition materials and promotion of the competition.
-- **December 2024**: Acceptance of participant registrations.
-- **Official Competition**:
-  - Participants submit solutions, and organizers evaluate and maintain a public leaderboard.
-- **February 2025**: Notification of winners, invitation of winners to write papers, and preparation of the competition presentation.
-
----
-
-### Fairness Mechanisms
-1. **Public Leaderboard**: The organizers will provide a public leaderboard for all participants to monitor and review performance.
-2. **Rigorous Review**: Submissions will undergo a thorough review to ensure compliance with competition rules and the integrity of results.
-3. **Equal Access to Resources**: The organizers will ensure all participants have access to sufficient and fair computational resources.`;
-
-        document.getElementById('content').innerHTML = marked.parse(markdownContent);
-    </script>
     <script>
         // 获取当前页面的文件名
         const currentPage = window.location.pathname.split('/').pop();

@@ -6,6 +6,88 @@
     <title>Timeline - WWW'25 AgentSociety Challenge</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* 二级标题样式 */
+        .section h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            position: relative;
+        }
+
+        .section h2:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+        }
+
+        /* 三级标题样式 */
+        .section h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        /* 链接样式 */
+        .section a {
+            color: #007bff;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .section a:hover {
+            color: #0056b3;
+        }
+
+        .section a:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #0056b3;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .section a:hover:after {
+            transform: scaleX(1);
+        }
+
+        /* 列表样式 */
+        .section ul, .section ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .section ul li, .section ol li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .section ul {
+            list-style: none;
+        }
+
+        .section ul li:before {
+            content: '•';
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        } 
+    </style>
 </head>
 <body>
     <nav class="sidebar">
@@ -15,32 +97,34 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html" class="active">Overview</a></li>
+            <li><a href="discussion.html" class="active">Discussion</a></li>
             <li><a href="timeline.html">Timeline</a></li>
             <li><a href="rules.html">Rules</a></li>
-            <li><a href="behavior-track.html">User Behavior Modeling</a></li>
+            <li><a href="behavior-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="behavior-leaderboard.html">Behavior Leaderboard</a></li>
+            <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
         <section class="section" id="content">
+            <h1>Timeline</h1>
+            <p>The schedule for the competition is as follows:</p>
+            <ul>
+                <li><strong>Start of the Competition (Registration):</strong> Dec 10th, 2024 - Jun 18th, 2025</li>
+                <li><strong>Official Competition:</strong> Dec 18th, 2024 - Jan 25th, 2025
+                    <ul>
+                        <li><strong>Development Phase:</strong> Dec 30th, 2024 - Jan 23rd, 2025</li>
+                        <li><strong>Final Phase:</strong> Jun 24th, 2025 - Jun 30th, 2025</li>
+                    </ul>
+                </li>
+                <li><strong>Winner Notification and Per Invitation:</strong> Feb 3rd, 2025</li>
+                <li><strong>Camera-ready Submission:</strong> Feb 17th, 2025</li>
+            </ul>
         </section>
     </main>
 
-    <script>
-        const markdownContent = `# Timeline
-The schedule for the competition is as follows：
-1. Start of the Competition （Registration）： Dec 10th, 2024-Jun 18th, 2025.
-2. Official Competition: Dec 18th, 2024 -Jan 25th, 2025.
-	* Development Phase: Dec 30th, 2024 - Jan 23th, 2025.
-	* Final Phase: Jun 24th, 2025 - Jun 30th, 2025.
-3. Winner Notification and Per Invitation: Feb 3rd, 2025.
-4. Camera-ready Submission: Feb 17th, 2025.`;
-
-        document.getElementById('content').innerHTML = marked.parse(markdownContent);
-    </script>
     <script>
         // 获取当前页面的文件名
         const currentPage = window.location.pathname.split('/').pop();
