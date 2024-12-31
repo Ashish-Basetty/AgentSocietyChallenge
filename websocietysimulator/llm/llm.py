@@ -3,7 +3,8 @@ from openai import OpenAI
 from langchain_openai import OpenAIEmbeddings
 from .infinigence_embeddings import InfinigenceEmbeddings
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-from openai import RateLimitError
+import logging
+logger = logging.getLogger("websocietysimulator")
 
 class LLMBase:
     def __init__(self, model: str = "qwen2.5-72b-instruct"):
@@ -58,7 +59,7 @@ class InfinigenceLLM(LLMBase):
         self.embedding_model = InfinigenceEmbeddings(api_key=api_key)
         
     @retry(
-        retry=retry_if_exception_type(RateLimitError),
+        retry=retry_if_exception_type(Exception),
         wait=wait_exponential(multiplier=1, min=4, max=60),  # 等待时间从4秒开始，指数增长，最长60秒
         stop=stop_after_attempt(5)  # 最多重试5次
     )
@@ -93,7 +94,9 @@ class InfinigenceLLM(LLMBase):
                 return [choice.message.content for choice in response.choices]
         except Exception as e:
             if "429" in str(e):  # 如果是速率限制错误
-                raise RateLimitError("Rate limit exceeded")
+                logger.warning("Rate limit exceeded")
+            else:
+                logger.error(f"Other LLM Error: {e}")
             raise e
     
     def get_embedding_model(self):
