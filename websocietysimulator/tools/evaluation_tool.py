@@ -9,7 +9,17 @@ from sentence_transformers import SentenceTransformer
 from scipy.spatial import distance
 import torch
 import nltk
-nltk.download('vader_lexicon')
+
+def ensure_nltk_data():
+    """Ensure NLTK data is available"""
+    try:
+        nltk.data.find('sentiment/vader_lexicon.zip')
+    except LookupError:
+        logging.warning("VADER lexicon not found, downloading...")
+        nltk.download('vader_lexicon', quiet=True)
+
+# Check NLTK data availability at import time
+ensure_nltk_data()
 
 @dataclass
 class RecommendationMetrics:
