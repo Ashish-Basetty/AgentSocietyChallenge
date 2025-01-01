@@ -23,22 +23,20 @@ ensure_nltk_data()
 
 @dataclass
 class RecommendationMetrics:
-    hr_at_1: float
-    hr_at_3: float
-    hr_at_5: float
-    final_hr: float
+    top_1_hit_rate: float
+    top_3_hit_rate: float
+    top_5_hit_rate: float
+    average_hit_rate: float
     total_scenarios: int
-    hits_at_1: int
-    hits_at_3: int
-    hits_at_5: int
+    top_1_hits: int
+    top_3_hits: int
+    top_5_hits: int
 
 @dataclass
 class SimulationMetrics:
-    star_error: float
-    sentiment_error: float
-    emotion_error: float
-    topic_error: float
-    overall_error: float
+    preference_estimation: float
+    review_generation: float
+    overall_quality: float
 
 class BaseEvaluator:
     """Base class for evaluation tools"""
@@ -74,19 +72,19 @@ class RecommendationEvaluator(BaseEvaluator):
                 if gt in pred[:n]:
                     hits[n] += 1
         
-        hr_at_1 = hits[1] / total if total > 0 else 0
-        hr_at_3 = hits[3] / total if total > 0 else 0
-        hr_at_5 = hits[5] / total if total > 0 else 0
-        final_hr = (hr_at_1 + hr_at_3 + hr_at_5) / 3
+        top_1_hit_rate = hits[1] / total if total > 0 else 0
+        top_3_hit_rate = hits[3] / total if total > 0 else 0
+        top_5_hit_rate = hits[5] / total if total > 0 else 0
+        average_hit_rate = (top_1_hit_rate + top_3_hit_rate + top_5_hit_rate) / 3
         metrics = RecommendationMetrics(
-            hr_at_1=hr_at_1,
-            hr_at_3=hr_at_3,
-            hr_at_5=hr_at_5,
-            final_hr=final_hr,
+            top_1_hit_rate=top_1_hit_rate,
+            top_3_hit_rate=top_3_hit_rate,
+            top_5_hit_rate=top_5_hit_rate,
+            average_hit_rate=average_hit_rate,
             total_scenarios=total,
-            hits_at_1=hits[1],
-            hits_at_3=hits[3],
-            hits_at_5=hits[5]
+            top_1_hits=hits[1],
+            top_3_hits=hits[3],
+            top_5_hits=hits[5]
         )
         
         self.save_metrics(metrics)
@@ -146,6 +144,7 @@ class SimulationEvaluator(BaseEvaluator):
                 sim_star = 0
             star_error += abs(sim_star - real_star) / 5
         star_error = star_error / len(real_stars)
+        preference_estimation = 1 - star_error
 
         # Calculate review metrics
         simulated_reviews = [item['review'] for item in simulated_data]
@@ -158,15 +157,13 @@ class SimulationEvaluator(BaseEvaluator):
         sentiment_error = review_details['sentiment_error']
         emotion_error = review_details['emotion_error']
         topic_error = review_details['topic_error']
-
-        overall_error = (star_error + (sentiment_error * 0.25 + emotion_error * 0.25 + topic_error * 0.5)) / 2
+        review_generation = 1 - (sentiment_error * 0.25 + emotion_error * 0.25 + topic_error * 0.5)
+        overall_quality = (preference_estimation + review_generation) / 2
 
         metrics = SimulationMetrics(
-            star_error=star_error,
-            sentiment_error=sentiment_error,
-            emotion_error=emotion_error,
-            topic_error=topic_error,
-            overall_error=overall_error
+            preference_estimation=preference_estimation,
+            review_generation=review_generation,
+            overall_quality=overall_quality
         )
 
         self.save_metrics(metrics)
