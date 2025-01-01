@@ -172,17 +172,16 @@ evaluation_results = simulator.evaluate()
 ---
 
 ### 6. Submit your agent
-- Submit your registration form through this [Registration Form](https://forms.gle/MARrrNfKFSZX2Hpp9)
-  - Please fill in the form carefully.
-- Submit your solution through this [Submission Form](https://forms.gle/dB3sZnif1yiWFNrb9)
+- You should register your team firstly in the competition homepage ([Homepage](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge)).
+- Submit your solution through the submission button at the specific track page. (the submission button is at the top right corner of the page)
+  - [User Modeling Track](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge/pages/behavior-track.html)
+  - [Recommendation Track](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge/pages/recommendation-track.html)
   - Please register your team first.
-  - Please fill in the form carefully.
   - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
 - **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
 - Example submissions:
   - For Track 1: [submission_1](example/trackOneSubmission_example.zip)
   - For Track 2: [submission_2](example/trackTwoSubmission_example.zip)
-- Leaderboard: coming soon
 
 ---
 

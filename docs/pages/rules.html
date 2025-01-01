@@ -87,33 +87,70 @@
             position: absolute;
             left: -15px;
         } 
+
+        /* 提交按钮样式 */
+        .submit-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 1000;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
+    <button class="submit-button" onclick="window.open('https://forms.gle/XwWbGBQZcVZp7oMr9', '_blank')">
+        Submit
+    </button>
+
     <nav class="sidebar">
         <div class="sidebar-logo">
             <img src="../assets/images/ASC.jpg" alt="Logo">
             <h1>AgentSociety Challenge</h1>
         </div>
         <ul class="nav-links">
-            <li><a href="overview.html" class="active">Overview</a></li>
-            <li><a href="discussion.html" class="active">Discussion</a></li>
-            <li><a href="timeline.html">Timeline</a></li>
-            <li><a href="rules.html">Rules</a></li>
+            <li><a href="overview.html">Overview</a></li>
             <li><a href="behavior-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
             <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
+            <li><a href="rules.html">Submission Guidelines</a></li>
+            <li><a href="discussion.html">Discussion</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
         <section class="section" id="content">
-            <h1>Terms and Conditions</h1>
+            <h1>Submission Guidelines</h1>
 
-            <h2>Competition Format</h2>
+            <h2>Modular Agent Design Space</h2>
+            <p>Within this framework, participants can explore LLM agent design with three levels:</p>
+            <ul>
+                <li><strong>Module Recombination:</strong> Designing novel agents by recombining the classic modules (reasoning, planning, tool use, and memory).</li>
+                <li><strong>Module Design:</strong> Developing or modifying modules to implement new functionalities while ensuring compatibility with the standardized framework.</li>
+                <li><strong>Workflow Construction:</strong> Designing the overall structure and interaction flow of the agentic system to effectively integrate the modules and achieve the desired outcomes.</li>
+            </ul>
+            
+            <p>
+                With the standard IO interfaces of these modules, participants can easily integrate different classic modules, facilitating the discovery of novel agent architectures through module recombination. 
+                This approach allows for the reuse of prior successful designs, significantly lowering the barrier for participants who may not have deep knowledge of LLM agents. 
+                Besides, this challenge also supports more in-depth agent design, allowing participants to reprogram each module and even rewrite the entire workflow. 
+                One key motivation of our challenge design is to ensure the discovered modules, with standard IO interfaces, can be reused in future research and applications, benefiting the LLM agent and web community. 
+                In the final phase, submissions will be required to adhere to a modular design.
+            </p>
 
-            <h3>Rules</h3>
+            <h2>Submission Rules</h2>
             <ol>
                 <li>
                     Participants should devise LLM agentic workflows within the predefined modular design space, including:
@@ -143,23 +180,25 @@
 
             <hr>
 
-            <h3>Schedule</h3>
-            <ul>
-                <li><strong>October 2024:</strong> Competition organization building, competition planning, and proposal writing.</li>
-                <li><strong>November 2024:</strong> Preparation of competition materials and promotion of the competition.</li>
-                <li><strong>December 2024:</strong> Acceptance of participant registrations.</li>
-                <li>
-                    <strong>Official Competition:</strong>
-                    <ul>
-                        <li>Participants submit solutions, and organizers evaluate and maintain a public leaderboard.</li>
-                    </ul>
-                </li>
-                <li><strong>February 2025:</strong> Notification of winners, invitation of winners to write papers, and preparation of the competition presentation.</li>
-            </ul>
+            <h2>Submit Your Agent</h2>
+            <p>
+                You should register your team first. Submit your solution through the submission button in the top right corner.
+            </p>
+            <p>
+                <ul>
+                    <li>Please register your team first.</li>
+                    <li>When you submit your agent, please carefully <strong>SELECT the TRACK</strong> you want to submit to.</li>
+                    <li><strong>The content of your submission should be a zip file containing your agent (Only one <code>{your_agent}.py</code> file without evaluation code).</strong></li>
+                    <li>Example submissions:
+                        <ul>
+                            <li>For Track 1: <a href="https://github.com/tsinghua-fib-lab/AgentSocietyChallenge/blob/main/example/trackOneSubmission_example.zip" target="_blank">submission_1</a></li>
+                            <li>For Track 2: <a href="https://github.com/tsinghua-fib-lab/AgentSocietyChallenge/blob/main/example/trackTwoSubmission_example.zip" target="_blank">submission_2</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </p>
 
-            <hr>
-
-            <h3>Fairness Mechanisms</h3>
+            <h2>Fairness Mechanisms</h2>
             <ol>
                 <li>
                     <strong>Public Leaderboard:</strong> The organizers will provide a public leaderboard for all participants to monitor and review performance.

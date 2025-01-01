@@ -324,7 +324,38 @@
             font-weight: bold;
             position: absolute;
             left: -15px;
-        } 
+        }
+
+        .contact-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(to right, #1a237e, #283593);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-info span {
+            white-space: nowrap;
+        }
+
+        .contact-info a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-info a:hover {
+            color: #90caf9;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -335,14 +366,16 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html">Overview</a></li>
-            <li><a href="discussion.html">Discussion</a></li>
-            <li><a href="timeline.html">Timeline</a></li>
-            <li><a href="rules.html">Rules</a></li>
             <li><a href="behavior-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
             <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
+            <li><a href="rules.html">Submission Guidelines</a></li>
+            <li><a href="discussion.html">Discussion</a></li>
         </ul>
+        <div class="contact-info">
+            <a href="mailto:LLMSociety-Challenge@outlook.com">LLMSociety-Challenge@outlook.com</a>
+        </div>
     </nav>
 
     <!-- 预检测注册信息 -->
@@ -407,38 +440,40 @@
                 The participants are tasked to construct effective agent modules that work together to enhance the agent’s ability to process information, make decisions, and interact with dynamic environments in IR tasks.
             </p>
 
-            <h2>Modular Agent Design Space</h2>
-            <p>Within this framework, participants can explore LLM agent design with three levels:</p>
-            <ul>
-                <li><strong>Module Recombination:</strong> Designing novel agents by recombining the classic modules (reasoning, planning, tool use, and memory).</li>
-                <li><strong>Module Design:</strong> Developing or modifying modules to implement new functionalities while ensuring compatibility with the standardized framework.</li>
-                <li><strong>Workflow Construction:</strong> Designing the overall structure and interaction flow of the agentic system to effectively integrate the modules and achieve the desired outcomes.</li>
-            </ul>
-            
-            <p>
-                With the standard IO interfaces of these modules, participants can easily integrate different classic modules, facilitating the discovery of novel agent architectures through module recombination. 
-                This approach allows for the reuse of prior successful designs, significantly lowering the barrier for participants who may not have deep knowledge of LLM agents. 
-                Besides, this challenge also supports more in-depth agent design, allowing participants to reprogram each module and even rewrite the entire workflow. 
-                One key motivation of our challenge design is to ensure the discovered modules, with standard IO interfaces, can be reused in future research and applications, benefiting the LLM agent and web community. 
-                In the final phase, submissions will be required to adhere to a modular design.
-            </p>
-
+            <h2>Tracks Introduction</h2>
             <p>
                 Specifically, this challenge consists of two tracks: 
-                <strong>User Modeling Track</strong>, which focuses on simulating user behavior in specific scenarios by leveraging their historical actions and accessible environmental data. 
-                In this track, we utilized datasets from <strong>Yelp</strong>, <strong>Amazon</strong>, and <strong>Goodreads</strong> to build a text simulation environment that allows participants to come up with new solutions to these problems in an interactive environment in agentic mode, ensuring a comprehensive and diverse evaluation of user behaviors; 
-                <strong>Recommendation Track</strong>, which emphasizes building personalized recommendation assistants that provide users with appropriate suggestions tailored to particular contexts. 
-                These tracks focus on key problems in information retrieval (IR), like understanding user intent, context-aware decision-making, and adaptive response generation. 
-                They aim to advance research in behavioral modeling and recommendation systems, driving innovation in how information is retrieved and applied to support users in various situations. 
-                In the User Modeling Track, participants must design agents to simulate user reviews and star ratings. 
-                In the Recommendation Track, participants are tasked with using agents to generate rankings based on the current user's preferences.
+                <ul>
+                    <li><strong>User Modeling Track</strong>: In this track, participants must design agents to simulate user reviews and star ratings, 
+                        focusing on simulating user behavior in specific scenarios by leveraging their historical actions and accessible environmental data. 
+                        By utilizing the text simulation environment, participants come up with new solutions to these problems in an interactive environment in agentic mode, 
+                        ensuring a comprehensive and diverse evaluation of user behaviors. </li>
+                    <li><strong>Recommendation Track</strong>: In this track, participants are tasked with using agents to generate rankings based on the current user's preferences, 
+                        which emphasizes building personalized recommendation assistants that provide users with appropriate suggestions tailored to particular contexts. </li>
+                </ul>
+                These tracks focus on key problems in information retrieval (IR), like understanding user intent, 
+                context-aware decision-making, and adaptive response generation. They aim to advance research in user modeling and recommendation systems, 
+                driving innovation in how information is retrieved and applied to support users in various situations.
             </p>
 
             <p>Here is the <strong>Resource & Code base:</strong> 
                 <a href="https://github.com/tsinghua-fib-lab/WebSocietySimulator" target="_blank">Official Github</a>.
             </p>
 
-            <h2>About Token Support</h2>
+            <h2>Timeline</h2>
+            <ul>
+                <li><strong>Start of the Competition (Registration):</strong> Dec 10th, 2024 - Jun 18th, 2025</li>
+                <li><strong>Official Competition:</strong> Dec 18th, 2024 - Jan 25th, 2025
+                    <ul>
+                        <li><strong>Development Phase:</strong> Dec 30th, 2024 - Jan 23rd, 2025</li>
+                        <li><strong>Final Phase:</strong> Jun 24th, 2025 - Jun 30th, 2025</li>
+                    </ul>
+                </li>
+                <li><strong>Winner Notification and Per Invitation:</strong> Feb 3rd, 2025</li>
+                <li><strong>Camera-ready Submission:</strong> Feb 17th, 2025</li>
+            </ul>
+
+            <h2>Token Support</h2>
             <p>
                 To support participants, we will provide API-key access during the development phase. 
                 This will be offered through InfinigenceAI, with the following specifications: RPM=100, TPM=60000, RPD=10000, and the ability to call models such as Qwen-72b-instruct. 
@@ -449,8 +484,8 @@
 
             <h2>Award</h2>
             <p>
-                To encourage and reward excellence, the competition will offer prizes for first, second, and third place <strong>FOR EACH TRACK</strong>. 
-                The first place team will receive <strong>3,000 USD</strong>, the second place team will receive <strong>1,000 USD</strong>, and the third place team will receive <strong>500 USD</strong>. (all pre-tax)
+                To encourage and reward excellence, the competition will offer prizes for the first place, the first runner-up, and the second runner-up in each track. 
+                The first place team will receive 3,000 USD, the first runner-up team will receive 1,000 USD, and the second runner-up team will receive 500 USD. (all pre-tax)
             </p>
         </section>
     </main>
