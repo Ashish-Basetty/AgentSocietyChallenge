@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recommendation Leaderboard - WWW'25 AgentSociety Challenge</title>
+    <title>User Behavior Modeling Leaderboard - WWW'25 AgentSociety Challenge</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">  <!-- 确保我们的样式在最后加载 -->
@@ -288,38 +288,20 @@
             overflow-x: auto;
         }
 
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .section {
-                padding: 1rem;
-                width: 100%;
-            }
-
-            .dataTables_wrapper {
-                padding: 15px;
-            }
-
-            .dataTables_length,
-            .dataTables_filter {
-                float: none;
-                text-align: left;
-                margin-bottom: 15px;
-            }
-
-            .dataTables_filter input {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 8px;
-            }
-
-            .recommendation-title {
-                font-size: 1.5rem;
+        /* 优化表格在小屏幕上的显示 */
+        @media (max-width: 1200px) {
+            .behavior-title {
+                font-size: 2rem;
             }
         }
 
-        @media (max-width: 1200px) {
-            .recommendation-title {
-                font-size: 2rem;
+        @media (max-width: 768px) {
+            .behavior-title {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1rem;
             }
         }
 
@@ -353,6 +335,37 @@
             color: #90caf9;
             text-decoration: underline;
         }
+
+        .leaderboard-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #007bff, #00ff88);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+        }
+
+        .leaderboard-content {
+            display: block;
+        }
+
+        .leaderboard-content.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -365,8 +378,7 @@
             <li><a href="overview.html">Overview</a></li>
             <li><a href="modeling-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="modeling-leaderboard.html">User Modeling Leaderboard</a></li>
-            <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
+            <li><a href="leaderboards.html">Leaderboards</a></li>
             <li><a href="submission-guidelines.html">Submission Guidelines</a></li>
             <li><a href="discussion.html">Discussion Forum</a></li>
         </ul>
@@ -374,40 +386,79 @@
 
     <main class="main-content">
         <section class="section">
-            <h1>🏆 Recommendation Track Leaderboard</h1>
-            <table id="leaderboard" class="display responsive nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th><i class="header-icon">👥</i>Team Name</th>
-                        <th><i class="header-icon">⏰</i>Submission Time</th>
-                        <th><i class="header-icon">🎯</i>Top-1 Hit Rate</th>
-                        <th><i class="header-icon">🎯</i>Top-3 Hit Rate</th>
-                        <th><i class="header-icon">🎯</i>Top-5 Hit Rate</th>
-                        <th><i class="header-icon">🏆</i>Avg Hit Rate</th>
-                    </tr>
-                </thead>
-            </table>
+            <!-- 添加标签切换按钮 -->
+            <div class="leaderboard-tabs">
+                <button class="tab-button active" data-tab="modeling">User Modeling Track</button>
+                <button class="tab-button" data-tab="recommendation">Recommendation Track</button>
+            </div>
+
+            <!-- User Modeling Leaderboard -->
+            <div class="leaderboard-content" id="modeling-leaderboard">
+                <h1>🏆 User Modeling Track Leaderboard</h1>
+                <table id="modeling-table" class="display responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th><i class="header-icon">👥</i>Team Name</th>
+                            <th><i class="header-icon">⏰</i>Submission Time</th>
+                            <th><i class="header-icon">⭐</i>Preference Estimation</th>
+                            <th><i class="header-icon">📝</i>Review Generation</th>
+                            <th><i class="header-icon">📊</i>Overall Quality</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <!-- Recommendation Leaderboard -->
+            <div class="leaderboard-content hidden" id="recommendation-leaderboard">
+                <h1>🏆 Recommendation Track Leaderboard</h1>
+                <table id="recommendation-table" class="display responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th><i class="header-icon">👥</i>Team Name</th>
+                            <th><i class="header-icon">⏰</i>Submission Time</th>
+                            <th><i class="header-icon">🎯</i>Top-1 Hit Rate</th>
+                            <th><i class="header-icon">🎯</i>Top-3 Hit Rate</th>
+                            <th><i class="header-icon">🎯</i>Top-5 Hit Rate</th>
+                            <th><i class="header-icon">🏆</i>Avg Hit Rate</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </section>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#leaderboard').DataTable({
+            // 初始化两个表格
+            const modelingTable = $('#modeling-table').DataTable({
+                ajax: {
+                    url: '../assets/data/behavior_leaderboard.csv',
+                    dataType: 'text',
+                    dataSrc: function(csvData) {
+                        return $.csv.toObjects(csvData);
+                    }
+                },
+                columns: [
+                    { data: 'Team name', className: 'team-name' },
+                    { data: 'Submission Time', className: 'submission-time' },
+                    { data: 'Preference Estimation', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Review Generation', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Overall Quality', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } }
+                ],
+                order: [[4, 'desc']],
+                pageLength: 10,
+                responsive: false
+            });
+
+            const recommendationTable = $('#recommendation-table').DataTable({
                 ajax: {
                     url: '../assets/data/recommendation_leaderboard.csv',
                     dataType: 'text',
-                    cache: false,
                     dataSrc: function(csvData) {
-                        const data = $.csv.toObjects(csvData);
-                        console.log('Loaded data:', data);
-                        return data;
-                    },
-                    error: function(xhr, error, thrown) {
-                        console.error('Error loading data:', error);
+                        return $.csv.toObjects(csvData);
                     }
                 },
                 columns: [
@@ -422,8 +473,29 @@
                 pageLength: 10,
                 responsive: false
             });
+
+            // 标签切换功能
+            $('.tab-button').click(function() {
+                const tabId = $(this).data('tab');
+                
+                // 更新按钮状态
+                $('.tab-button').removeClass('active');
+                $(this).addClass('active');
+                
+                // 更新内容显示
+                $('.leaderboard-content').addClass('hidden');
+                $(`#${tabId}-leaderboard`).removeClass('hidden');
+                
+                // 重新计算表格列宽
+                if(tabId === 'modeling') {
+                    modelingTable.columns.adjust();
+                } else {
+                    recommendationTable.columns.adjust();
+                }
+            });
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
     <script>
         // 获取当前页面的文件名
         const currentPage = window.location.pathname.split('/').pop();

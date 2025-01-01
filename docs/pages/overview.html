@@ -392,8 +392,7 @@
             <li><a href="overview.html">Overview</a></li>
             <li><a href="modeling-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="modeling-leaderboard.html">User Modeling Leaderboard</a></li>
-            <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
+            <li><a href="leaderboards.html">Leaderboards</a></li>
             <li><a href="submission-guidelines.html">Submission Guidelines</a></li>
             <li><a href="discussion.html">Discussion Forum</a></li>
         </ul>
@@ -443,23 +442,28 @@
         <section class="section" id="content">
             <h1>🌏 AgentSociety Challenge @ WWW 2025</h1>
             <p>
-                Online review platforms play a pivotal role in shaping social interactions and information exchange in the digital age, 
-                providing spaces for people to share experiences and seek insights. 
-                The AgentSociety Challenge aims to explore the potential of large language model (LLM) agents in understanding user behavior and enhancing user experiences within these platforms. 
-                Participants are invited to compete in two tracks: the <strong>User Modeling Track</strong>, which focuses on modeling user preferences and simulating online reviews, 
-                and the <strong>Recommendation Track</strong>, which emphasizes delivering personalized recommendations across diverse scenarios. 
-                The Challenge utilizes large-scale public datasets from prominent online review platforms, complemented by a textual simulator to provide interactive feedback for LLM agents. 
-                By encouraging participants to design LLM agents within a modular design space, the Challenge seeks to advance the integration of LLM technologies into real-world web applications. 
-                Winning modular designs will be reusable and adaptable, offering long-term value to academic research, industry applications, and the broader Web community.
+                We are excited to announce the AgentSociety Challenge, a significant competition aimed at advancing the application of large language model (LLM) agents in online review platforms. 
+                As organizers, we recognize the crucial role these platforms play in today's digital age, serving as vital spaces for experience sharing, advice seeking, and social interaction.
+
+                We have carefully designed two competitive tracks: the <strong>User Modeling Track</strong>, which focuses on understanding user preferences and simulating online reviews, 
+                and the <strong>Recommendation Track</strong>, dedicated to delivering personalized recommendations across diverse scenarios. 
+                To support participants' research and development, we use large-scale open-source datasets from leading online review platforms, 
+                complemented by our custom-built textual simulator for interactive agent feedback.
+
+                We particularly emphasize modular design principles, encouraging participants to develop LLM agents within our predefined modular design space. 
+                We believe that winning modular solutions will not only be reusable and adaptable but will also bring long-term value to academic research, 
+                industry applications, and the broader Web community. 
+                Through this challenge, we aim to drive innovation and breakthrough in the integration of LLM technologies with real-world Web applications.
             </p>
 
-            <h2>Problem Formulation</h2>
+            <h2>📍 Problem Formulation</h2>
             <p>
-                The participants are tasked to construct effective agent modules that work together to enhance the agent's ability to process information, make decisions, 
-                and interact with dynamic environments in online review platforms.
-                To facilitate this, we have built an interactive simulation environment.
-                The interactive environment is built based on open-source datasets, including Yelp<sup><a href="#yelp-dataset">[1]</a></sup>, Amazon<sup><a href="#amazon-dataset">[2]</a></sup>, and Goodreads<sup><a href="#goodreads-dataset">[3]</a></sup>, 
-                complemented by a textual simulator to provide interactive feedback for LLM agents.
+                The participants are tasked to construct agentic workflows with LLM to process information, write reviews, and make recommendations 
+                by interacting with online review platforms. To facilitate this, we have built an interactive 
+                simulation environment that allows agents to engage with these platforms in a controlled setting.
+                The interactive environment is built based on open-source datasets, including Yelp<sup><a href="#yelp-dataset">[1]</a></sup>, 
+                Amazon<sup><a href="#amazon-dataset">[2]</a></sup>, and Goodreads<sup><a href="#goodreads-dataset">[3]</a></sup>, 
+                complemented by a textual simulator to provide interactive feedback for agents.
                 Specifically, this challenge consists of two tracks: 
                 <ul>
                     <li><strong><a href="modeling-track.html">User Modeling Track</a></strong>: In this track, participants must design agents to simulate user reviews and star ratings, 
@@ -476,13 +480,15 @@
                 These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
                 The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. 
                 Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. 
+                Through this modular design approach, participants can not only create effective solutions for this challenge but also contribute reusable modules to the broader agent community, 
+                fostering innovation and collaboration in agent development.
             </p> <br>
 
             <p>Here is the <strong>Resource & Code base:</strong> 
                 <a href="https://github.com/tsinghua-fib-lab/WebSocietySimulator" target="_blank">Official Github</a>.
             </p>
 
-            <h2>Timeline</h2>
+            <h2>📅 Timeline</h2>
             <p>
                 The competition will be held from Dec 30th, 2024 to Jan 30th, 2025, following the timeline outlined below: 
                 <ul>
@@ -494,7 +500,7 @@
                 Note: All submission deadlines are end-of-day in the Anywhere on Earth (AoE) time zone.
             </p>
 
-            <h2>Token Support</h2>
+            <h2>💪🏻 Token Support</h2>
             <p>
                 To support participants, we will provide API-key access during the development phase. 
                 This will be offered through InfinigenceAI, with the following specifications: RPM=100, TPM=60000, RPD=10000, and the ability to call models such as Qwen-72b-instruct. 
@@ -503,9 +509,9 @@
                 Once your verification is completed, we will send you the API key. Please note that the number of API keys is <strong>limited</strong>.
             </p>
 
-            <h2>Award</h2>
+            <h2>🏆 Award</h2>
             <p>
-                To encourage and reward excellence, the competition will offer <strong>cash prizes</strong> for each track:
+                The total prize pool is 12,000 USD. To encourage and reward excellence, the competition will offer <strong>cash prizes</strong> each track:
                 <ul>
                     <li>🥇 1st Place: 2,000 USD</li>
                     <li>🥈 2nd Place: 1,000 USD</li>
@@ -516,9 +522,10 @@
                     <li>🥇 1st Place: 1,500 USD</li>
                     <li>🥈 2nd Place: 1,000 USD</li>
                 </ul>
+                <strong>We will recommend 1st & 2nd place of each track to submit a competition-related papers for inclusion in the conference's companion proceedings.</strong>
             </p>
 
-            <h2>Organizing Committee</h2>
+            <h2>🏪 Organizing Committee</h2>
             <p>
                 <strong>Hosting Organization:</strong> <a href="https://fi.ee.tsinghua.edu.cn/" target="_blank">Tsinghua University</a>, <a href="https://cloud.infini-ai.com/" target="_blank">Infinigence AI</a>, <a href="https://www2025.thewebconf.org/" target="_blank">the Web Conference</a>
             </p> <br>
@@ -529,12 +536,12 @@
                 <strong>Committee Chair:</strong> Yu Wang, Fengli Xu, Yong Li (Tsinghua University)
             </p>
 
-            <h2>Contact</h2>
+            <h2>📬 Contact</h2>
             <p>
                 For any questions or inquiries, please contact us at <a href="mailto:LLMSociety-Challenge@outlook.com">LLMSociety-Challenge@outlook.com</a>.
             </p>
 
-            <h2>Reference</h2>
+            <h2>📚 Reference</h2>
             <ol>
                 <li id="yelp-dataset">
                     Nabiha Asghar. 
