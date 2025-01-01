@@ -107,7 +107,6 @@ body {
 
 /* 添加标题前的图标 */
 .section h1:before {
-    content: '🏆';  /* 可以根据不同的排行榜使用不同的图标 */
     margin-right: 15px;
     font-size: 0.9em;
     animation: trophy-shine 2s infinite;

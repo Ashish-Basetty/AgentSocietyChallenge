@@ -356,9 +356,33 @@
             color: #90caf9;
             text-decoration: underline;
         }
+
+        /* 提交按钮样式 */
+        .submit-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #007bff, #00ff88);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 1000;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
+    <button class="submit-button" onclick="window.open('https://forms.gle/wisLykLK8eGB2X1PA', '_blank')">
+        Registration
+    </button>
+
     <nav class="sidebar">
         <div class="sidebar-logo">
             <img src="../assets/images/ASC.jpg" alt="Logo">
@@ -371,15 +395,9 @@
             <li><a href="modeling-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
             <li><a href="submission-guidelines.html">Submission Guidelines</a></li>
-            <li><a href="discussion.html">Discussion</a></li>
+            <li><a href="discussion.html">Discussion Forum</a></li>
         </ul>
-        <div class="contact-info">
-            <a href="mailto:LLMSociety-Challenge@outlook.com">LLMSociety-Challenge@outlook.com</a>
-        </div>
     </nav>
-
-    <!-- 预检测注册信息 -->
-    <button class="registration-btn" onclick="openRegistrationForm()">Registration</button>
     
     <div class="team-count-display" style="position: fixed; top: 80px; right: 20px; padding: 10px 20px; background: linear-gradient(to right, #007bff, #00ff88); color: white; border-radius: 5px; font-size: 16px; z-index: 999;">
         Current Registered Teams: <span id="teamCount" style="font-weight: bold;">Loading...</span>
@@ -423,7 +441,7 @@
 
     <main class="main-content">
         <section class="section" id="content">
-            <h1>AgentSociety Challenge @ WWW 2025</h1>
+            <h1>🌏 AgentSociety Challenge @ WWW 2025</h1>
             <p>
                 Online review platforms play a pivotal role in shaping social interactions and information exchange in the digital age, 
                 providing spaces for people to share experiences and seek insights. 
@@ -437,45 +455,44 @@
 
             <h2>Problem Formulation</h2>
             <p>
-                In this challenge, we are inspired by the concept of modular agent design and adopt an actionable modular design space with four key modules: 
-                <strong>Planning</strong>, <strong>Reasoning</strong>, <strong>Tool use</strong>, and <strong>Memory</strong>. 
-                These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
-                The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. 
-                Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. 
-                The interactive environment is built based on open-source datasets, including Yelp<sup><a href="#yelp-dataset">[1]</a></sup>, Amazon<sup><a href="#amazon-dataset">[2]</a></sup>, and Goodreads<sup><a href="#goodreads-dataset">[3]</a></sup>, complemented by a textual simulator to provide interactive feedback for LLM agents.
-                The participants are tasked to construct effective agent modules that work together to enhance the agent's ability to process information, make decisions, and interact with dynamic environments in information retrieval tasks.
-            </p>
-            <p>
+                The participants are tasked to construct effective agent modules that work together to enhance the agent's ability to process information, make decisions, 
+                and interact with dynamic environments in online review platforms.
+                To facilitate this, we have built an interactive simulation environment.
+                The interactive environment is built based on open-source datasets, including Yelp<sup><a href="#yelp-dataset">[1]</a></sup>, Amazon<sup><a href="#amazon-dataset">[2]</a></sup>, and Goodreads<sup><a href="#goodreads-dataset">[3]</a></sup>, 
+                complemented by a textual simulator to provide interactive feedback for LLM agents.
                 Specifically, this challenge consists of two tracks: 
                 <ul>
-                    <li><strong>User Modeling Track</strong>: In this track, participants must design agents to simulate user reviews and star ratings, 
+                    <li><strong><a href="modeling-track.html">User Modeling Track</a></strong>: In this track, participants must design agents to simulate user reviews and star ratings, 
                         focusing on simulating user behavior in specific scenarios by leveraging their historical actions and accessible environmental data. 
                         By utilizing the text simulation environment, participants come up with new solutions to these problems in an interactive environment in agentic mode, 
                         ensuring a comprehensive and diverse evaluation of user behaviors. </li>
-                    <li><strong>Recommendation Track</strong>: In this track, participants are tasked with using agents to generate rankings based on the current user's preferences, 
+                    <li><strong><a href="recommendation-track.html">Recommendation Track</a></strong>: In this track, participants are tasked with using agents to generate rankings based on the current user's preferences, 
                         which emphasizes building personalized recommendation assistants that provide users with appropriate suggestions tailored to particular contexts. </li>
                 </ul>
-                These tracks focus on key problems in information retrieval (IR), like understanding user intent, 
-                context-aware decision-making, and adaptive response generation. They aim to advance research in user modeling and recommendation systems, 
-                driving innovation in how information is retrieved and applied to support users in various situations.
             </p>
+            <p>
+                Based on the concept of modular agent design, participants are encouraged to adopt an actionable modular design space with four key modules: 
+                <strong>Planning</strong>, <strong>Reasoning</strong>, <strong>Tool use</strong>, and <strong>Memory</strong><sup><a href="#agentsquare">[4]</a></sup>. 
+                These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
+                The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. 
+                Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. 
+            </p> <br>
 
             <p>Here is the <strong>Resource & Code base:</strong> 
                 <a href="https://github.com/tsinghua-fib-lab/WebSocietySimulator" target="_blank">Official Github</a>.
             </p>
 
             <h2>Timeline</h2>
-            <ul>
-                <li><strong>Start of the Competition (Registration):</strong> Dec 30th, 2024 - Jan 30th, 2025</li>
-                <li><strong>Official Competition:</strong> Dec 30th, 2024 - Jan 30th, 2025
-                    <ul>
-                        <li><strong>Development Phase:</strong> Dec 30th, 2024 - Jan 23rd, 2025</li>
-                        <li><strong>Final Phase:</strong> Jan 24th, 2025 - Jan 30th, 2025</li>
-                    </ul>
-                </li>
-                <li><strong>Winner Notification and Per Invitation:</strong> Feb 3rd, 2025</li>
-                <li><strong>Camera-ready Submission:</strong> Feb 17th, 2025</li>
-            </ul>
+            <p>
+                The competition will be held from Dec 30th, 2024 to Jan 30th, 2025, following the timeline outlined below: 
+                <ul>
+                    <li><strong>Start of Development Phase:</strong> Dec 30th, 2024 - Jan 23rd, 2025</li>
+                    <li><strong>Start of Final Phase:</strong> Jan 24th, 2025 - Jan 30th, 2025</li>
+                    <li><strong>Winner Notification and Per Invitation:</strong> Feb 3rd, 2025</li>
+                    <li><strong>Camera-ready Submission:</strong> Feb 17th, 2025</li>
+                </ul>
+                Note: All submission deadlines are end-of-day in the Anywhere on Earth (AoE) time zone.
+            </p>
 
             <h2>Token Support</h2>
             <p>
@@ -488,29 +505,33 @@
 
             <h2>Award</h2>
             <p>
-                To encourage and reward excellence, the competition will offer prizes for <strong>each track</strong>:
+                To encourage and reward excellence, the competition will offer <strong>cash prizes</strong> for each track:
                 <ul>
-                    <li>🥇 1st Place: 3,000 USD</li>
+                    <li>🥇 1st Place: 2,000 USD</li>
                     <li>🥈 2nd Place: 1,000 USD</li>
                     <li>🥉 3rd Place: 500 USD</li>
                 </ul>
-                <small><em>Note: All prize amounts are pre-tax.</em></small>
+                Besides, challenge prizes also include the in-person <strong>travel grant</strong> for the top 2 winning teams each track:
+                <ul>
+                    <li>🥇 1st Place: 1,500 USD</li>
+                    <li>🥈 2nd Place: 1,000 USD</li>
+                </ul>
             </p>
 
             <h2>Organizing Committee</h2>
             <p>
-                <strong>Organizers:</strong> Tsinghua University, Infinigence AI, WWW (<a href="https://www2025.thewebconf.org/" target="_blank">https://www2025.thewebconf.org/</a>)
-            </p>
+                <strong>Hosting Organization:</strong> <a href="https://fi.ee.tsinghua.edu.cn/" target="_blank">Tsinghua University</a>, <a href="https://cloud.infini-ai.com/" target="_blank">Infinigence AI</a>, <a href="https://www2025.thewebconf.org/" target="_blank">the Web Conference</a>
+            </p> <br>
             <p>
-                <strong>Hosts:</strong> Future Intelligence laB (FIB) of Tsinghua University, Infinigence AI
-            </p>
+                <strong>Committee Members:</strong> Yuwei Yan (HKUST-gz); Yu Shang, Qingbing Zeng, Yu Li, Keyu Zhao, Zhiheng Zheng, Xuefei Ning (Tsinghua University); Tianji Wu, Shengen Yan (Infinigence AI)
+            </p> <br>
             <p>
-                <strong>Committee Members:</strong>
-                <ul>
-                    <li><strong>Tsinghua University:</strong> Yu Shang, Qingbing Zeng, Yu Li, Keyu Zhao, Zhiheng Zheng, Fengli Xu, Yong Li</li>
-                    <li><strong>Hong Kong University of Science and Technology (Guangzhou):</strong> Yuwei Yan</li>
-                    <li><strong>Infinigence AI:</strong> Xuefei Ning, Tianji Wu, Shengen Yan, Yu Wang</li>
-                </ul>
+                <strong>Committee Chair:</strong> Yu Wang, Fengli Xu, Yong Li (Tsinghua University)
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+                For any questions or inquiries, please contact us at <a href="mailto:LLMSociety-Challenge@outlook.com">LLMSociety-Challenge@outlook.com</a>.
             </p>
 
             <h2>Reference</h2>
@@ -533,6 +554,12 @@
                     In <em>Proceedings of the 12th ACM Conference on Recommender Systems (RecSys 2018)</em>, 
                     Vancouver, BC, Canada, October 2-7, 2018, pp. 86–94. ACM, 2018. 
                     <a href="https://doi.org/10.1145/3240323.3240369">[DOI]</a>
+                </li>
+                <li id="agentsquare">
+                    Yu Shang, Yu Li, Keyu Zhao, Likai Ma, Jiahe Liu, Fengli Xu, Yong Li. 
+                    <strong>AgentSquare: Automatic LLM Agent Search in Modular Design Space</strong>. 
+                    arXiv preprint arXiv:2410.06153, 2024. 
+                    <a href="https://arxiv.org/abs/2410.06153">[arXiv]</a>.
                 </li>
             </ol>
         </section>
