@@ -366,11 +366,11 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html">Overview</a></li>
-            <li><a href="behavior-track.html">User Modeling Track</a></li>
+            <li><a href="modeling-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
+            <li><a href="modeling-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
-            <li><a href="rules.html">Submission Guidelines</a></li>
+            <li><a href="submission-guidelines.html">Submission Guidelines</a></li>
             <li><a href="discussion.html">Discussion</a></li>
         </ul>
         <div class="contact-info">
@@ -423,24 +423,28 @@
 
     <main class="main-content">
         <section class="section" id="content">
-            <h1>Overview</h1>
+            <h1>AgentSociety Challenge @ WWW 2025</h1>
             <p>
-                The <strong>AgentSociety Challenge</strong> is an innovative competition designed to explore the potential of large language model (LLM) agents in modeling online social interaction and enhancing information retrieval systems. 
-                <strong>The competition organizers will select the winners and recommend participants to submit their solutions as research papers for inclusion in the WWW’25 companion proceedings.</strong> 
-                Authors of accepted papers will have the opportunity to present their work at the conference which is held in Sydney. 
-                <a href="https://www2025.thewebconf.org/accepted-competitions" target="_blank">WWW Accepted-Competitions</a>.
+                Online review platforms play a pivotal role in shaping social interactions and information exchange in the digital age, 
+                providing spaces for people to share experiences and seek insights. 
+                The AgentSociety Challenge aims to explore the potential of large language model (LLM) agents in understanding user behavior and enhancing user experiences within these platforms. 
+                Participants are invited to compete in two tracks: the <strong>User Modeling Track</strong>, which focuses on modeling user preferences and simulating online reviews, 
+                and the <strong>Recommendation Track</strong>, which emphasizes delivering personalized recommendations across diverse scenarios. 
+                The Challenge utilizes large-scale public datasets from prominent online review platforms, complemented by a textual simulator to provide interactive feedback for LLM agents. 
+                By encouraging participants to design LLM agents within a modular design space, the Challenge seeks to advance the integration of LLM technologies into real-world web applications. 
+                Winning modular designs will be reusable and adaptable, offering long-term value to academic research, industry applications, and the broader Web community.
             </p>
 
+            <h2>Problem Formulation</h2>
             <p>
                 In this challenge, we are inspired by the concept of modular agent design and adopt an actionable modular design space with four key modules: 
                 <strong>Planning</strong>, <strong>Reasoning</strong>, <strong>Tool use</strong>, and <strong>Memory</strong>. 
                 These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
                 The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. 
                 Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. 
-                The participants are tasked to construct effective agent modules that work together to enhance the agent’s ability to process information, make decisions, and interact with dynamic environments in IR tasks.
+                The interactive environment is built based on open-source datasets, including Yelp<sup><a href="#yelp-dataset">[1]</a></sup>, Amazon<sup><a href="#amazon-dataset">[2]</a></sup>, and Goodreads<sup><a href="#goodreads-dataset">[3]</a></sup>, complemented by a textual simulator to provide interactive feedback for LLM agents.
+                The participants are tasked to construct effective agent modules that work together to enhance the agent's ability to process information, make decisions, and interact with dynamic environments in information retrieval tasks.
             </p>
-
-            <h2>Tracks Introduction</h2>
             <p>
                 Specifically, this challenge consists of two tracks: 
                 <ul>
@@ -484,9 +488,53 @@
 
             <h2>Award</h2>
             <p>
-                To encourage and reward excellence, the competition will offer prizes for the first place, the first runner-up, and the second runner-up in each track. 
-                The first place team will receive 3,000 USD, the first runner-up team will receive 1,000 USD, and the second runner-up team will receive 500 USD. (all pre-tax)
+                To encourage and reward excellence, the competition will offer prizes for <strong>each track</strong>:
+                <ul>
+                    <li>🥇 1st Place: 3,000 USD</li>
+                    <li>🥈 2nd Place: 1,000 USD</li>
+                    <li>🥉 3rd Place: 500 USD</li>
+                </ul>
+                <small><em>Note: All prize amounts are pre-tax.</em></small>
             </p>
+
+            <h2>Organizing Committee</h2>
+            <p>
+                <strong>Organizers:</strong> Tsinghua University, Infinigence AI, WWW (<a href="https://www2025.thewebconf.org/" target="_blank">https://www2025.thewebconf.org/</a>)
+            </p>
+            <p>
+                <strong>Hosts:</strong> Future Intelligence laB (FIB) of Tsinghua University, Infinigence AI
+            </p>
+            <p>
+                <strong>Committee Members:</strong>
+                <ul>
+                    <li><strong>Tsinghua University:</strong> Yu Shang, Qingbing Zeng, Yu Li, Keyu Zhao, Zhiheng Zheng, Fengli Xu, Yong Li</li>
+                    <li><strong>Hong Kong University of Science and Technology (Guangzhou):</strong> Yuwei Yan</li>
+                    <li><strong>Infinigence AI:</strong> Xuefei Ning, Tianji Wu, Shengen Yan, Yu Wang</li>
+                </ul>
+            </p>
+
+            <h2>Reference</h2>
+            <ol>
+                <li id="yelp-dataset">
+                    Nabiha Asghar. 
+                    <strong>Yelp dataset challenge: Review rating prediction</strong>. 
+                    arXiv preprint arXiv:1605.05362, 2016. 
+                    <a href="https://arxiv.org/abs/1605.05362">[arXiv]</a>
+                </li>
+                <li id="amazon-dataset">
+                    Yupeng Hou, Jiacheng Li, Zhankui He, An Yan, Xiusi Chen, Julian McAuley. 
+                    <strong>Bridging Language and Items for Retrieval and Recommendation</strong>. 
+                    arXiv preprint arXiv:2403.03952, 2024.
+                    <a href="https://arxiv.org/abs/2403.03952">[arXiv]</a>
+                </li>
+                <li id="goodreads-dataset">
+                    Mengting Wan, Julian J. McAuley. 
+                    <strong>Item recommendation on monotonic behavior chains</strong>. 
+                    In <em>Proceedings of the 12th ACM Conference on Recommender Systems (RecSys 2018)</em>, 
+                    Vancouver, BC, Canada, October 2-7, 2018, pp. 86–94. ACM, 2018. 
+                    <a href="https://doi.org/10.1145/3240323.3240369">[DOI]</a>
+                </li>
+            </ol>
         </section>
     </main>
 

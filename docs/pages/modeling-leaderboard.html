@@ -345,11 +345,11 @@
         </div>
         <ul class="nav-links">
             <li><a href="overview.html">Overview</a></li>
-            <li><a href="behavior-track.html">User Modeling Track</a></li>
+            <li><a href="modeling-track.html">User Modeling Track</a></li>
             <li><a href="recommendation-track.html">Recommendation Track</a></li>
-            <li><a href="behavior-leaderboard.html">User Modeling Leaderboard</a></li>
+            <li><a href="modeling-leaderboard.html">User Modeling Leaderboard</a></li>
             <li><a href="recommendation-leaderboard.html">Recommendation Leaderboard</a></li>
-            <li><a href="rules.html">Submission Guidelines</a></li>
+            <li><a href="submission-guidelines.html">Submission Guidelines</a></li>
             <li><a href="discussion.html">Discussion</a></li>
         </ul>
         <div class="contact-info">
@@ -365,11 +365,9 @@
                     <tr>
                         <th><i class="header-icon">👥</i>Team Name</th>
                         <th><i class="header-icon">⏰</i>Submission Time</th>
-                        <th><i class="header-icon">⭐</i>Star Error</th>
-                        <th><i class="header-icon">😊</i>Sentiment Error</th>
-                        <th><i class="header-icon">🎭</i>Emotion Error</th>
-                        <th><i class="header-icon">📝</i>Topic Error</th>
-                        <th><i class="header-icon">📊</i>Final Error</th>
+                        <th><i class="header-icon">⭐</i>Preference Estimation</th>
+                        <th><i class="header-icon">📝</i>Review Generation</th>
+                        <th><i class="header-icon">📊</i>Overall Quality</th>
                     </tr>
                 </thead>
             </table>
@@ -398,13 +396,11 @@
                 columns: [
                     { data: 'Team name', className: 'team-name' },
                     { data: 'Submission Time', className: 'submission-time' },
-                    { data: 'Star error', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
-                    { data: 'Sentiment error', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
-                    { data: 'Emotion error', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
-                    { data: 'Topic error', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
-                    { data: 'Final error', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } }
+                    { data: 'Preference Estimation', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Review Generation', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
+                    { data: 'Overall Quality', className: 'error-value', render: function(data) { return parseFloat(data).toFixed(4); } },
                 ],
-                order: [[6, 'asc']],
+                order: [[4, 'desc']],
                 pageLength: 10,
                 responsive: false
             });
