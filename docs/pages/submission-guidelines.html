@@ -138,6 +138,49 @@
             color: #90caf9;
             text-decoration: underline;
         }
+
+        .announcement-banner {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+            margin: 20px;
+        }
+
+        .announcement-banner h3 {
+            color: #856404;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .announcement-banner ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .announcement-banner li {
+            margin-bottom: 15px;
+        }
+
+        .announcement-banner li:last-child {
+            margin-bottom: 0;
+        }
+
+        .params-table {
+            width: 100%;
+            margin: 10px 0;
+            border-collapse: collapse;
+        }
+
+        .params-table th, .params-table td {
+            padding: 8px;
+            border: 1px solid #000000;
+            text-align: center;
+        }
+
+        .params-table th {
+            background-color: #d1d1d1;
+        }
     </style>
 </head>
 <body>
@@ -175,7 +218,7 @@
                     </ul>
                 </li>
                 <li>
-                    We will use <strong>Qwen2.5-72B</strong> for evaluating the submitted agents. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
+                    We will use <strong>Qwen2.5-72B-instruct</strong> for evaluating the submitted agents. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
                 </li>
                 <li>
                     During the evaluation of submitted agents, all data access must go through the interaction tools provided by the textual web simulator.
@@ -193,6 +236,38 @@
                 <li>Evaluation will be <strong>time- and token-limited</strong>.</li>
                 <li>Any form of dishonest conduct is strictly prohibited and will result in <strong>immediate disqualification</strong> if detected.</li>
             </ol>
+
+            <div class="announcement-banner">
+                <h3>❗️ Important Evaluation Parameters</h3>
+                <ul>
+                    <li><strong>Rate Limits:</strong>
+                        RPM=300, TPM=180000 (applies to all phases)
+                    </li>
+                    <li><strong>Task Parallelism Settings:</strong>
+                        <table class="params-table">
+                            <tr>
+                                <th>Phase</th>
+                                <th>Official Evaluation</th>
+                                <th>With Supported API Key</th>
+                            </tr>
+                            <tr>
+                                <td>Development</td>
+                                <td>10 tasks</td>
+                                <td>4 tasks</td>
+                            </tr>
+                            <tr>
+                                <td>Final</td>
+                                <td>5 tasks</td>
+                                <td>2 tasks</td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li>Please make sure your agent can pass the evaluation.</li>
+                    <li><strong>Note:</strong> Task parallelism refers to concurrent task handling and is controlled by 
+                        <code>max_workers</code> in <code>simulator.run_simulation</code>
+                    </li>
+                </ul>
+            </div>
 
             <hr>
 

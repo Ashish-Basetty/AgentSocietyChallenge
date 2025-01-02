@@ -93,7 +93,7 @@ class InfinigenceLLM(LLMBase):
             else:
                 return [choice.message.content for choice in response.choices]
         except Exception as e:
-            if "429" in str(e):  # 如果是速率限制错误
+            if "429" in str(e):
                 logger.warning("Rate limit exceeded")
             else:
                 logger.error(f"Other LLM Error: {e}")
