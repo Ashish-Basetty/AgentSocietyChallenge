@@ -442,18 +442,13 @@
         <section class="section" id="content">
             <h1>🌏 AgentSociety Challenge @ WWW 2025</h1>
             <p>
-                We are excited to announce the AgentSociety Challenge, a significant competition aimed at advancing the application of large language model (LLM) agents in online review platforms. 
-                As organizers, we recognize the crucial role these platforms play in today's digital age, serving as vital spaces for experience sharing, advice seeking, and social interaction.
-
-                We have carefully designed two competitive tracks: the <strong>User Modeling Track</strong>, which focuses on understanding user preferences and simulating online reviews, 
-                and the <strong>Recommendation Track</strong>, dedicated to delivering personalized recommendations across diverse scenarios. 
-                To support participants' research and development, we use large-scale open-source datasets from leading online review platforms, 
-                complemented by our custom-built textual simulator for interactive agent feedback.
-
-                We particularly emphasize modular design principles, encouraging participants to develop LLM agents within our predefined modular design space. 
-                We believe that winning modular solutions will not only be reusable and adaptable but will also bring long-term value to academic research, 
-                industry applications, and the broader Web community. 
-                Through this challenge, we aim to drive innovation and breakthrough in the integration of LLM technologies with real-world Web applications.
+                We are excited to announce the AgentSociety Challenge, a competition for designing large language model (LLM) agents to advance web experience. 
+                As organizers, we recognize the crucial role online review platforms play in today's web society, serving as vital spaces for experience sharing, 
+                advice seeking, and social interaction. We have carefully designed two competitive tracks to explore the potential of LLM agents: the User Modeling Track,
+                which focuses on understanding user preferences and simulating online reviews, and the Recommendation Track, 
+                dedicated to delivering personalized recommendations across diverse scenarios. The Challenge utilizes large-scale public datasets from prominent online review platforms, 
+                complemented by a textual simulator to provide interactive feedback for LLM agents. Through this challenge, 
+                we aim to drive innovation and breakthrough in the integration of LLM technologies with real-world Web applications.
             </p>
 
             <h2>📍 Problem Formulation</h2>
@@ -477,27 +472,41 @@
             <p>
                 Based on the concept of modular agent design, participants are encouraged to adopt an actionable modular design space with four key modules: 
                 <strong>Planning</strong>, <strong>Reasoning</strong>, <strong>Tool use</strong>, and <strong>Memory</strong><sup><a href="#agentsquare">[4]</a></sup>. 
-                These modules are orchestrated in a designed workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
+                These modules have standardized interface to allow them cooperate with each other in a workflow: upon receiving a task query, the agent begins by decomposing it into sub-tasks through the Planning module. 
                 The Reasoning module then processes each sub-task, and when necessary, activates the Tool use module to select external tools for problem-solving. 
                 Additionally, the Memory module supports the reasoning process by accessing past observations and experiences, ensuring the agent continuously refines its actions based on feedback from the environment. 
                 Through this modular design approach, participants can not only create effective solutions for this challenge but also contribute reusable modules to the broader agent community, 
                 fostering innovation and collaboration in agent development.
-            </p> <br>
+            </p> 
 
-            <p>Here is the <strong>Resource & Code base:</strong> 
+            <p>Here is the <strong>Resource & Code base</strong> for agent development:
                 <a href="https://github.com/tsinghua-fib-lab/WebSocietySimulator" target="_blank">Official Github</a>.
+            </p><br>
+
+            <p>
+                We will also assist top-ranking teams in developing agents on the <strong>OpenCity platform</strong><sup><a href="#opencity">[5]</a></sup>, enabling agent simulation in a digital city environment. 
+                OpenCity is an open-source urban agent development platform that provides an interactive city environment for agents. 
+                Specifically, we will use the submitted recommendation agents for location selection and item interaction simulation, 
+                and use user modeling agents for preference and review simulation based on the teams' submissions. 
+                If the team is invited to attend the in-person workshop, this will be used for Best Demo selection at the venue.
+                <!-- <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+                    <div style="width: 80%; text-align: center;">
+                        <img src="../assets/images/large_scale_simulation.png" alt="Agent Simulation Example" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <p style="text-align: center; margin-top: 10px; color: #666;">Large-scale LLM Agents Simulation in OpenCity</p>
+                    </div>
+                </div> -->
             </p>
 
             <h2>📅 Timeline</h2>
             <p>
-                The competition will be held from Dec 30th, 2024 to Jan 30th, 2025, following the timeline outlined below: 
+                The competition will be held from Jan 1st, 2025 to Feb 14th, 2025, following the timeline outlined below: 
                 <ul>
-                    <li><strong>Start of Development Phase:</strong> Dec 30th, 2024 - Jan 23rd, 2025</li>
-                    <li><strong>Start of Final Phase:</strong> Jan 24th, 2025 - Jan 30th, 2025</li>
-                    <li><strong>Winner Notification and Per Invitation:</strong> Feb 3rd, 2025</li>
+                    <li><strong>Start of Development Phase:</strong> Jan 1st, 2025</li>
+                    <li><strong>Start of Final Phase:</strong> Feb 1st, 2025</li>
+                    <li><strong>Winner Notification and Per Invitation:</strong> Feb 14th, 2025</li>
                     <li><strong>Camera-ready Submission:</strong> Feb 17th, 2025</li>
                 </ul>
-                Note: All submission deadlines are end-of-day in the Anywhere on Earth (AoE) time zone.
+                Note: All submission deadlines are end-of-day in the Anywhere on Earth (AoE) time zone. Top 20 teams will be selected to participate in the Final Phase.
             </p>
 
             <h2>💪🏻 Token Support</h2>
@@ -511,13 +520,15 @@
 
             <h2>🏆 Award</h2>
             <p>
-                The total prize pool is 12,000 USD. To encourage and reward excellence, the competition will offer <strong>cash prizes</strong> each track:
+                The total prize pool is 12,000 USD. To encourage and reward excellence, 
+                the competition will offer monetary prizes and certificates to top-3 winning teams of each track:
                 <ul>
                     <li>🥇 1st Place: 2,000 USD</li>
                     <li>🥈 2nd Place: 1,000 USD</li>
                     <li>🥉 3rd Place: 500 USD</li>
                 </ul>
-                Besides, challenge prizes also include the in-person <strong>travel grant</strong> for the top 2 winning teams each track:
+                Besides, challenge prizes also include the in-person <strong>travel grant</strong> for the top 2 winning teams each track. 
+                This remuneration is to be paid after the in-person presentation in our workshop the Web Conference:
                 <ul>
                     <li>🥇 1st Place: 1,500 USD</li>
                     <li>🥈 2nd Place: 1,000 USD</li>
@@ -567,6 +578,12 @@
                     <strong>AgentSquare: Automatic LLM Agent Search in Modular Design Space</strong>. 
                     arXiv preprint arXiv:2410.06153, 2024. 
                     <a href="https://arxiv.org/abs/2410.06153">[arXiv]</a>.
+                </li>
+                <li id="opencity">
+                    Yuwei Yan, Qingbin Zeng, Zhiheng Zheng, Jingzhe Yuan, Jie Feng, Jun Zhang, Fengli Xu, Yong Li.  
+                    <strong>OpenCity: A Scalable Platform to Simulate Urban Activities with Massive LLM Agents</strong>.  
+                    arXiv preprint arXiv:2410.21286, 2024.  
+                    <a href="https://arxiv.org/abs/2410.21286">[arXiv]</a>.
                 </li>
             </ol>
         </section>

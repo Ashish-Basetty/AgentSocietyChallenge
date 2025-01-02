@@ -164,44 +164,30 @@
         <section class="section" id="content">
             <h1>📚 Submission Guidelines</h1>
 
-            <h2>Modular Agent Design Space</h2>
-            <p>Within the AgentSquare framework, participants can explore LLM agent design with three levels:</p>
-            <ul>
-                <li><strong>Module Recombination:</strong> Designing novel agents by recombining the classic modules (reasoning, planning, tool use, and memory).</li>
-                <li><strong>Module Design:</strong> Developing or modifying modules to implement new functionalities while ensuring compatibility with the standardized framework.</li>
-                <li><strong>Workflow Construction:</strong> Designing the overall structure and interaction flow of the agentic system to effectively integrate the modules and achieve the desired outcomes.</li>
-            </ul>
-            
-            <p>
-                With the standard IO interfaces of these modules, participants can easily integrate different classic modules, facilitating the discovery of novel agent architectures through module recombination. 
-                This approach allows for the reuse of prior successful designs, significantly lowering the barrier for participants who may not have deep knowledge of LLM agents. 
-                Besides, this challenge also supports more in-depth agent design, allowing participants to reprogram each module and even rewrite the entire workflow. 
-                One key motivation of our challenge design is to ensure the discovered modules, with standard IO interfaces, can be reused in future research and applications, benefiting the LLM agent and web community. 
-                In the final phase, submissions will be required to adhere to a modular design.
-            </p>
-
             <h2>Submission Rules</h2>
             <ol>
                 <li>
-                    Participants should devise LLM agentic workflows within the predefined modular design space, including:
+                    teams should devise LLM agentic workflows within the predefined modular design space, including:
                     <ul>
-                        <li><strong>Module Recombination</strong></li>
-                        <li><strong>Module Design</strong></li>
-                        <li><strong>Workflow Construction</strong></li>
+                        <li><strong>Module Recombination:</strong> Designing novel agents by recombining the classic modules (reasoning, planning, tool use, and memory). <a href="https://github.com/tsinghua-fib-lab/AgentSocietyChallenge/blob/main/tutorials/agent_development.md" target="_blank">Tutorial</a></li>
+                        <li><strong>Module Design:</strong> Developing or modifying modules to implement new functionalities while ensuring compatibility with the standardized framework.</li>
+                        <li><strong>Workflow Construction:</strong> Designing the overall structure and interaction flow of the agentic system to effectively integrate the modules and achieve the desired outcomes.</li>
                     </ul>
-                    Uniform LLMs will be provided for evaluating the submitted workflows. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
                 </li>
                 <li>
-                    During the evaluation of submitted agents, any direct interaction with the original dataset is strictly prohibited. All data access must go through the interaction tools provided by the competition organizers.
+                    We will use <strong>Qwen2.5-72B</strong> for evaluating the submitted agents. The use of external models, training of external models, or utilization of external tools is strictly prohibited.
                 </li>
                 <li>
-                    Participants are permitted to utilize inference services from any platform during the <strong>Development Phase</strong>. However, during the <strong>Evaluation Phase</strong>, all submitted agents will be evaluated exclusively on the Infinigence AI Tech platform.
+                    During the evaluation of submitted agents, all data access must go through the interaction tools provided by the textual web simulator.
+                </li>
+                <li>
+                    External data access is prohibited.
                 </li>
                 <li>
                     Submission limits:
                     <ul>
-                        <li><strong>Development Phase:</strong> Each participant may submit up to <strong>2 times per day</strong>, with a maximum of <strong>100 submissions</strong> allowed throughout the phase.</li>
-                        <li><strong>Evaluation Phase:</strong> Each participant is allowed a maximum of <strong>2 submissions</strong> within the designated time frame.</li>
+                        <li><strong>Development Phase:</strong> Each team may submit up to <strong>one submission per day</strong>.</li>
+                        <li><strong>Evaluation Phase:</strong> Each team may submit up to <strong>three submissions per day</strong>.</li>
                     </ul>
                 </li>
                 <li>Evaluation will be <strong>time- and token-limited</strong>.</li>
@@ -212,12 +198,12 @@
 
             <h2>Submit Your Agent</h2>
             <p>
-                You should register your team first. Submit your solution through the submission button in the top right corner.
+                Submit your solution through the submission button in the top right corner.
             </p>
             <p>
                 <ul>
-                    <li>Please register your team first.</li>
-                    <li>When you submit your agent, please carefully <strong>SELECT the TRACK</strong> you want to submit to.</li>
+                    <li>Please register your team first. <a href="https://forms.gle/wisLykLK8eGB2X1PA" target="_blank">Registration</a></li>
+                    <li>Please carefully <strong>SELECT the TRACK</strong> you want to submit to.</li>
                     <li><strong>The content of your submission should be a zip file containing your agent (Only one <code>{your_agent}.py</code> file without evaluation code).</strong></li>
                     <li>Example submissions:
                         <ul>
@@ -231,13 +217,13 @@
             <h2>Fairness Mechanisms</h2>
             <ol>
                 <li>
-                    <strong>Public Leaderboard:</strong> The organizers will provide a public leaderboard for all participants to monitor and review performance.
+                    <strong>Public Leaderboard:</strong> We will provide a public leaderboard for all teams to monitor and review performance.
                 </li>
                 <li>
                     <strong>Rigorous Review:</strong> Submissions will undergo a thorough review to ensure compliance with competition rules and the integrity of results.
                 </li>
                 <li>
-                    <strong>Equal Access to Resources:</strong> The organizers will ensure all participants have access to sufficient and fair computational resources.
+                    <strong>Equal Access to Resources:</strong> We will ensure all teams have access to sufficient and fair computational resources.
                 </li>
             </ol>
         </section>
