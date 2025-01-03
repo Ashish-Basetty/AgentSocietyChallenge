@@ -243,6 +243,12 @@
                     <li><strong>Rate Limits:</strong>
                         RPM=300, TPM=180000 (applies to all phases)
                     </li>
+                    <li><strong>Time Limits:</strong>
+                        <ul>
+                            <li>Development Phase: 60 minutes maximum (600 tasks from different datasets)</li>
+                            <li>Final Phase: TBD</li>
+                        </ul>
+                    </li>
                     <li><strong>Task Parallelism Settings:</strong>
                         <table class="params-table">
                             <tr>
@@ -252,8 +258,8 @@
                             </tr>
                             <tr>
                                 <td>Development</td>
-                                <td>10 tasks</td>
-                                <td>4 tasks</td>
+                                <td>10 tasks (600 tasks, 60 minutes)</td>
+                                <td>4 tasks (600 tasks, 120 minutes)</td>
                             </tr>
                             <tr>
                                 <td>Final</td>
@@ -283,7 +289,7 @@
                     <li>Example submissions:
                         <ul>
                             <li>For Track 1: <a href="https://github.com/tsinghua-fib-lab/AgentSocietyChallenge/blob/main/example/trackOneSubmission_example.zip" target="_blank">submission_1</a></li>
-                            <li>For Track 2: Coming Soon.</li>
+                            <li>For Track 2: <a href="https://github.com/tsinghua-fib-lab/AgentSocietyChallenge/blob/main/example/trackTwoSubmission_example.zip" target="_blank">submission_2</a></li>
                         </ul>
                     </li>
                 </ul>

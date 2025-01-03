@@ -55,10 +55,25 @@ class Simulator:
             groundtruth_dir: Directory containing groundtruth files.
         """
         self.tasks = []  # Clear previous tasks
+        self.groundtruth_data = []
 
-        for file_name in os.listdir(task_dir):
-            file_path = os.path.join(task_dir, file_name)
-            with open(file_path, 'r') as f:
+        # 获取所有task文件并按index排序
+        task_files = sorted([f for f in os.listdir(task_dir) if f.startswith('task_') and f.endswith('.json')], 
+                          key=lambda x: int(x.split('_')[1].split('.')[0]))
+
+        for task_file in task_files:
+            # 获取对应的groundtruth文件
+            task_index = task_file.split('_')[1].split('.')[0]
+            groundtruth_file = f'groundtruth_{task_index}.json'
+            groundtruth_path = os.path.join(groundtruth_dir, groundtruth_file)
+            
+            if not os.path.exists(groundtruth_path):
+                logger.warning(f"Groundtruth file {groundtruth_file} not found for task {task_file}")
+                continue
+
+            # 读取task文件
+            task_path = os.path.join(task_dir, task_file)
+            with open(task_path, 'r') as f:
                 task_data = json.load(f)
                 task_type = task_data.get('type')
 
@@ -77,17 +92,14 @@ class Simulator:
                     )
                 else:
                     raise ValueError(f"Unsupported task type: {task_type}")
-                
-                self.tasks.append(task)
-        logger.info("Tasks loaded")
 
-        self.groundtruth_data = []
-        for file_name in os.listdir(groundtruth_dir):
-            file_path = os.path.join(groundtruth_dir, file_name)
-            with open(file_path, 'r') as f:
+            with open(groundtruth_path, 'r') as f:
                 groundtruth_data = json.load(f)
-                self.groundtruth_data.append(groundtruth_data)
-        logger.info("Groundtruth data loaded")
+                
+            self.tasks.append(task)
+            self.groundtruth_data.append(groundtruth_data)
+
+        logger.info(f"Loaded {len(self.tasks)} task-groundtruth pairs")
 
     def set_agent(self, agent_class: Type):
         """

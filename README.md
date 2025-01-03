@@ -134,7 +134,7 @@ class MySimulationAgent(SimulationAgent):
 
 - Check out the [Tutorial](./tutorials/agent_development.md) for Agent Development.
 - Baseline User Behavior Simulation Agent: [Baseline User Behavior Simulation Agent](./example/userBehaviorSimulation.py).
-- Baseline Recommendation Agent: Coming Soon.
+- Baseline Recommendation Agent: [Baseline Recommendation Agent](./example/RecAgent_baseline.py).
 ---
 
 ### 5. Evaluation your agent with training data
@@ -181,7 +181,7 @@ evaluation_results = simulator.evaluate()
 - **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
 - Example submissions:
   - For Track 1: [submission_1](example/trackOneSubmission_example.zip)
-  - For Track 2: Coming Soon.
+  - For Track 2: [submission_2](example/trackTwoSubmission_example.zip)
 
 ---
 
