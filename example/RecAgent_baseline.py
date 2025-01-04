@@ -7,11 +7,16 @@ from websocietysimulator.agent.modules.planning_modules import PlanningBase
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
 import re
 import logging
+import time
 logging.basicConfig(level=logging.INFO)
 
 def num_tokens_from_string(string: str) -> int:
     encoding = tiktoken.get_encoding("cl100k_base")
-    return len(encoding.encode(string))
+    try:
+        a = len(encoding.encode(string))
+    except:
+        print(encoding.encode(string))
+    return a
 
 class RecPlanning(PlanningBase):
     """Inherits from PlanningBase"""
@@ -60,7 +65,6 @@ class RecReasoning(ReasoningBase):
         """Override the parent class's __call__ method"""
         prompt = '''
 {task_description}
-Let's think step by step.
 '''
         prompt = prompt.format(task_description=task_description)
         
@@ -107,60 +111,55 @@ class MyRecommendationAgent(RecommendationAgent):
             if 'user' in sub_task['description']:
                 user = str(self.interaction_tool.get_user(user_id=self.task['user_id']))
                 input_tokens = num_tokens_from_string(user)
-                if input_tokens > 18000:
+                if input_tokens > 12000:
                     encoding = tiktoken.get_encoding("cl100k_base")
-                    user = encoding.decode(encoding.encode(user)[:18000])
+                    user = encoding.decode(encoding.encode(user)[:12000])
 
             elif 'item' in sub_task['description']:
                 for n_bus in range(len(self.task['candidate_list'])):
                     item = self.interaction_tool.get_item(item_id=self.task['candidate_list'][n_bus])
                     keys_to_extract = ['item_id', 'name','stars','review_count','attributes','title', 'average_rating', 'rating_number','description','ratings_count','title_without_series']
                     filtered_item = {key: item[key] for key in keys_to_extract if key in item}
-                    # print(filtered_item)
-                input_tokens = num_tokens_from_string(str(filtered_item))
-                if input_tokens > 2000:
-                    encoding = tiktoken.get_encoding("cl100k_base")
-                    filtered_item = encoding.decode(encoding.encode(str(filtered_item))[:2000])
                 item_list.append(filtered_item)
                 # print(item)
             elif 'review' in sub_task['description']:
                 history_review = str(self.interaction_tool.get_reviews(user_id=self.task['user_id']))
                 input_tokens = num_tokens_from_string(history_review)
-                if input_tokens > 15000:
+                if input_tokens > 12000:
                     encoding = tiktoken.get_encoding("cl100k_base")
-                    history_review = encoding.decode(encoding.encode(history_review)[:15000])
+                    history_review = encoding.decode(encoding.encode(history_review)[:12000])
             else:
                 pass
         task_description = f'''
         You are a real user on an online platform. Your historical item review text and stars are as follows: {history_review}. 
         Now you need to rank the following 20 items: {self.task['candidate_list']} according to their match degree to your preference.
+        Please rank the more interested items more front in your rank list.
         The information of the above 20 candidate items is as follows: {item_list}.
 
-        Your final output should be only a ranked item list with the following format, DO NOT output your analysis process!
+        Your final output should be ONLY a ranked item list of {self.task['candidate_list']} with the following format, DO NOT introduce any other item ids!
+        DO NOT output your analysis process!
+
+        The correct output format:
 
         ['item id1', 'item id2', 'item id3', ...]
 
-        An output example:
-        ['1888', '7850', '4966', '1641', '3249', '2469', '2668', '8546', '3567', '5879', '2578', '1264', '6036', '5117', '2642', '2785', '3422', '3338', '1085', '7748'] 
         '''
         result = self.reasoning(task_description)
 
         try:
-            # print(result)
-            # result = result.strip()
-            # result = eval(result)
-            # print(result)
+            # print('Meta Output:',result)
             match = re.search(r"\[.*\]", result, re.DOTALL)
             if match:
                 result = match.group()
             else:
                 print("No list found.")
+            print('Processed Output:',eval(result))
+            # time.sleep(4)
+            return eval(result)
         except:
             print('format error')
-            result = ['']
+            return ['']
 
-        print(f"The result is :{result}")
-        return result
 
 if __name__ == "__main__":
     task_set = "amazon" # "goodreads" or "yelp"
