@@ -121,17 +121,24 @@ class Simulator:
         self.llm = llm
         logger.info("LLM set")
 
-    def run_simulation(self, number_of_tasks: int = None, enable_threading: bool = False, max_workers: int = None) -> List[Any]:
+    def run_simulation(self, number_of_tasks: int = None, enable_threading: bool = False, max_workers: int = None, time_limitation: float = None) -> List[Any]:
         """
-        Run the simulation with optional multi-threading support.
+        Run the simulation with optional multi-threading support and time limitation.
         
         Args:
             number_of_tasks: Number of tasks to run. If None, run all tasks.
             enable_threading: Whether to enable multi-threading. Default is False.
             max_workers: Maximum number of threads to use. If None, will use min(32, number_of_tasks).
+            time_limitation: Time limit in minutes. If None, no time limit is applied.
         Returns:
             List of outputs from agents for each scenario.
         """
+        import time
+        from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
+
+        start_time = time.time()
+        timeout_seconds = time_limitation * 60 if time_limitation else None
+
         logger.info("Running simulation")
         if not self.agent_class:
             raise RuntimeError("Agent class is not set. Use set_agent() to set it.")
@@ -145,6 +152,11 @@ class Simulator:
         if not enable_threading:
             self.simulation_outputs = []
             for index, task in enumerate(task_to_run):
+                # 检查是否超时
+                if timeout_seconds and (time.time() - start_time) > timeout_seconds:
+                    logger.warning(f"Time limit ({time_limitation} minutes) reached. Stopping simulation.")
+                    break
+
                 if isinstance(self.llm, list):
                     agent = self.agent_class(llm=self.llm[index%len(self.llm)])
                 else:
@@ -167,7 +179,6 @@ class Simulator:
                 logger.info(f"Simulation finished for task {index}")
         else:
             # 多线程处理
-            from concurrent.futures import ThreadPoolExecutor
             from threading import Lock
 
             log_lock = Lock()
@@ -175,7 +186,10 @@ class Simulator:
 
             def process_task(task_index_tuple):
                 index, task = task_index_tuple
-                agent = self.agent_class(llm=self.llm)
+                if isinstance(self.llm, list):
+                    agent = self.agent_class(llm=self.llm[index%len(self.llm)])
+                else:
+                    agent = self.agent_class(llm=self.llm)
                 agent.set_interaction_tool(self.interaction_tool)
                 agent.insert_task(task)
                 
@@ -195,7 +209,7 @@ class Simulator:
                     logger.info(f"Simulation finished for task {index}")
                 
                 self.simulation_outputs[index] = result
-                return result
+                return index, result
 
             # 确定线程数
             if max_workers is None:
@@ -204,10 +218,29 @@ class Simulator:
                 max_workers = min(max_workers, len(task_to_run))
             
             logger.info(f"Running with {max_workers} threads")
+            
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                list(executor.map(process_task, enumerate(task_to_run)))
+                # 提交所有任务
+                future_to_index = {
+                    executor.submit(process_task, (i, task)): i 
+                    for i, task in enumerate(task_to_run)
+                }
+
+                try:
+                    # 等待所有任务完成或达到时间限制
+                    for future in as_completed(future_to_index, timeout=timeout_seconds):
+                        try:
+                            index, result = future.result()
+                            self.simulation_outputs[index] = result
+                        except Exception as e:
+                            logger.error(f"Task failed with error: {str(e)}")
+                except TimeoutError:
+                    logger.error(f"Time limit ({time_limitation} minutes) reached.")
+                    raise TimeoutError
 
         logger.info("Simulation finished")
+        # 过滤掉None值（未完成的任务）
+        self.simulation_outputs = [output for output in self.simulation_outputs if output is not None]
         return self.simulation_outputs
 
     def evaluate(self) -> Dict[str, Any]:

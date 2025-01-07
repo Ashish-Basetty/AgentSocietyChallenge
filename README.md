@@ -178,7 +178,7 @@ evaluation_results = simulator.evaluate()
   - [Recommendation Track](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge/pages/recommendation-track.html)
   - Please register your team first.
   - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
-- **The content of your submission should be a zip file containing your agent (Only one `{your_agent}.py` file without evaluation code).**
+- **The content of your submission should be a .py file containing your agent (Only one `{your_team}.py` file without evaluation code).**
 - Example submissions:
   - For Track 1: [submission_1](example/trackOneSubmission_example.zip)
   - For Track 2: [submission_2](example/trackTwoSubmission_example.zip)
