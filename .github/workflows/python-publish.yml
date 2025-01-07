@@ -34,7 +34,7 @@ jobs:
       run: |
         poetry self add poetry-git-version-plugin
         poetry set-git-version
-        poetry install --no-dev
+        poetry install
     - name: Build package
       run: poetry build
     - name: Publish package
