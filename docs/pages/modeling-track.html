@@ -227,6 +227,24 @@
                   <li>An embedding vector for the review text is generated using a predefined embedding model [2].</li>
                   <li><b>Metric:</b> Cosine similarity between text embeddings, measuring alignment with the real topics.</li>
               </ul>
+
+              <h3>Preference Estimation</h3>
+              <ul>
+                  <li>The preference estimation is calculated based on the star rating accuracy.</li>
+                  <li><b>Metric:</b> 1 - MAE of star ratings, indicating the deviation from actual preferences.</li>
+              </ul>
+
+              <h3>Review Generation</h3>
+              <ul>
+                  <li>The review generation is calculated based on the review metrics.</li>
+                  <li><b>Metric:</b> 1 - (Emotional Tone Error * 0.25 + Sentiment Attitude Error * 0.25 + Topic Relevance Error * 0.5), indicating the deviation from actual reviews.</li>
+              </ul>
+
+              <h3>Overall Quality</h3>
+              <ul>
+                  <li>The overall quality is calculated based on the preference estimation and review generation.</li>
+                  <li><b>Metric:</b> (Preference Estimation + Review Generation) / 2, indicating the overall quality of the simulated reviews.</li>
+              </ul>
           
               <h3>References</h3>
               <ol>
