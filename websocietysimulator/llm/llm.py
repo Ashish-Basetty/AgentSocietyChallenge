@@ -16,7 +16,7 @@ class LLMBase:
         """
         self.model = model
         
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call LLM to get response
         
@@ -62,7 +62,7 @@ class InfinigenceLLM(LLMBase):
         wait=wait_exponential(multiplier=1, min=4, max=60),  # 等待时间从4秒开始，指数增长，最长60秒
         stop=stop_after_attempt(5)  # 最多重试5次
     )
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call Infinigence AI API to get response with rate limit handling
         
@@ -113,7 +113,7 @@ class OpenAILLM(LLMBase):
         self.client = OpenAI(api_key=api_key)
         self.embedding_model = OpenAIEmbeddings(api_key=api_key)
         
-    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
+    def __call__(self, messages: List[Dict[str, str]], model: Optional[str] = None, temperature: float = 0.0, max_tokens: int = 500, stop_strs: Optional[List[str]] = None, n: int = 1) -> Union[str, List[str]]:
         """
         Call OpenAI API to get response
         
