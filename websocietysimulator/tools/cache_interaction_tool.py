@@ -8,12 +8,11 @@ from tqdm import tqdm
 logger = logging.getLogger("websocietysimulator")
 
 class CacheInteractionTool:
-    def __init__(self, data_dir: str, cache_size: int = 10000):
+    def __init__(self, data_dir: str):
         """
         Initialize the tool with the dataset directory.
         Args:
             data_dir: Path to the directory containing Yelp dataset files.
-            map_size: Maximum size of the database in bytes.
         """
         logger.info(f"Initializing InteractionTool with data directory: {data_dir}")
         self.data_dir = data_dir
