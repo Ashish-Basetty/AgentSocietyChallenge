@@ -18,3 +18,5 @@ TODO
 db/
 dataset/
 **/data/
+.env
+yelp_dataset/

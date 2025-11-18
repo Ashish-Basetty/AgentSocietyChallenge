@@ -142,7 +142,7 @@ class MySimulationAgent(SimulationAgent):
 
 if __name__ == "__main__":
     # Set the data
-    task_set = "amazon" # "goodreads" or "yelp"
+    task_set = "yelp"
     simulator = Simulator(data_dir="your data dir", device="gpu", cache=True)
     simulator.set_task_and_groundtruth(task_dir=f"./track1/{task_set}/tasks", groundtruth_dir=f"./track1/{task_set}/groundtruth")
 
