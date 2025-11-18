@@ -83,17 +83,42 @@ def load_and_process_yelp_data(input_dir):
     user_file = os.path.join(input_dir, 'yelp_academic_dataset_user.json')
     review_file = os.path.join(input_dir, 'yelp_academic_dataset_review.json')
 
-    # Load the datasets with progress bars
-    business_df = load_data(business_file)
-    user_df = load_data(user_file)
-    review_df = load_data(review_file)
-
     # Find top cities and related data
     logging.info("Finding top cities by reviews for Yelp...")
     top_cities = ['Philadelphia']
 
-    logging.info("Filtering data for top cities for Yelp...")
-    filtered_businesses, filtered_reviews, filtered_users = filter_data(top_cities, business_df, user_df, review_df)
+    # Load businesses first and filter
+    logging.info("Loading businesses...")
+    business_df = load_data(business_file)
+    filtered_businesses = business_df[business_df['city'].isin(top_cities)]
+    philly_business_ids = set(filtered_businesses['business_id'].unique())
+    logging.info(f"Found {len(philly_business_ids)} businesses in {top_cities}")
+    
+    # Stream reviews and filter in memory-efficient way
+    logging.info("Streaming and filtering reviews...")
+    filtered_reviews_data = []
+    with open(review_file, 'r') as file:
+        for line in tqdm(file, desc=f"Filtering reviews", unit=" lines"):
+            review = json.loads(line)
+            if review.get('business_id') in philly_business_ids:
+                filtered_reviews_data.append(review)
+    filtered_reviews = pd.DataFrame(filtered_reviews_data)
+    logging.info(f"Found {len(filtered_reviews)} reviews for selected cities businesses")
+    
+    # Get unique user IDs from filtered reviews
+    philly_user_ids = set(filtered_reviews['user_id'].unique())
+    
+    # Stream users and filter
+    logging.info("Streaming and filtering users...")
+    filtered_users_data = []
+    with open(user_file, 'r') as file:
+        for line in tqdm(file, desc=f"Filtering users", unit=" lines"):
+            user = json.loads(line)
+            if user.get('user_id') in philly_user_ids:
+                filtered_users_data.append(user)
+    filtered_users = pd.DataFrame(filtered_users_data)
+    logging.info(f"Found {len(filtered_users)} users with reviews in selected cities")
+    
     return filtered_businesses, filtered_reviews, filtered_users
 
 def merge_business_data(yelp_business, output_file=None):
