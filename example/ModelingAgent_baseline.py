@@ -1,7 +1,7 @@
 from websocietysimulator import Simulator
 from websocietysimulator.agent import SimulationAgent
 import json 
-from websocietysimulator.llm import LLMBase, InfinigenceLLM
+from websocietysimulator.llm import LLMBase
 from websocietysimulator.agent.modules.planning_modules import PlanningBase 
 from websocietysimulator.agent.modules.reasoning_modules import ReasoningBase
 from websocietysimulator.agent.modules.memory_modules import MemoryDILU
@@ -139,25 +139,3 @@ class MySimulationAgent(SimulationAgent):
                 "stars": 0,
                 "review": ""
             }
-
-if __name__ == "__main__":
-    # Set the data
-    task_set = "yelp"
-    simulator = Simulator(data_dir="your data dir", device="gpu", cache=True)
-    simulator.set_task_and_groundtruth(task_dir=f"./track1/{task_set}/tasks", groundtruth_dir=f"./track1/{task_set}/groundtruth")
-
-    # Set the agent and LLM
-    simulator.set_agent(MySimulationAgent)
-    simulator.set_llm(InfinigenceLLM(api_key="your api key"))
-
-    # Run the simulation
-    # If you don't set the number of tasks, the simulator will run all tasks.
-    outputs = simulator.run_simulation(number_of_tasks=None, enable_threading=True, max_workers=10)
-    
-    # Evaluate the agent
-    evaluation_results = simulator.evaluate()       
-    with open(f'./evaluation_results_track1_{task_set}.json', 'w') as f:
-        json.dump(evaluation_results, f, indent=4)
-
-    # Get evaluation history
-    evaluation_history = simulator.get_evaluation_history()
