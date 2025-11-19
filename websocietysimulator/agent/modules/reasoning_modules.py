@@ -16,7 +16,17 @@ class ReasoningBase:
         self.llm = llm
     
     def process_task_description(self, task_description):
-        examples = ''
+        examples = []
+        example_1_description = '''
+        stars: 1.0
+        review: I had high hopes for the Masters Inn Fairgrounds, but my experience was a major letdown. The room was infested with roaches, and the furniture was old and falling apart. The staff was unhelpful and seemed disinterested in addressing the issues. The overall cleanliness and maintenance were poor, which made the stay very uncomfortable. Given my preference for well-maintained and clean environments, this place did not meet any of my standards. I would not recommend it to anyone, especially families or those looking for a pleasant stay.
+        '''
+        examples.append(example_1_description)
+        example_2_description = '''
+        stars: 3.0
+        review: I visited Arizona Bug Doctor for pest control services, and my experience was mixed. On the positive side, the technicians were knowledgeable and thorough, which is important when dealing with pests. However, scheduling the appointment was a bit of a challenge, and the office staff could be more responsive. The limited hours of operation were also inconvenient. Overall, the service was effective, but there's room for improvement in customer service and flexibility.
+        '''
+        examples.append(example_2_description)
         return examples, task_description
 
 class ReasoningIO(ReasoningBase):
