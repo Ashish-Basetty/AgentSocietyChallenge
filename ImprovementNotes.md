@@ -16,13 +16,13 @@ We used the provided structure of simulator and example baseline model to come u
 
 # Improving reasoning
 
-We first tried implementing a  *Tree of Thought (TOT)* system to improve responses. Simply replacing the baseline reasoning model with the Tree of though model gave us:
+We first tried implementing a  *Tree of Thought (TOT)* system to improve responses. One other possible way to improve reasoning was to provide concrete examples for the agent. Using the ground truth data, we decided to provide a few hardcoded examples based on past responses. Using the last two yelp ground truth examples, we got the following results:
 {
     "type": "simulation",
     "metrics": {
-        "preference_estimation": 0.42666666666666664,
-        "review_generation": 0.60427244149902,
-        "overall_quality": 0.5154695540828433
+        "preference_estimation": 0.6533333333333333,
+        "review_generation": 0.5875791056496582,
+        "overall_quality": 0.6204562194914958
     },
     "data_info": {
         "evaluated_count": 30,
@@ -30,19 +30,3 @@ We first tried implementing a  *Tree of Thought (TOT)* system to improve respons
         "original_ground_truth_count": 400
     }
 }
-This gave us no initial discernible improvement, but one possible way to improve reasoning was to provide concrete examples for the agent. Using the ground truth data, we decided to provide a few hardcoded examples based on past responses. Using the last two yelp ground truth examples, we got the following results:
-{
-    "type": "simulation",
-    "metrics": {
-        "preference_estimation": 0.42666666666666664,
-        "review_generation": 0.60427244149902,
-        "overall_quality": 0.5154695540828433
-    },
-    "data_info": {
-        "evaluated_count": 30,
-        "original_simulation_count": 30,
-        "original_ground_truth_count": 400
-    }
-}
-
-One modification to the *Tree of Thought* system was to immediately return a result if 'think' was part of the text. This shortcut sped up responses, but **COMPLETE**

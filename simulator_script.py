@@ -59,7 +59,7 @@ def main():
         groundtruth_dir=f"example/track1/{task_set}/groundtruth"
     )
 
-    simulator.set_agent(BaselineSimulationAgent)
+    simulator.set_agent(TOTSimulationAgent)
 
     # Create LLM with logger
     llm = GeminiLLM(api_key=os.getenv("GEMINI_API_KEY"), logger=logger)
@@ -68,7 +68,7 @@ def main():
     # Set logger in simulator for passing to agents
     simulator.logger = logger
 
-    agent_outputs = simulator.run_simulation(number_of_tasks=3, enable_threading=True, max_workers=10)
+    agent_outputs = simulator.run_simulation(number_of_tasks=30, enable_threading=True, max_workers=10)
 
     evaluation_results = simulator.evaluate()
     with open(results_file, 'w') as f:
