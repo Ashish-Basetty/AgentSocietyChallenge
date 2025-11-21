@@ -203,15 +203,30 @@ class GeminiLLM(LLMBase):
     def get_embedding_model(self):
         """
         Get the embedding model for text embeddings.
-        Uses SentenceTransformer as default embedding model.
+        Uses SentenceTransformer wrapped in a LangChain-compatible interface.
         
         Returns:
-            SentenceTransformer: An instance of SentenceTransformer for embeddings
+            LangChain Embeddings: A LangChain-compatible embedding model
         """
         if self._embedding_model is None:
             # Use a lightweight, fast embedding model
             # Force CPU to avoid MPS device issues on macOS
             import os
             os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
-            self._embedding_model = SentenceTransformer('paraphrase-MiniLM-L6-v2', device='cpu')
+            sentence_transformer = SentenceTransformer('paraphrase-MiniLM-L6-v2', device='cpu')
+            
+            # Wrap SentenceTransformer in a LangChain-compatible interface
+            from langchain_core.embeddings import Embeddings
+            
+            class SentenceTransformerEmbeddings(Embeddings):
+                def __init__(self, model):
+                    self.model = model
+                
+                def embed_documents(self, texts):
+                    return self.model.encode(texts, convert_to_numpy=True).tolist()
+                
+                def embed_query(self, text):
+                    return self.model.encode([text], convert_to_numpy=True).tolist()[0]
+            
+            self._embedding_model = SentenceTransformerEmbeddings(sentence_transformer)
         return self._embedding_model

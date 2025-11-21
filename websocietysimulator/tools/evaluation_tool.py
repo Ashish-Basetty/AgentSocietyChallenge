@@ -105,6 +105,10 @@ class SimulationEvaluator(BaseEvaluator):
         import os
         os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
         os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Disable CUDA
+        try:
+            torch.set_default_device('cpu')
+        except Exception as e:
+            logging.warning(f"Failed to set default torch device to CPU: {e}")
         
         self.sia = SentimentIntensityAnalyzer()
         self.emotion_classifier = pipeline(
@@ -116,6 +120,9 @@ class SimulationEvaluator(BaseEvaluator):
         # Force CPU to avoid MPS device issues on macOS
         import os
         os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
+        # Explicitly ensure device is "cpu" string, not any other value
+        st_device = "cpu"
+        print(f"Device set to use {st_device}")
         self.topic_model = SentenceTransformer(
             'paraphrase-MiniLM-L6-v2',
             device=st_device
