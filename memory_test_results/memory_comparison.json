@@ -1,0 +1,59 @@
+{
+    "timestamp": "2025-11-20T19:37:29.951382",
+    "best_memory_type": "generative",
+    "best_score": 0.6782271465033591,
+    "results": {
+        "dilu": {
+            "type": "simulation",
+            "metrics": {
+                "preference_estimation": 0.72,
+                "review_generation": 0.5967981085895866,
+                "overall_quality": 0.6583990542947933
+            },
+            "data_info": {
+                "evaluated_count": 5,
+                "original_simulation_count": 5,
+                "original_ground_truth_count": 400
+            }
+        },
+        "generative": {
+            "type": "simulation",
+            "metrics": {
+                "preference_estimation": 0.76,
+                "review_generation": 0.5964542930067184,
+                "overall_quality": 0.6782271465033591
+            },
+            "data_info": {
+                "evaluated_count": 5,
+                "original_simulation_count": 5,
+                "original_ground_truth_count": 400
+            }
+        },
+        "tp": {
+            "type": "simulation",
+            "metrics": {
+                "preference_estimation": 0.68,
+                "review_generation": 0.6096817649301892,
+                "overall_quality": 0.6448408824650946
+            },
+            "data_info": {
+                "evaluated_count": 5,
+                "original_simulation_count": 5,
+                "original_ground_truth_count": 400
+            }
+        },
+        "voyager": {
+            "type": "simulation",
+            "metrics": {
+                "preference_estimation": 0.72,
+                "review_generation": 0.6083118201757785,
+                "overall_quality": 0.6641559100878892
+            },
+            "data_info": {
+                "evaluated_count": 5,
+                "original_simulation_count": 5,
+                "original_ground_truth_count": 400
+            }
+        }
+    }
+}
