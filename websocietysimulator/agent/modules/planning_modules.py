@@ -2,21 +2,36 @@ import re
 import ast
 
 class PlanningBase():
-    def __init__(self, llm):
+    def __init__(self, llm, logger=None):
         """
         Initialize the planning base class
         
         Args:
             llm: LLM instance used to generate planning
+            logger: Optional logger instance for diagnostics
         """
         self.plan = []
         self.llm = llm
+        self.logger = logger
     
     def create_prompt(self, task_type, task_description, feedback, few_shot):
         raise NotImplementedError("Subclasses should implement this method")
     
     def __call__(self, task_type, task_description, feedback, few_shot='few_shot'):
         prompt = self.create_prompt(task_type, task_description, feedback, few_shot)
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="planning",
+                function_name="__call__",
+                event_type="planning_started",
+                data={
+                    "task_type": task_type,
+                    "task_description_length": len(str(task_description)),
+                    "has_feedback": bool(feedback),
+                    "has_few_shot": bool(few_shot)
+                }
+            )
         
         # Use the new LLM call method
         messages = [{"role": "user", "content": prompt}]
@@ -28,6 +43,19 @@ class PlanningBase():
         dict_strings = re.findall(r"\{[^{}]*\}", string)
         dicts = [ast.literal_eval(ds) for ds in dict_strings]
         self.plan = dicts
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="planning",
+                function_name="__call__",
+                event_type="planning_completed",
+                data={
+                    "task_type": task_type,
+                    "plan_length": len(self.plan),
+                    "subtasks": [subtask.get('description', '')[:50] for subtask in self.plan]
+                }
+            )
+        
         return self.plan
     
 class PlanningIO(PlanningBase):

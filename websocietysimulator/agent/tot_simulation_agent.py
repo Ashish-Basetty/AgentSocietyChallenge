@@ -10,9 +10,9 @@ logging.basicConfig(level=logging.INFO)
 class PlanningBaseline(PlanningBase):
     """Inherit from PlanningBase"""
     
-    def __init__(self, llm):
+    def __init__(self, llm, logger=None):
         """Initialize the planning module"""
-        super().__init__(llm=llm)
+        super().__init__(llm=llm, logger=logger)
     
     def __call__(self, task_description):
         """Override the parent class's __call__ method"""
@@ -37,9 +37,10 @@ class TOTSimulationAgent(SimulationAgent):
     def __init__(self, llm: LLMBase):
         """Initialize MySimulationAgent"""
         super().__init__(llm=llm)
-        self.planning = PlanningBaseline(llm=self.llm)
-        self.reasoning = ReasoningTOT(profile_type_prompt='', llm=self.llm)
-        self.memory = MemoryDILU(llm=self.llm)
+        logger = getattr(llm, 'logger', None)
+        self.memory = MemoryDILU(llm=self.llm, logger=logger)
+        self.planning = PlanningBaseline(llm=self.llm, logger=logger)
+        self.reasoning = ReasoningTOT(profile_type_prompt='', memory=self.memory, llm=self.llm, logger=logger)
         
     def workflow(self):
         """
@@ -50,17 +51,31 @@ class TOTSimulationAgent(SimulationAgent):
         try:
             plan = self.planning(task_description=self.task)
 
+            user = None
+            business = None
             for sub_task in plan:
                 if 'user' in sub_task['description']:
-                    user = str(self.interaction_tool.get_user(user_id=self.task['user_id']))
+                    user_data = self.interaction_tool.get_user(user_id=self.task['user_id'])
+                    user = str(user_data) if user_data else "No user data available"
                 elif 'business' in sub_task['description']:
-                    business = str(self.interaction_tool.get_item(item_id=self.task['item_id']))
+                    item_data = self.interaction_tool.get_item(item_id=self.task['item_id'])
+                    business = str(item_data) if item_data else "No business data available"
+            
+            # Ensure we have user and business data
+            if not user:
+                user = str(self.interaction_tool.get_user(user_id=self.task['user_id']) or "No user data available")
+            if not business:
+                business = str(self.interaction_tool.get_item(item_id=self.task['item_id']) or "No business data available")
             reviews_item = self.interaction_tool.get_reviews(item_id=self.task['item_id'])
             for review in reviews_item:
                 review_text = review['text']
                 self.memory(f'review: {review_text}')
             reviews_user = self.interaction_tool.get_reviews(user_id=self.task['user_id'])
-            review_similar = self.memory(f'{reviews_user[0]["text"]}')
+            # Handle case where user has no reviews
+            if reviews_user and len(reviews_user) > 0:
+                review_similar = self.memory(f'{reviews_user[0]["text"]}')
+            else:
+                review_similar = ""
             task_description = f'''
             You are a real human user on Yelp, a platform for crowd-sourced business reviews. Here is your Yelp profile and review history: {user}
 
@@ -93,14 +108,45 @@ class TOTSimulationAgent(SimulationAgent):
             '''
             result = self.reasoning(task_description)
             
+            # Parse the result, handling errors gracefully
+            stars_line = None
+            review_line = None
             try:
-                stars_line = [line for line in result.split('\n') if 'stars:' in line][0]
-                review_line = [line for line in result.split('\n') if 'review:' in line][0]
-            except:
-                print('Error:', result)
+                if result and isinstance(result, str):
+                    stars_lines = [line for line in result.split('\n') if 'stars:' in line.lower()]
+                    review_lines = [line for line in result.split('\n') if 'review:' in line.lower()]
+                    if stars_lines:
+                        stars_line = stars_lines[0]
+                    if review_lines:
+                        review_line = review_lines[0]
+            except Exception as e:
+                print(f'Error parsing result: {e}')
+                print(f'Result was: {result}')
 
-            stars = float(stars_line.split(':')[1].strip())
-            review_text = review_line.split(':')[1].strip()
+            # Default values if parsing failed
+            if not stars_line:
+                stars = 3.0  # Default rating
+            else:
+                try:
+                    parts = stars_line.split(':')
+                    if len(parts) > 1:
+                        stars = float(parts[1].strip())
+                    else:
+                        stars = 3.0
+                except (ValueError, IndexError, AttributeError):
+                    stars = 3.0
+            
+            if not review_line:
+                review_text = "No review generated."
+            else:
+                try:
+                    parts = review_line.split(':')
+                    if len(parts) > 1:
+                        review_text = parts[1].strip()
+                    else:
+                        review_text = "No review generated."
+                except (ValueError, IndexError, AttributeError):
+                    review_text = "No review generated."
 
             if len(review_text) > 512:
                 review_text = review_text[:512]

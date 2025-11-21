@@ -10,9 +10,9 @@ logging.basicConfig(level=logging.INFO)
 class PlanningBaseline(PlanningBase):
     """Inherit from PlanningBase"""
     
-    def __init__(self, llm):
+    def __init__(self, llm, logger=None):
         """Initialize the planning module"""
-        super().__init__(llm=llm)
+        super().__init__(llm=llm, logger=logger)
     
     def __call__(self, task_description):
         """Override the parent class's __call__ method"""
@@ -34,9 +34,9 @@ class PlanningBaseline(PlanningBase):
 class ReasoningBaseline(ReasoningBase):
     """Inherit from ReasoningBase"""
     
-    def __init__(self, profile_type_prompt, llm):
+    def __init__(self, profile_type_prompt, llm, logger=None):
         """Initialize the reasoning module"""
-        super().__init__(profile_type_prompt=profile_type_prompt, memory=None, llm=llm)
+        super().__init__(profile_type_prompt=profile_type_prompt, memory=None, llm=llm, logger=logger)
         
     def __call__(self, task_description: str):
         """Override the parent class's __call__ method"""
@@ -48,7 +48,7 @@ class ReasoningBaseline(ReasoningBase):
         reasoning_result = self.llm(
             messages=messages,
             temperature=0.0,
-            max_tokens=1000
+            max_tokens=4000  # Increased from 1000 to handle longer review generation
         )
         
         return reasoning_result
@@ -60,9 +60,10 @@ class BaselineSimulationAgent(SimulationAgent):
     def __init__(self, llm: LLMBase):
         """Initialize MySimulationAgent"""
         super().__init__(llm=llm)
-        self.planning = PlanningBaseline(llm=self.llm)
-        self.reasoning = ReasoningBaseline(profile_type_prompt='', llm=self.llm)
-        self.memory = MemoryDILU(llm=self.llm)
+        logger = getattr(llm, 'logger', None)
+        self.planning = PlanningBaseline(llm=self.llm, logger=logger)
+        self.reasoning = ReasoningBaseline(profile_type_prompt='', llm=self.llm, logger=logger)
+        self.memory = MemoryDILU(llm=self.llm, logger=logger)
         
     def workflow(self):
         """
@@ -83,7 +84,11 @@ class BaselineSimulationAgent(SimulationAgent):
                 review_text = review['text']
                 self.memory(f'review: {review_text}')
             reviews_user = self.interaction_tool.get_reviews(user_id=self.task['user_id'])
-            review_similar = self.memory(f'{reviews_user[0]["text"]}')
+            # Check if user has reviews before accessing
+            if reviews_user and len(reviews_user) > 0:
+                review_similar = self.memory(f'{reviews_user[0]["text"]}')
+            else:
+                review_similar = ""  # No previous reviews to reference
             task_description = f'''
             You are a real human user on Yelp, a platform for crowd-sourced business reviews. Here is your Yelp profile and review history: {user}
 

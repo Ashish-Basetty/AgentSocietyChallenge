@@ -163,6 +163,15 @@ class Simulator:
                 agent.set_interaction_tool(self.interaction_tool)
                 agent.insert_task(task)
                 
+                # Log task start
+                if hasattr(self, 'logger') and self.logger:
+                    task_id = f"task_{index}"
+                    self.logger.log_simulation_event(
+                        event_type="task_start",
+                        data={"task_index": index, "task": task.to_dict()},
+                        task_id=task_id
+                    )
+                
                 try:
                     output = agent.workflow()
                     result = {
@@ -174,6 +183,28 @@ class Simulator:
                         "task": task.to_dict(),
                         "error": "Forward method not implemented by participant."
                     }
+                except Exception as e:
+                    result = {
+                        "task": task.to_dict(),
+                        "error": str(e)
+                    }
+                    if hasattr(self, 'logger') and self.logger:
+                        task_id = f"task_{index}"
+                        self.logger.log_simulation_event(
+                            event_type="task_error",
+                            data={"task_index": index, "error": str(e)},
+                            task_id=task_id
+                        )
+                
+                # Log task complete
+                if hasattr(self, 'logger') and self.logger:
+                    task_id = f"task_{index}"
+                    self.logger.log_simulation_event(
+                        event_type="task_complete",
+                        data={"task_index": index, "output": result.get("output")},
+                        task_id=task_id
+                    )
+                
                 self.simulation_outputs.append(result)
                 logger.info(f"Simulation finished for task {index}")
         else:
@@ -203,6 +234,15 @@ class Simulator:
                 agent.set_interaction_tool(self.interaction_tool)
                 agent.insert_task(task)
                 
+                # Log task start
+                if hasattr(self, 'logger') and self.logger:
+                    task_id = f"task_{index}"
+                    self.logger.log_simulation_event(
+                        event_type="task_start",
+                        data={"task_index": index, "task": task.to_dict()},
+                        task_id=task_id
+                    )
+                
                 try:
                     # 使用内部的ThreadPoolExecutor来执行单个任务，设置超时时间为5分钟
                     with ThreadPoolExecutor(max_workers=1) as single_task_executor:
@@ -215,6 +255,13 @@ class Simulator:
                             }
                         except TimeoutError:
                             logger.warning(f"Task {index} timed out")
+                            if hasattr(self, 'logger') and self.logger:
+                                task_id = f"task_{index}"
+                                self.logger.log_simulation_event(
+                                    event_type="task_timeout",
+                                    data={"task_index": index},
+                                    task_id=task_id
+                                )
                             # 强制关闭执行器
                             single_task_executor._threads.clear()
                             single_task_executor.shutdown(wait=False)
@@ -226,7 +273,23 @@ class Simulator:
                     }
                 except Exception as e:
                     logger.error(f"Task {index} failed with error: {str(e)}")
+                    if hasattr(self, 'logger') and self.logger:
+                        task_id = f"task_{index}"
+                        self.logger.log_simulation_event(
+                            event_type="task_error",
+                            data={"task_index": index, "error": str(e)},
+                            task_id=task_id
+                        )
                     return index, None
+                
+                # Log task complete
+                if hasattr(self, 'logger') and self.logger:
+                    task_id = f"task_{index}"
+                    self.logger.log_simulation_event(
+                        event_type="task_complete",
+                        data={"task_index": index, "output": result.get("output")},
+                        task_id=task_id
+                    )
                 
                 with log_lock:
                     logger.info(f"Simulation finished for task {index}")

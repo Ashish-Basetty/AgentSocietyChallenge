@@ -2,7 +2,7 @@ from collections import Counter
 import re
 
 class ReasoningBase:
-    def __init__(self, profile_type_prompt, memory, llm):
+    def __init__(self, profile_type_prompt, memory, llm, logger=None):
         """
         Initialize the reasoning base class
         
@@ -10,10 +10,12 @@ class ReasoningBase:
             profile_type_prompt: Profile type prompt
             memory: Memory module
             llm: LLM instance used to generate reasoning
+            logger: Optional logger instance for diagnostics
         """
         self.profile_type_prompt = profile_type_prompt
         self.memory = memory
         self.llm = llm
+        self.logger = logger
     
     def process_task_description(self, task_description):
         examples = []
@@ -39,10 +41,35 @@ Here is the task:
 {task_description}'''
         prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="__call__",
+                event_type="reasoning_started",
+                data={
+                    "reasoning_type": "IO",
+                    "task_length": len(task_description),
+                    "has_feedback": bool(feedback),
+                    "examples_count": len(examples)
+                }
+            )
+        
         reasoning_result = self.llm(
             messages=messages,
             temperature=0.1,
         )
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="__call__",
+                event_type="reasoning_completed",
+                data={
+                    "reasoning_type": "IO",
+                    "result_length": len(reasoning_result) if isinstance(reasoning_result, str) else len(str(reasoning_result))
+                }
+            )
         
         return reasoning_result
     
@@ -78,7 +105,11 @@ Here is the task:
             n=5
         )
         string_counts = Counter(reasoning_results)
-        reasoning_result = string_counts.most_common(1)[0][0]
+        most_common = string_counts.most_common(1)
+        if most_common and len(most_common) > 0:
+            reasoning_result = most_common[0][0]
+        else:
+            reasoning_result = reasoning_results[0] if reasoning_results else "stars: 3.0\nreview: Unable to generate review."
         return reasoning_result
     
 class ReasoningTOT(ReasoningBase):
@@ -91,15 +122,66 @@ Here is the task:
 {task_description}'''
         prompt = prompt.format(task_description=task_description, examples=examples)
         messages = [{"role": "user", "content": prompt}]
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="__call__",
+                event_type="reasoning_started",
+                data={
+                    "reasoning_type": "TOT",
+                    "task_length": len(task_description),
+                    "has_feedback": bool(feedback),
+                    "examples_count": len(examples),
+                    "n_candidates": 3
+                }
+            )
+        
         reasoning_results = self.llm(
             messages=messages,
             temperature=0.1,
             n=3
         )
+        
+        # Handle case where reasoning_results might be empty or None
+        if not reasoning_results:
+            reasoning_results = ["stars: 3.0\nreview: Unable to generate review."]
+        elif not isinstance(reasoning_results, list):
+            reasoning_results = [reasoning_results]
+        elif len(reasoning_results) == 0:
+            reasoning_results = ["stars: 3.0\nreview: Unable to generate review."]
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="__call__",
+                event_type="reasoning_candidates_generated",
+                data={
+                    "reasoning_type": "TOT",
+                    "candidates_count": len(reasoning_results) if isinstance(reasoning_results, list) else 1
+                }
+            )
+        
         reasoning_result = self.get_votes(task_description, reasoning_results, examples)
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="__call__",
+                event_type="reasoning_completed",
+                data={
+                    "reasoning_type": "TOT",
+                    "result_length": len(reasoning_result) if isinstance(reasoning_result, str) else len(str(reasoning_result))
+                }
+            )
+        
         return reasoning_result
     def get_votes(self, task_description, reasoning_results, examples):
-        if 'think'  in reasoning_results[0].lower():
+        # Handle empty results
+        if not reasoning_results or len(reasoning_results) == 0:
+            return "stars: 3.0\nreview: Unable to generate review."
+        
+        if reasoning_results[0] and 'think' in reasoning_results[0].lower():
             return reasoning_results[0]
         prompt = '''Given the reasoning process for two completed tasks and one ongoing task, and several answers for the next step, decide which answer best follows the reasoning process for example command format. Output "The best answer is {{s}}", where s is the integer id chosen.
 Here are some examples.
@@ -118,7 +200,12 @@ Here is the task:
             n=5
         )
         vote_results = [0] * len(reasoning_results)
+        # Handle case where vote_outputs might not be a list
+        if not isinstance(vote_outputs, list):
+            vote_outputs = [vote_outputs] if vote_outputs else []
         for vote_output in vote_outputs:
+            if not vote_output:
+                continue
             pattern = r".*best answer is .*(\d+).*"
             match = re.match(pattern, vote_output, re.DOTALL)
             if match:
@@ -128,7 +215,25 @@ Here is the task:
             else:
                 print(f'vote no match: {[vote_output]}')
         ids = list(range(len(reasoning_results)))
+        if len(ids) == 0:
+            return "stars: 3.0\nreview: Unable to generate review."
         select_id = sorted(ids, key=lambda x: vote_results[x], reverse=True)[0]
+        if select_id >= len(reasoning_results):
+            return reasoning_results[0] if reasoning_results else "stars: 3.0\nreview: Unable to generate review."
+        
+        if self.logger:
+            self.logger.log_module_diagnostic(
+                module_name="reasoning",
+                function_name="get_votes",
+                event_type="vote_selection",
+                data={
+                    "reasoning_type": "TOT",
+                    "vote_results": vote_results,
+                    "selected_id": select_id,
+                    "votes_count": len(vote_outputs)
+                }
+            )
+        
         return reasoning_results[select_id]
 
 class ReasoningDILU(ReasoningBase):

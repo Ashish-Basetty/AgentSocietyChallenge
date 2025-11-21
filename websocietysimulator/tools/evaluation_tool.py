@@ -97,8 +97,14 @@ class SimulationEvaluator(BaseEvaluator):
         super().__init__()
         self.device = self._get_device(device)
         
-        pipeline_device = self.device
-        st_device = "cuda" if self.device == 0 else "cpu" 
+        # Force CPU for all models to avoid MPS device issues on macOS
+        pipeline_device = -1  # Use CPU instead of GPU/MPS
+        st_device = "cpu"
+        
+        # Set environment variable before importing/using transformers
+        import os
+        os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
+        os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Disable CUDA
         
         self.sia = SentimentIntensityAnalyzer()
         self.emotion_classifier = pipeline(
@@ -107,13 +113,18 @@ class SimulationEvaluator(BaseEvaluator):
             top_k=5,
             device=pipeline_device
         )
+        # Force CPU to avoid MPS device issues on macOS
+        import os
+        os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
         self.topic_model = SentenceTransformer(
             'paraphrase-MiniLM-L6-v2',
             device=st_device
         )
         
     def _get_device(self, device: str) -> int:
-        """Parse device from string"""
+        """Parse device from string - always return CPU (-1) to avoid MPS issues on macOS"""
+        # Force CPU to avoid MPS device issues on macOS
+        return -1
         if device == "gpu":
             if torch.cuda.is_available():
                 return 0  # GPU

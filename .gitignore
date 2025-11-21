@@ -20,3 +20,10 @@ dataset/
 **/data/
 .env
 yelp_dataset/
+
+# Temporary simulation and test output files
+*_results.json
+*_history.json
+*_llm_logs.jsonl
+llm_logs.jsonl
+evaluation_*.json
