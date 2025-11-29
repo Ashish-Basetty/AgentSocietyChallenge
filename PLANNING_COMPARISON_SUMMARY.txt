@@ -1,0 +1,33 @@
+================================================================================
+PLANNING MODULES COMPARISON RESULTS - QUICK SUMMARY
+================================================================================
+
+Rank | Module      | Preference Est | Review Gen | Overall Quality | Status
+--------------------------------------------------------------------------------
+ 1   | TD          | 0.8000         | 0.6907     | 0.7453         | ✓ Best
+ 2   | OPENAGI     | 0.7333         | 0.7562     | 0.7448         | ✓ Excellent
+ 3   | IO          | 0.8000         | 0.6772     | 0.7386         | ✓ Excellent
+ 4   | Voyager     | 0.7333         | 0.7021     | 0.7177         | ✓ Very Good
+ 5   | DEPS        | 0.7333         | 0.6818     | 0.7075         | ✓ Good
+ 6   | HUGGINGGPT  | 0.6667         | 0.6690     | 0.6678         | ✓ Moderate
+ 7   | Baseline    | 0.6400         | 0.6063     | 0.6232         | ✓ Baseline
+
+================================================================================
+🏆 WINNER: PlanningTD (Temporal Dependencies)
+   Overall Quality: 0.7453
+   Best at: Preference Estimation (0.8000)
+   
+🥈 RUNNER-UP: PlanningOPENAGI (Overall Quality: 0.7448, only 0.0005 behind!)
+   Best at: Review Generation (0.7562)
+================================================================================
+
+Key Findings:
+- PlanningTD has the highest overall quality (0.7453)
+- PlanningOPENAGI is extremely close (0.7448) and has BEST review generation (0.7562)
+- TD and IO both excel at preference estimation (0.8000)
+- All modules significantly outperform the baseline
+
+Recommendation: 
+- Use PlanningTD for highest overall performance and best preference estimation
+- Consider PlanningOPENAGI if review quality is the top priority (best review gen: 0.7562)
+

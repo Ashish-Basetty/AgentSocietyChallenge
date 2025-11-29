@@ -1,0 +1,65 @@
+{
+    "Baseline": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.6598210334777832
+    },
+    "IO": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.5285818576812744
+    },
+    "DEPS": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.6539320945739746
+    },
+    "TD": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.803908109664917
+    },
+    "Voyager": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.5972468852996826
+    },
+    "OPENAGI": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.629913091659546
+    },
+    "HUGGINGGPT": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 2.120356798171997
+    }
+}

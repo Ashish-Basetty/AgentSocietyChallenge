@@ -1,0 +1,32 @@
+{
+    "HUGGINGGPT": {
+        "preference_estimation": 0.6666666666666667,
+        "review_generation": 0.6690319574392478,
+        "overall_quality": 0.6678493120529573
+    },
+    "TD": {
+        "preference_estimation": 0.7999999999999999,
+        "review_generation": 0.6906603537054034,
+        "overall_quality": 0.7453301768527016
+    },
+    "OPENAGI": {
+        "preference_estimation": 0.7333333333333334,
+        "review_generation": 0.6823613330325966,
+        "overall_quality": 0.707847333182965
+    },
+    "DEPS": {
+        "preference_estimation": 0.7333333333333334,
+        "review_generation": 0.6817513849512596,
+        "overall_quality": 0.7075423591422965
+    },
+    "Voyager": {
+        "preference_estimation": 0.7333333333333334,
+        "review_generation": 0.7020759972636976,
+        "overall_quality": 0.7177046652985155
+    },
+    "IO": {
+        "preference_estimation": 0.7999999999999999,
+        "review_generation": 0.6771562101691263,
+        "overall_quality": 0.7385781050845631
+    }
+}

@@ -1,0 +1,65 @@
+{
+    "TOT": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.5107340812683105
+    },
+    "IO": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 2.5193569660186768
+    },
+    "COT": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 2.6228890419006348
+    },
+    "COTSC": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.8184058666229248
+    },
+    "DILU": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.7368009090423584
+    },
+    "SelfRefine": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.9739363193511963
+    },
+    "StepBack": {
+        "metrics": {
+            "preference_estimation": 0.5999999999999999,
+            "review_generation": 0.5957800591940293,
+            "overall_quality": 0.5978900295970146
+        },
+        "error": null,
+        "execution_time_seconds": 1.6349079608917236
+    }
+}
