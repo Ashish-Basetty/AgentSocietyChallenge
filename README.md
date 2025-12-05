@@ -1,153 +1,118 @@
-<div style="text-align: center; display: flex; align-items: center; justify-content: center; background-color: white; padding: 20px; border-radius: 30px;">
-  <img src="./static/ASC.jpg" alt="AgentSociety Challenge Logo" width="100" style="margin-right: 20px; border-radius: 10%;">
-  <h1 style="color: black; margin: 0; font-size: 2em;">WWW'25 AgentSociety Challenge: WebSocietySimulator</h1>
-</div>
+# Agent Society Challange - Yelp User Behavior Simulation
 
-# 🚀 AgentSociety Challenge
-![License](https://img.shields.io/badge/license-MIT-green) &ensp;
-[![Competition Link](https://img.shields.io/badge/competition-link-orange)](https://www.codabench.org/competitions/4574/) &ensp;
-[![arXiv](https://img.shields.io/badge/arXiv-2502.18754-b31b1b.svg)](https://arxiv.org/abs/2502.18754)
+Our project is for simulating Yelp user behavior using LLM agents. This project uses the Yelp dataset to train and evaluate agents that can generate realistic restaurant reviews and ratings based on user profiles and business information.
 
-Welcome to the **WWW'25 AgentSociety Challenge**! This repository provides the tools and framework needed to participate in a competition that focuses on building **LLM Agents** for **user behavior simulation** and **recommendation systems** based on open source datasets.
+## Overview
 
-Participants are tasked with developing intelligent agents that interact with a simulated environment and perform specific tasks in two competition tracks:
-1. **User Behavior Simulation Track**: Agents simulate user behavior, including generating reviews and ratings.
-2. **Recommendation Track**: Agents generate recommendations based on provided contextual data.
+Our project implements an intelligent agent system that simulates how Yelp users would rate and review restaurants. The system uses large language models (LLMs) to generate contextually appropriate reviews and ratings by analyzing:
 
-This repository includes:
-- The core library `websocietysimulator` for environment simulation.
-- Scripts for dataset processing and analysis.
-- Example usage for creating and evaluating agents.
+- User profiles and review history
+- Business information and characteristics
+- Existing reviews for context
 
----
+Our project uses the `websocietysimulator` framework and implements a Tree of Thoughts (TOT) based simulation agent that generates realistic user behavior patterns.
 
-## Directory Structure
+## Features
 
-### 1. **`websocietysimulator/`**  
-This is the core library containing all source code required for the competition.
+- **User Behavior Simulation**: Generates realistic restaurant reviews and ratings based on user profiles
+- **TOT-based Agent**: Uses Tree of Thoughts reasoning for improved decision-making
+- **Yelp Dataset Integration**: Works with processed Yelp dataset for realistic simulations
+- **Comprehensive Evaluation**: Includes metrics for preference estimation and review generation quality
 
-- **`agents/`**: Contains base agent classes (`SimulationAgent`, `RecommendationAgent`) and their abstractions. Participants must extend these classes for their implementations.
-- **`task/`**: Defines task structures for each track (`SimulationTask`, `RecommendationTask`).
-- **`llm/`**: Contains base LLM client classes (`DeepseekLLM`, `OpenAILLM`).
-- **`tools/`**: Includes utility tools:
-  - `InteractionTool`: A utility for interacting with the Yelp dataset during simulations.
-  - `EvaluationTool`: Provides comprehensive metrics for both recommendation (HR@1/3/5) and simulation tasks (RMSE, sentiment analysis).
-- **`simulator.py`**: The main simulation framework, which handles task and groundtruth setting, evaluation and agent execution.
+## Project Structure
 
-### 2. **`example/`**  
-Contains usage examples of the `websocietysimulator` library. Includes sample agents and scripts to demonstrate how to load scenarios, set agents, and evaluate them.
+```
+.
+├── websocietysimulator/     # Core simulation framework
+│   ├── agent/               # Agent implementations (TOTSimulationAgent, etc.)
+│   ├── llm/                 # LLM client implementations (GeminiLLM)
+│   ├── tasks/               # Task definitions
+│   ├── tools/               # Interaction and evaluation tools
+│   └── simulator.py         # Main simulation framework
+├── dataset/                 # Processed Yelp dataset
+│   ├── item.json           # Business/item data
+│   ├── review.json         # Review data
+│   └── user.json           # User data
+├── example/                 # Example tasks and ground truth data
+│   └── track1/yelp/        # Yelp simulation tasks
+├── simulator_script.py      # Main script to run simulations
+├── data_process.py          # Script to process raw Yelp dataset
+└── tutorials/               # Documentation and guides
+```
 
-### 3. **`data_process.py`**  
-A script to process the raw Yelp dataset into the required format for use with the `websocietysimulator` library. This script ensures the dataset is cleaned and structured correctly for simulations.
+## Installation
 
----
+### Prerequisites
 
-## Quick Start
+- Python 3.10 or higher
+- At least 16GB RAM (for dataset processing)
+- Gemini API key
 
-### 1. Install the Library
-
-The repository is organized using [Python Poetry](https://python-poetry.org/). Follow these steps to install the library:
+### Setup
 
 1. Clone the repository:
    ```bash
-   git clone <this_repo>
+   git clone <repository-url>
    cd AgentSocietyChallenge
    ```
 
 2. Install dependencies:
-  - Option 1: Install dependencies using Poetry: (Recommended)
-    ```bash
-    poetry install  && \
-    poetry shell
-    ```
-  - Option 2: Install dependencies using pip:
-    ```bash
-    pip install -r requirements.txt && \
-    pip install .
-    ```
-  - Option 3: Install dependencies using conda:
-    ```bash
-    conda create -n websocietysimulator python=3.11 && \
-    conda activate websocietysimulator && \
-    pip install -r requirements.txt && \
-    pip install .
-    ```
+   
+   **Option 1: Using Poetry (Recommended)**
+   ```bash
+   poetry install && poetry shell
+   ```
+   
+   **Option 2: Using pip**
+   ```bash
+   pip install -r requirements.txt && pip install .
+   ```
+   
+   **Option 3: Using conda**
+   ```bash
+   conda create -n websocietysimulator python=3.11
+   conda activate websocietysimulator
+   pip install -r requirements.txt && pip install .
+   ```
 
 3. Set up environment variables:
-   Create a `.env` file in the root directory and add your Gemini API key:
+   
+   Create a `.env` file in the root directory:
    ```bash
    GEMINI_API_KEY=your_gemini_api_key_here
    ```
 
-4. Verify the installation:
+4. Verify installation:
    ```python
    import websocietysimulator
    ```
 
----
+## Data Preparation
 
-### 2. Data Preparation
+1. Download the Yelp dataset from [Yelp Dataset](https://www.yelp.com/dataset)
 
-1. Download the raw dataset from the Yelp[1], Amazon[2] or Goodreads[3].
-2. Run the `data_process.py` script to process the dataset:
+2. Process the dataset:
    ```bash
-   python data_process.py --input <path_to_raw_dataset> --output <path_to_processed_dataset>
+   python data_process.py --input <path_to_raw_dataset> --output dataset/
    ```
-- Check out the [Data Preparation Guide](./tutorials/data_preparation.md) for more information.
-- **NOTICE: You Need at least 16GB RAM to process the dataset.**
+   
+   The processed dataset should have the following structure:
+   ```
+   dataset/
+   ├── item.json
+   ├── review.json
+   └── user.json
+   ```
+   
+   **Note:** Dataset processing requires at least 16GB RAM.
 
----
+   For more details, see the [Data Preparation Guide](./tutorials/data_preparation.md).
 
-### 3. Organize Your Data
+## Running Simulations
 
-Ensure the dataset is organized in a directory structure similar to this:
+### Quick Start
 
-```
-<your_dataset_directory>/
-├── item.json
-├── review.json
-├── user.json
-```
-
-You can name the dataset directory whatever you prefer (e.g., `dataset/`).
-
----
-
-### 4. Develop Your Agent
-
-Create a custom agent by extending either `SimulationAgent` or `RecommendationAgent`. Refer to the examples in the `example/` directory. Here's a quick template:
-
-```python
-from yelpsimulator.agents.simulation_agent import SimulationAgent
-
-class MySimulationAgent(SimulationAgent):
-    def workflow(self):
-        # The simulator will automatically set the task for your agent. You can access the task by `self.task` to get task information.
-        print(self.task)
-
-        # You can also use the `interaction_tool` to get data from the dataset.
-        # For example, you can get the user information by `interaction_tool.get_user(user_id="example_user_id")`.
-        # You can also get the item information by `interaction_tool.get_item(item_id="example_item_id")`.
-        # You can also get the reviews by `interaction_tool.get_reviews(review_id="example_review_id")`.
-        user_info = interaction_tool.get_user(user_id="example_user_id")
-
-        # Implement your logic here
-        
-        # Finally, you need to return the result in the format of `stars` and `review`.
-        # For recommendation track, you need to return a candidate list of items, in which the first item is the most recommended item.
-        stars = 4.0
-        review = "Great experience!"
-        return stars, review
-```
-
-- Check out the [Tutorial](./tutorials/agent_development.md) for Agent Development.
-- Baseline User Behavior Simulation Agent: [Baseline User Behavior Simulation Agent](./example/ModelingAgent_baseline.py).
-- Baseline Recommendation Agent: [Baseline Recommendation Agent](./example/RecAgent_baseline.py).
----
-
-### 5. Run the Simulation
-
-You can run the simulation using the provided script:
+Run the simulation using the provided script:
 
 ```bash
 python simulator_script.py --output results/
@@ -160,11 +125,13 @@ This will:
 - Save evaluation history to `results/evaluation_history.json`
 - Save LLM logs to `results/llm_logs.jsonl` (unless `--disable-logging` is used)
 
-**Command-line options:**
+### Command-line Options
+
 - `--output`: Directory or file prefix for saving results (default: current directory)
 - `--disable-logging`: Disable LLM call and diagnostic logging
 
-**Example:**
+### Examples
+
 ```bash
 # Run with default settings (saves to current directory)
 python simulator_script.py
@@ -178,7 +145,9 @@ python simulator_script.py --output results/ --disable-logging
 
 **Note:** Make sure your `.env` file contains `GEMINI_API_KEY` before running the script.
 
-Alternatively, you can run the simulation programmatically:
+### Programmatic Usage
+
+You can also run simulations programmatically:
 
 ```python
 from websocietysimulator import Simulator
@@ -191,9 +160,6 @@ load_dotenv()
 
 # Initialize Simulator
 simulator = Simulator(data_dir="dataset", device="auto", cache=False)
-# The cache parameter controls whether to use cache for interaction tool.
-# If you want to use cache, you can set cache=True. When using cache, the simulator will only load data into memory when it is needed, which saves a lot of memory.
-# If you want to use normal interaction tool, you can set cache=False. Notice that, normal interaction tool will load all data into memory at the beginning, which needs a lot of memory (20GB+).
 
 # Load scenarios
 simulator.set_task_and_groundtruth(
@@ -201,64 +167,55 @@ simulator.set_task_and_groundtruth(
     groundtruth_dir="example/track1/yelp/groundtruth"
 )
 
-# Set your custom agent
+# Set agent
 simulator.set_agent(TOTSimulationAgent)
 
 # Set LLM client
 llm = GeminiLLM(api_key=os.getenv("GEMINI_API_KEY"))
 simulator.set_llm(llm)
 
-# Run evaluation
-# If you don't set the number of tasks, the simulator will run all tasks.
-agent_outputs = simulator.run_simulation(number_of_tasks=30, enable_threading=True, max_workers=10)
+# Run simulation
+agent_outputs = simulator.run_simulation(
+    number_of_tasks=30, 
+    enable_threading=True, 
+    max_workers=10
+)
 
-# Evaluate the agent
+# Evaluate results
 evaluation_results = simulator.evaluate()
+print(evaluation_results)
 ```
 
-- If you want to use your own LLMClient, you can easily implement it by inheriting the `LLMBase` class. Refer to the [Tutorial](./tutorials/agent_development.md) for more information.
+## Evaluation Metrics
 
----
+The simulation evaluates agent performance using:
 
-### 6. Submit your agent
-- You should register your team firstly in the competition homepage ([Homepage](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge)).
-- Submit your solution through the submission button at the specific track page. (the submission button is at the top right corner of the page)
-  - [User Modeling Track](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge/pages/behavior-track.html)
-  - [Recommendation Track](https://tsinghua-fib-lab.github.io/AgentSocietyChallenge/pages/recommendation-track.html)
-  - Please register your team first.
-  - When you submit your agent, please carefully **SELECT the TRACK you want to submit to.**
-- **The content of your submission should be a .py file containing your agent (Only one `{your_team}.py` file without evaluation code).**
-- Example submissions:
-  - For Track 1: [submission_1](example/trackOneSubmission_example.zip)
-  - For Track 2: [submission_2](example/trackTwoSubmission_example.zip)
+- **Preference Estimation**: Measures how well the agent predicts user ratings (RMSE-based)
+- **Review Generation**: Evaluates the quality of generated reviews (sentiment analysis and similarity)
+- **Overall Quality**: Combined metric for overall performance
 
----
+Results are saved in JSON format with detailed metrics for each task.
 
-## Introduction to the `InteractionTool`
+## Agent Architecture
 
-The `InteractionTool` is the core utility for interacting with the dataset. It provides an interface for querying user, item, and review data.
+The project uses `TOTSimulationAgent`, which implements:
 
-### Functions
+- **Tree of Thoughts (TOT) Reasoning**: Generates multiple reasoning paths and selects the best one
+- **Planning Module**: Breaks down tasks into structured subtasks
+- **Memory Module**: Maintains context across interactions
+- **Interaction Tool**: Accesses user, business, and review data from the dataset
 
-- **Get User Information**:
-  Retrieve user data by user ID or current scenario context.
-  ```python
-  user_info = interaction_tool.get_user(user_id="example_user_id")
-  ```
+For more details on agent development, see the [Agent Development Guide](./tutorials/agent_development.md).
 
-- **Get Item Information**:
-  Retrieve item data by item ID or current scenario context.
-  ```python
-  item_info = interaction_tool.get_item(item_id="example_item_id")
-  ```
+## Dataset
 
-- **Get Reviews**:
-  Fetch reviews related to a specific item or user, filtered by time.
-  ```python
-  reviews = interaction_tool.get_reviews(review_id="example_review_id")  # Fetch a specific review
-  reviews = interaction_tool.get_reviews(item_id="example_item_id")  # Fetch all reviews for a specific item
-  reviews = interaction_tool.get_reviews(user_id="example_user_id")  # Fetch all reviews for a specific user
-  ```
+This project uses the Yelp Open Dataset, which includes:
+
+- Business information (restaurants, locations, categories)
+- User profiles and review history
+- Historical reviews and ratings
+
+The dataset is processed to extract relevant features for simulation tasks. For dataset details and download links, see the [Data Preparation Guide](./tutorials/data_preparation.md).
 
 ## License
 
@@ -266,8 +223,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## References
 
-[1] Yelp Dataset: https://www.yelp.com/dataset
-
-[2] Amazon Dataset: https://amazon-reviews-2023.github.io/
-
-[3] Goodreads Dataset: https://sites.google.com/eng.ucsd.edu/ucsdbookgraph/home
+- Yelp Dataset: https://www.yelp.com/dataset
