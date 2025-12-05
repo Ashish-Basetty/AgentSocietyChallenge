@@ -51,7 +51,7 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
 1. Clone the repository:
    ```bash
    git clone <this_repo>
-   cd websocietysimulator
+   cd AgentSocietyChallenge
    ```
 
 2. Install dependencies:
@@ -60,9 +60,10 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
     poetry install  && \
     poetry shell
     ```
-  - Option 2: Install dependencies using pip(COMING SOON):
+  - Option 2: Install dependencies using pip:
     ```bash
-    pip install websocietysimulator
+    pip install -r requirements.txt && \
+    pip install .
     ```
   - Option 3: Install dependencies using conda:
     ```bash
@@ -72,7 +73,13 @@ The repository is organized using [Python Poetry](https://python-poetry.org/). F
     pip install .
     ```
 
-3. Verify the installation:
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add your Gemini API key:
+   ```bash
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+4. Verify the installation:
    ```python
    import websocietysimulator
    ```
@@ -138,36 +145,77 @@ class MySimulationAgent(SimulationAgent):
 - Baseline Recommendation Agent: [Baseline Recommendation Agent](./example/RecAgent_baseline.py).
 ---
 
-### 5. Evaluation your agent with training data
+### 5. Run the Simulation
 
-Run the simulation using the provided `Simulator` class:
+You can run the simulation using the provided script:
+
+```bash
+python simulator_script.py --output results/
+```
+
+This will:
+- Load the dataset from `dataset/` directory
+- Run 30 simulation tasks using the TOTSimulationAgent
+- Save evaluation results to `results/evaluation_results.json`
+- Save evaluation history to `results/evaluation_history.json`
+- Save LLM logs to `results/llm_logs.jsonl` (unless `--disable-logging` is used)
+
+**Command-line options:**
+- `--output`: Directory or file prefix for saving results (default: current directory)
+- `--disable-logging`: Disable LLM call and diagnostic logging
+
+**Example:**
+```bash
+# Run with default settings (saves to current directory)
+python simulator_script.py
+
+# Run and save results to a specific directory
+python simulator_script.py --output my_results/
+
+# Run without logging
+python simulator_script.py --output results/ --disable-logging
+```
+
+**Note:** Make sure your `.env` file contains `GEMINI_API_KEY` before running the script.
+
+Alternatively, you can run the simulation programmatically:
 
 ```python
 from websocietysimulator import Simulator
-from my_agent import MySimulationAgent
+from websocietysimulator.agent import TOTSimulationAgent
+from websocietysimulator.llm import GeminiLLM
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize Simulator
-simulator = Simulator(data_dir="path/to/your/dataset", device="auto", cache=False)
+simulator = Simulator(data_dir="dataset", device="auto", cache=False)
 # The cache parameter controls whether to use cache for interaction tool.
 # If you want to use cache, you can set cache=True. When using cache, the simulator will only load data into memory when it is needed, which saves a lot of memory.
 # If you want to use normal interaction tool, you can set cache=False. Notice that, normal interaction tool will load all data into memory at the beginning, which needs a lot of memory (20GB+).
 
 # Load scenarios
-simulator.set_task_and_groundtruth(task_dir="path/to/task_directory", groundtruth_dir="path/to/groundtruth_directory")
+simulator.set_task_and_groundtruth(
+    task_dir="example/track1/yelp/tasks",
+    groundtruth_dir="example/track1/yelp/groundtruth"
+)
 
 # Set your custom agent
-simulator.set_agent(MySimulationAgent)
+simulator.set_agent(TOTSimulationAgent)
 
 # Set LLM client
-simulator.set_llm(DeepseekLLM(api_key="Your API Key"))
+llm = GeminiLLM(api_key=os.getenv("GEMINI_API_KEY"))
+simulator.set_llm(llm)
 
 # Run evaluation
 # If you don't set the number of tasks, the simulator will run all tasks.
-agent_outputs = simulator.run_simulation(number_of_tasks=None, enable_threading=True, max_workers=10)
+agent_outputs = simulator.run_simulation(number_of_tasks=30, enable_threading=True, max_workers=10)
 
 # Evaluate the agent
 evaluation_results = simulator.evaluate()
 ```
+
 - If you want to use your own LLMClient, you can easily implement it by inheriting the `LLMBase` class. Refer to the [Tutorial](./tutorials/agent_development.md) for more information.
 
 ---
