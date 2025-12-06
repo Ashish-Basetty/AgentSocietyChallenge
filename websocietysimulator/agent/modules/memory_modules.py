@@ -1,10 +1,85 @@
 import os
 import re
-from langchain_chroma import Chroma
-from langchain_core.documents import Document
 import shutil
 import uuid
 import inspect
+import math
+from typing import List
+
+try:
+    from langchain_chroma import Chroma
+    from langchain_core.documents import Document
+    _CHROMA_AVAILABLE = True
+except Exception:
+    # Fallback when chroma / hnswlib is not available
+    _CHROMA_AVAILABLE = False
+
+    class Document:
+        def __init__(self, page_content: str, metadata: dict = None):
+            self.page_content = page_content
+            self.metadata = metadata or {}
+
+    class SimpleMemoryCollection:
+        """A minimal in-memory memory store that mimics the small subset of
+        Chroma's API used by Memory modules: add_documents and
+        similarity_search_with_score.
+        """
+        def __init__(self, embedding_provider):
+            self._docs: List[Document] = []
+            self._embs: List[List[float]] = []
+            self._embedding_provider = embedding_provider
+
+        def add_documents(self, docs: List[Document]):
+            texts = [d.page_content for d in docs]
+            if texts:
+                embs = self._embedding_provider.embed_documents(texts)
+            else:
+                embs = []
+            for d, e in zip(docs, embs):
+                self._docs.append(d)
+                self._embs.append(e)
+
+        def similarity_search_with_score(self, query: str, k: int = 1):
+            # compute query embedding
+            if not self._docs:
+                return []
+            q_emb = self._embedding_provider.embed_query(query)
+            # compute cosine similarities
+            def _cos(a, b):
+                import math
+                if a is None or b is None:
+                    return 0.0
+                # assume lists
+                num = sum(x * y for x, y in zip(a, b))
+                na = math.sqrt(sum(x * x for x in a))
+                nb = math.sqrt(sum(y * y for y in b))
+                if na == 0 or nb == 0:
+                    return 0.0
+                return num / (na * nb)
+
+            scores = [_cos(q_emb, e) for e in self._embs]
+            # get top-k indices
+            idxs = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
+            results = [ (self._docs[i], scores[i]) for i in idxs ]
+            return results
+else:
+    # When Chroma is available we still export a SimpleMemoryCollection symbol
+    # so other modules can import it without ImportError. This is a lightweight
+    # stub and should not be used at runtime because the code path uses the
+    # Chroma-backed collection instead. It exists solely to keep imports stable
+    # across environments where optional dependencies may or may not be present.
+    class SimpleMemoryCollection:
+        def __init__(self, embedding_provider):
+            self._docs = []
+            self._embs = []
+            self._embedding_provider = embedding_provider
+
+        def add_documents(self, docs: List[Document]):
+            # No-op when real Chroma is available.
+            return
+
+        def similarity_search_with_score(self, query: str, k: int = 1):
+            return []
 
 class MemoryBase:
     def __init__(self, memory_type: str, llm, logger=None) -> None:
@@ -23,10 +98,21 @@ class MemoryBase:
         db_path = os.path.join('./db', memory_type, f'{str(uuid.uuid4())}')
         if os.path.exists(db_path):
             shutil.rmtree(db_path)
-        self.scenario_memory = Chroma(
-            embedding_function=self.embedding,
-            persist_directory=db_path
-        )
+        if _CHROMA_AVAILABLE:
+            try:
+                self.scenario_memory = Chroma(
+                    embedding_function=self.embedding,
+                    persist_directory=db_path
+                )
+            except Exception:
+                # If constructing Chroma fails at runtime (e.g., missing
+                # optional native deps like hnswlib), fall back to the
+                # in-memory collection so the system can still run in
+                # lightweight/mock environments.
+                self.scenario_memory = SimpleMemoryCollection(self.embedding)
+        else:
+            # Use simple in-memory fallback
+            self.scenario_memory = SimpleMemoryCollection(self.embedding)
         
         if self.logger:
             self.logger.log_module_diagnostic(
@@ -38,6 +124,15 @@ class MemoryBase:
                     "db_path": db_path
                 }
             )
+
+    def memory_count(self):
+        """Return number of memories stored in the underlying collection."""
+        try:
+            if _CHROMA_AVAILABLE:
+                return self.scenario_memory._collection.count()
+        except Exception:
+            pass
+        return len(getattr(self.scenario_memory, '_docs', []))
 
     def __call__(self, current_situation: str = ''):
         if 'review:' in current_situation:
@@ -60,7 +155,7 @@ class MemoryDILU(MemoryBase):
         task_name = query_scenario
         
         # Return empty string if memory is empty
-        memory_count = self.scenario_memory._collection.count()
+        memory_count = self.memory_count()
         if memory_count == 0:
             if self.logger:
                 self.logger.log_module_diagnostic(
@@ -127,7 +222,7 @@ class MemoryDILU(MemoryBase):
                 data={
                     "memory_type": self.memory_type,
                     "content_length": len(current_situation),
-                    "memory_count_after": self.scenario_memory._collection.count()
+                    "memory_count_after": self.memory_count()
                 }
             )
 
@@ -140,7 +235,7 @@ class MemoryGenerative(MemoryBase):
         task_name = query_scenario
         
         # Return empty if no memories exist
-        if self.scenario_memory._collection.count() == 0:
+        if self.memory_count() == 0:
             return ''
             
         # Get top 3 similar memories
@@ -232,7 +327,7 @@ Score: '''
                 data={
                     "memory_type": self.memory_type,
                     "content_length": len(current_situation),
-                    "memory_count_after": self.scenario_memory._collection.count()
+                    "memory_count_after": self.memory_count()
                 }
             )
 
@@ -245,7 +340,7 @@ class MemoryTP(MemoryBase):
         task_name = query_scenario
         
         # Return empty if no memories exist
-        if self.scenario_memory._collection.count() == 0:
+        if self.memory_count() == 0:
             return ''
             
         # Find most similar memory
@@ -294,7 +389,7 @@ Plan:
                 data={
                     "memory_type": self.memory_type,
                     "content_length": len(current_situation),
-                    "memory_count_after": self.scenario_memory._collection.count()
+                    "memory_count_after": self.memory_count()
                 }
             )
 
@@ -307,7 +402,7 @@ class MemoryVoyager(MemoryBase):
         task_name = query_scenario
         
         # Return empty if no memories exist
-        if self.scenario_memory._collection.count() == 0:
+        if self.memory_count() == 0:
             return ''
             
         # Find most similar memories
@@ -358,7 +453,7 @@ Please fill in this part yourself
                     "memory_type": self.memory_type,
                     "content_length": len(current_situation),
                     "summary_length": len(trajectory_summary),
-                    "memory_count_after": self.scenario_memory._collection.count()
+                    "memory_count_after": self.memory_count()
                 }
             )
 

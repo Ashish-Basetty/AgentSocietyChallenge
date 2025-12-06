@@ -1,7 +1,6 @@
 import logging
 import os
 import json
-import pandas as pd
 from typing import Optional, Dict, List, Any
 
 logger = logging.getLogger("websocietysimulator")

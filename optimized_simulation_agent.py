@@ -91,15 +91,29 @@ class OptimizedReasoning(ReasoningBase):
     def __init__(self, profile_type_prompt, llm, logger=None):
         super().__init__(profile_type_prompt=profile_type_prompt, memory=None, llm=llm, logger=logger)
         
-    def __call__(self, task_description: str):
+    def __call__(self, task_description: str, n: int = 1):
+        """
+        Get reasoning result(s) from the underlying LLM.
+
+        Args:
+            task_description: prompt string
+            n: number of candidates to return (default 1)
+
+        Returns:
+            If n==1: a string. If n>1: a list of strings.
+        """
         prompt = f'''{task_description}'''
         messages = [{"role": "user", "content": prompt}]
         reasoning_result = self.llm(
             messages=messages,
             temperature=0.3,  # Slightly higher for more creative reviews
-            max_tokens=4000
+            max_tokens=4000,
+            n=n
         )
         return reasoning_result
+
+
+from websocietysimulator.tools.reranker import rerank_by_user_similarity, rerank_hybrid, rerank_by_llm
 
 
 class OptimizedSimulationAgent(SimulationAgent):
@@ -112,7 +126,7 @@ class OptimizedSimulationAgent(SimulationAgent):
     3. Thinks step-by-step about all required tasks
     """
     
-    def __init__(self, llm: LLMBase, planning_module=PlanningHUGGINGGPT):
+    def __init__(self, llm: LLMBase, planning_module=PlanningHUGGINGGPT, n_candidates: int = 1, use_rerank: bool = False):
         """
         Initialize the optimized simulation agent.
         
@@ -127,6 +141,9 @@ class OptimizedSimulationAgent(SimulationAgent):
         self.planning = OptimizedPlanningWrapper(planning_module, llm=self.llm, logger=logger)
         self.reasoning = OptimizedReasoning(profile_type_prompt='', llm=self.llm, logger=logger)
         self.memory = MemoryDILU(llm=self.llm, logger=logger)
+        # Candidate and rerank configuration
+        self.n_candidates = max(1, int(n_candidates))
+        self.use_rerank = bool(use_rerank)
         
     def workflow(self):
         """
@@ -216,45 +233,84 @@ Format your response exactly as follows:
 stars: [your rating]
 review: [your review]
 '''
-            result = self.reasoning(task_description)
-            
-            # Parse result
-            try:
-                stars_lines = [line for line in result.split('\n') if 'stars:' in line.lower()]
-                review_lines = [line for line in result.split('\n') if 'review:' in line.lower()]
-                
-                if stars_lines:
-                    stars_line = stars_lines[0]
-                else:
-                    raise ValueError("No stars line found")
-                    
-                if review_lines:
-                    review_line = review_lines[0]
-                else:
-                    raise ValueError("No review line found")
-                    
-            except Exception as e:
-                print(f'Error parsing result: {e}')
-                print(f'Result was: {result[:500]}')
-                return {"stars": 3.0, "review": "No review generated due to parsing error."}
 
-            stars = float(stars_line.split(':')[1].strip())
-            review_text = review_line.split(':')[1].strip()
+            # Get N candidates from reasoning module
+            reasoning_output = self.reasoning(task_description, n=self.n_candidates)
 
-            # Clamp stars to valid range
-            stars = max(1.0, min(5.0, stars))
-            
-            # Round to nearest valid rating
-            stars = round(stars)
+            # Normalize to list of strings
+            if isinstance(reasoning_output, list):
+                candidates_raw = reasoning_output
+            else:
+                candidates_raw = [reasoning_output]
 
-            if len(review_text) > 512:
-                review_text = review_text[:512]
-                
+            parsed_candidates = []
+            for cand in candidates_raw:
+                try:
+                    stars_lines = [line for line in cand.split('\n') if 'stars:' in line.lower()]
+                    review_lines = [line for line in cand.split('\n') if 'review:' in line.lower()]
+                    if stars_lines:
+                        stars_line = stars_lines[0]
+                    else:
+                        raise ValueError("No stars line found")
+                    if review_lines:
+                        review_line = review_lines[0]
+                    else:
+                        raise ValueError("No review line found")
+                    stars_val = float(stars_line.split(':')[1].strip())
+                    review_text = review_line.split(':', 1)[1].strip()
+                except Exception:
+                    # Fallback: try to extract numbers and the rest
+                    try:
+                        import re
+                        m = re.search(r'stars:\s*([0-9]+)', cand, re.IGNORECASE)
+                        stars_val = float(m.group(1)) if m else 3.0
+                        m2 = re.search(r'review:\s*(.*)', cand, re.IGNORECASE | re.DOTALL)
+                        review_text = m2.group(1).strip() if m2 else cand.strip()
+                    except Exception:
+                        stars_val = 3.0
+                        review_text = cand.strip()
+
+                if len(review_text) > 512:
+                    review_text = review_text[:512]
+
+                parsed_candidates.append({
+                    'stars': float(max(1.0, min(5.0, round(stars_val)))),
+                    'review': review_text,
+                    'raw': cand
+                })
+
+            # If reranking enabled and multiple candidates, pick best via LLM scorer first
+            selected_idx = 0
+            if self.use_rerank and len(parsed_candidates) > 1:
+                candidate_texts = [c['review'] for c in parsed_candidates]
+                user_texts = [r.get('text', '') for r in reviews_user] if reviews_user else []
+                embedding_provider = None
+                if hasattr(self.llm, 'get_embedding_model'):
+                    try:
+                        embedding_provider = self.llm.get_embedding_model()
+                    except Exception:
+                        embedding_provider = None
+
+                # Try LLM-based reranker first (this will use the MockLLM deterministically in mock mode)
+                try:
+                    selected_idx = rerank_by_llm(self.llm, candidate_texts, user_texts, parsed_candidates=parsed_candidates, n=self.n_candidates)
+                except Exception:
+                    # Fallback to embedding-based hybrid reranker or similarity-only reranker
+                    try:
+                        if embedding_provider is not None:
+                            selected_idx = rerank_hybrid(candidate_texts, user_texts, embedding_provider=embedding_provider, parsed_candidates=parsed_candidates, n=self.n_candidates)
+                        else:
+                            selected_idx = rerank_by_user_similarity(candidate_texts, user_texts, embedding_provider=None)
+                    except Exception:
+                        selected_idx = 0
+
+            chosen = parsed_candidates[selected_idx]
+
             return {
-                "stars": float(stars),
-                "review": review_text
+                "stars": float(chosen['stars']),
+                "review": chosen['review']
             }
-            
+
         except Exception as e:
             print(f"Error in workflow: {e}")
             import traceback

@@ -1,0 +1,41 @@
+{
+  "single": {
+    "type": "simulation",
+    "metrics": {
+      "preference_estimation": 0.778,
+      "review_generation": 0.536570351537974,
+      "overall_quality": 0.657285175768987
+    },
+    "data_info": {
+      "evaluated_count": 50,
+      "original_simulation_count": 50,
+      "original_ground_truth_count": 400
+    }
+  },
+  "n3_rerank": {
+    "type": "simulation",
+    "metrics": {
+      "preference_estimation": 0.798,
+      "review_generation": 0.5374070673293485,
+      "overall_quality": 0.6677035336646743
+    },
+    "data_info": {
+      "evaluated_count": 50,
+      "original_simulation_count": 50,
+      "original_ground_truth_count": 400
+    }
+  },
+  "n10_rerank": {
+    "type": "simulation",
+    "metrics": {
+      "preference_estimation": 0.758,
+      "review_generation": 0.5437405769570782,
+      "overall_quality": 0.6508702884785391
+    },
+    "data_info": {
+      "evaluated_count": 50,
+      "original_simulation_count": 50,
+      "original_ground_truth_count": 400
+    }
+  }
+}

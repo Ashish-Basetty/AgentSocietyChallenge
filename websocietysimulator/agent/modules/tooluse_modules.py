@@ -1,9 +1,22 @@
 import os
 import re
 import ast
-from langchain_chroma import Chroma
-from langchain_core.documents import Document
 from .tooluse_pool import tooluse_pool
+from .memory_modules import _CHROMA_AVAILABLE, SimpleMemoryCollection, Document as MemDocument
+
+try:
+    # Try to import Chroma and langchain Document if available
+    if _CHROMA_AVAILABLE:
+        from langchain_chroma import Chroma
+        from langchain_core.documents import Document
+    else:
+        # Use local Document fallback
+        Document = MemDocument
+        Chroma = None
+except Exception:
+    # If import fails at runtime, fall back to local Document and disable Chroma usage
+    Document = MemDocument
+    Chroma = None
 
 class ToolUseBase():
     def __init__(self, llm):
@@ -93,10 +106,17 @@ class ToolUseToolBench(ToolUseBase):
         
         for name, tools in tooluse_pool.items():
             db_path = os.path.join('./db', f'api_pool{name}/') 
-            self.scenario_memory[name] = Chroma(
-                embedding_function=self.embedding,
-                persist_directory=db_path
-            )
+            # Try to create a Chroma collection, fall back to in-memory collection on any error
+            try:
+                if Chroma is not None:
+                    self.scenario_memory[name] = Chroma(
+                        embedding_function=self.embedding,
+                        persist_directory=db_path
+                    )
+                else:
+                    raise Exception("Chroma not available")
+            except Exception:
+                self.scenario_memory[name] = SimpleMemoryCollection(self.embedding)
             
             api_pattern = re.compile(r"\[(\d+)\] ([^:]+): (.+?)(?=\[\d+\]|\Z)", re.DOTALL)
             api_matches = api_pattern.findall(tools)
@@ -111,7 +131,11 @@ class ToolUseToolBench(ToolUseBase):
                 for api_id, api_name, api_description in api_matches
             ]
             
-            if self.scenario_memory[name]._collection.count() == 0:
+            try:
+                count = self.scenario_memory[name]._collection.count()
+            except Exception:
+                count = len(getattr(self.scenario_memory[name], '_docs', []))
+            if count == 0:
                 self.scenario_memory[name].add_documents(documents)
 
     def __call__(self, task_description, tool_instruction, feedback_of_previous_tools):
@@ -146,7 +170,11 @@ class ToolUseToolBenchFormer(ToolUseBase):
                 for api_id, api_name, api_description in api_matches
             ]
             
-            if self.scenario_memory[name]._collection.count() == 0:
+            try:
+                count = self.scenario_memory[name]._collection.count()
+            except Exception:
+                count = len(getattr(self.scenario_memory[name], '_docs', []))
+            if count == 0:
                 self.scenario_memory[name].add_documents(documents)
 
     def __call__(self, task_description, tool_instruction, feedback_of_previous_tools):
